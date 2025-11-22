@@ -125,7 +125,7 @@ const treeHeight = ref(0);
 let resizeObserver = null;
 const query = ref('')
 const treeRef = ref()
-const project_path = ref('我的监控策略')
+const project_path = ref('我创建的')
 const project_id = ref('1')
 const openProcessorModelTitle = ref("创建监控策略")
 const pipeline_detail = ref({})
@@ -174,7 +174,7 @@ emitter.on('create_folder', (data) => {
             'project_name': data.name,
             'description': '',
             'parent_id': data.cur_id,
-            'type': 1,
+            'type': 99,
         })).then(response => {
             if (response.data.status != 0) {
                 ElMessage({

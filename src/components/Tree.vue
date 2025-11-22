@@ -167,6 +167,7 @@ emitter.on('create_folder', (data) => {
             'project_name': data.name,
             'description': '',
             'parent_id': data.cur_id,
+            'type': 2
         })).then(response => {
             if (response.data.status != 0) {
                 ElMessage({
