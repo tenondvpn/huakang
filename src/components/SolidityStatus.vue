@@ -51,7 +51,7 @@
 <script setup lang="ts">
 import { DataAnalysis, Operation, CaretLeft, Key, Odometer } from '@element-plus/icons-vue'
 import emitter from './EventBus';
-import { nextTick, ref } from 'vue';
+import { nextTick, ref, onMounted, onBeforeUnmount } from 'vue';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
 import qs from 'qs';

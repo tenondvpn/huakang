@@ -1,8 +1,9 @@
 <template>
     <!-- <el-skeleton v-if="isLoading" :rows="10" animated /> -->
     <el-table v-loading="isLoading" ref="multipleTableRef" border :data="tableData" row-key="id" 
-    :style="`width: 100%; margin-top: ${table_margin_top}vh`"
+    :style="`width: 100%; margin-top: ${table_margin_top}px`"
     style="width: 100%"
+    table-layout="auto"
     max-height="82vh"
         element-loading-text="数据加载中" element-loading-spinner="el-icon-loading" @header-click="handleHeaderClick"
         @sort-change="handleSortChange" element-loading-background="rgba(0,0,0,0.3)"
@@ -16,7 +17,7 @@
         </template>
         <el-table-column type="selection" width="35" align="center" />
 
-        <el-table-column fixed label="执行时间" column-key="run_time" width="130" sortable="custom" header-align="center">
+        <el-table-column label="执行时间" column-key="run_time" min-width="10%" sortable="custom" header-align="center">
             <template #header>
                 <span style="color: var(--el-color-primary);">执行时间</span>
                 <el-input clearable v-model="run_time_search" size="small" style="float: right;margin-top: 10px;"
@@ -25,9 +26,9 @@
             <template #default="scope">{{ scope.row.run_time }}</template>
         </el-table-column>
 
-        <el-table-column label="流程名" column-key="pl_name" width="200" sortable header-align="center">
+        <el-table-column label="监控策略名" column-key="pl_name" min-width="20%" sortable header-align="center">
             <template #header>
-                <span style="color: var(--el-color-primary);">流程名</span>
+                <span style="color: var(--el-color-primary);">监控策略组</span>
                 <el-input clearable v-model="pl_name_search" size="small" style="float: right;margin-top: 10px;"
                     placeholder="搜索" :prefix-icon="Search" @change="changePipelineName" />
             </template>
@@ -36,9 +37,9 @@
             </template>
         </el-table-column>
 
-        <el-table-column label="任务名" column-key="task_name" width="200" sortable header-align="center">
+        <el-table-column label="策略名" column-key="task_name" min-width="20%" sortable header-align="center">
             <template #header>
-                <span style="color: var(--el-color-primary);">任务名</span>
+                <span style="color: var(--el-color-primary);">策略名</span>
                 <el-input clearable v-model="task_name_search" size="small" style="float: right;margin-top: 10px;"
                     placeholder="搜索" :prefix-icon="Search" @change="changeTaskName" />
             </template>
@@ -47,7 +48,7 @@
             </template>
         </el-table-column>
 
-        <el-table-column label="状态" column-key="status" width="105" sortable header-align="center" align="center">
+        <el-table-column label="状态" column-key="status" min-width="10%" sortable header-align="center" align="center">
             <template #header>
                 <span style="color: var(--el-color-primary);">状态</span>
                 <el-select size="small" v-model="status_value" clearable multiple collapse-tags collapse-tags-tooltip
@@ -66,7 +67,7 @@
                 <el-tag v-if="scope.row.status == 1" type="primary">正在执行</el-tag>
                 <el-tag v-if="scope.row.status == 2" type="success">执行成功</el-tag>
                 <el-tag v-if="scope.row.status == 3" type="danger">执行失败</el-tag>
-                <el-tag v-if="scope.row.status == 4" type="danger">任务超时</el-tag>
+                <el-tag v-if="scope.row.status == 4" type="danger">策略超时</el-tag>
                 <el-tag v-if="scope.row.status == 5" type="warning">等待调度</el-tag>
                 <el-tag v-if="scope.row.status == 6" type="danger">用户停止</el-tag>
                 <el-tag v-if="scope.row.status == 7" type="danger">上游失败</el-tag>
@@ -74,7 +75,7 @@
         </el-table-column>
 
 
-        <el-table-column prop="start_time" sortable column-key="start_time" label="开始时间" width="220"
+        <el-table-column prop="start_time" sortable column-key="start_time" label="开始时间" min-width="10%"
             header-align="center">
             <template #header>
                 <span style="color: var(--el-color-primary);">开始时间</span>
@@ -101,7 +102,7 @@
             </template>
             <template #default="scope">{{ scope.row.start_time }}</template>
         </el-table-column>
-        <el-table-column sortable column-key="use_time" label="耗时" width="180" header-align="center" align="center">
+        <el-table-column sortable column-key="use_time" label="耗时" min-width="10%" header-align="center" align="center">
             <template #header>
                 <span style="color: var(--el-color-primary); ;">耗时</span>
                 <el-row style="float: right;margin-top: 10px;width: 100%;margin-right: 0px;">
@@ -131,38 +132,47 @@
                 <el-tag type="warning">{{ getUseTime(scope.row.use_time) }}</el-tag>
             </template>
         </el-table-column>
-        <el-table-column label="执行操作" width="135" header-align="center" align="center">
+        <el-table-column label="执行操作" min-width="10%" header-align="center" align="center">
             <template #header>
                 <span style="color: var(--el-color-primary);">执行操作</span>
             </template>
             <template #default="scope">
                 <el-button plain  size="small" type="danger" @click="stopTask(scope.row)"
                     v-if="scope.row.status == 0 || scope.row.status == 5 || scope.row.status == 1"> 停止运行 </el-button>
-                <el-dropdown  v-else plain split-button size="small" type="primary" v-model="command_items[scope.$index]"
+                <el-dropdown  v-else-if="scope.row.status == 2" plain split-button size="small" type="primary" v-model="command_items[scope.$index]"
                     style="width: 110px" @click="runSingleTask(scope.$index, scope.row)">
-                    单跑任务
+                    重跑策略
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item  @click.native="runAll(scope.$index, scope.row)">完全重跑</el-dropdown-item>
+                            <el-dropdown-item
+                                @click.native="runAllNext(scope.$index, scope.row)">重跑当前及后续</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
+                <el-dropdown  v-else  plain split-button size="small" type="primary" v-model="command_items[scope.$index]"
+                    style="width: 110px" @click="setSuccess(scope.$index, scope.row)">
+                    处理
                     <template #dropdown>
                         <el-dropdown-menu>
                             <el-dropdown-item  @click.native="runAll(scope.$index, scope.row)">完全重跑</el-dropdown-item>
                             <el-dropdown-item
                                 @click.native="runAllNext(scope.$index, scope.row)">重跑当前及后续</el-dropdown-item>
                             <el-dropdown-item
-                                @click.native="setSuccess(scope.$index, scope.row)">设为成功</el-dropdown-item>
+                                @click.native="runSingleTask(scope.$index, scope.row)">重新运行</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
             </template>
         </el-table-column>
-        <el-table-column label="任务管理" header-align="center" align="center">
+        <el-table-column label="策略管理" header-align="center" align="center" min-width="20%">
             <template #header>
-                <span style="color: var(--el-color-primary);">任务管理</span>
+                <span style="color: var(--el-color-primary);">策略管理</span>
             </template>
             <template #default="scope" style="text-align: center;">
                 <el-button-group style="text-align: center;">
-                    <el-button plain size="small" type="primary" @click="clickShowGraph(scope.row)">
-                        状态追踪
-                    </el-button>
-                    <el-button plain size="small" type="primary" @click="clickShowLog(scope.row)">
+
+                    <el-button  v-if="scope.row.status == 2 || scope.row.status == 3 || scope.row.status == 1" plain size="small" type="primary" @click="clickShowLog(scope.row)">
                         查看日志
                     </el-button>
                 </el-button-group>
@@ -180,7 +190,7 @@
     <el-drawer v-model="createPipeline" :direction="drawer_direction" size="50%" :destroy-on-close="true"
         :append-to-body="true">
         <template #header>
-            <h4>更新流程信息</h4>
+            <h4>更新监控策略信息</h4>
         </template>
         <template #default>
             <CreatePipelineVue :pipeline_info="pipeline_info" />
@@ -190,7 +200,7 @@
     <el-drawer v-model="show_task_vue" :direction="drawer_direction" size="50%" :destroy-on-close="true"
         :append-to-body="true">
         <template #header>
-            <h4 style="width: 100px">更新任务配置</h4>
+            <h4 style="width: 100px">更新策略配置</h4>
         </template>
         <template #default>
             <CreateNode :pipeline_id="pipeline_id" :task_info="clicked_task_info" :task_type="taskType" />
@@ -217,7 +227,7 @@
         </template>
     </el-drawer>
 
-    <el-dialog v-model="history_graph_show" fullscreen title="全流程状态追踪">
+    <el-dialog v-model="history_graph_show" fullscreen title="全监控策略状态追踪">
         <div class="iframe-container" style="border: 0px;">
       <iframe
         :src="history_graph_url"
@@ -233,7 +243,7 @@
 
 
 <script lang="ts" setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted, onDeactivated, onBeforeUnmount } from 'vue'
 import type { TableInstance, CheckboxValueType } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
 import axios from 'axios'
@@ -270,7 +280,7 @@ const props = defineProps({
 });
 
 // const multipleTableRef = ref<TableInstance>()
-const project_path = ref('我的项目')
+const project_path = ref('我的监控策略')
 const project_id = ref('1')
 const show_task_vue = ref(false)
 const drawer_direction = ref<DrawerProps['direction']>('rtl')
@@ -289,8 +299,8 @@ const start_time_select = ref('>=')
 const use_time_select = ref('>')
 const use_time_seconds = ref(0)
 const curPage = ref(1)
-const curPageSize = ref(10)
-let intervalId = null
+const curPageSize = ref(50)
+const intervalId = ref(null)
 const order_name = ref('start_time')
 const order_type = ref('desc')
 const isLoading = ref(true)
@@ -400,7 +410,7 @@ const handleCheckAll = (val: CheckboxValueType) => {
 }
 
 const stopTask = (task_info) => {
-    ElMessageBox.confirm('确定要终止任务执行吗？', '提示', {
+    ElMessageBox.confirm('确定要终止策略执行吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -411,18 +421,18 @@ const stopTask = (task_info) => {
                 'run_time': task_info.run_time,
             }))
             .then(response => {
-                ElMessage.success("重跑任务成功！")
+                ElMessage.success("重跑策略成功！")
                 load_data((curPage.value - 1) * curPageSize.value)
             })
             .catch(error => {
-                ElMessage.success("重跑任务失败：" + error)
+                ElMessage.success("重跑策略失败：" + error)
             })
     }).catch((error) => {
     })
 }
 
 const runSingleTask = (index, task_info) => {
-    ElMessageBox.confirm('确定要重新执行任务吗？', '提示', {
+    ElMessageBox.confirm('确定要重新执行策略吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -433,18 +443,18 @@ const runSingleTask = (index, task_info) => {
                 'run_time': task_info.run_time,
             }))
             .then(response => {
-                ElMessage.success("重跑任务成功！")
+                ElMessage.success("重跑策略成功！")
                 load_data((curPage.value - 1) * curPageSize.value)
             })
             .catch(error => {
-                ElMessage.success("重跑任务失败：" + error)
+                ElMessage.success("重跑策略失败：" + error)
             })
     }).catch((error) => {
     })
 }
 
 const runAll = (index, task_info) => {
-    ElMessageBox.confirm('确定要重新执行整个流程吗？', '提示', {
+    ElMessageBox.confirm('确定要重新执行整个监控策略吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -455,18 +465,18 @@ const runAll = (index, task_info) => {
                 'run_time': task_info.run_time,
             }))
             .then(response => {
-                ElMessage.success("重跑流程成功！")
+                ElMessage.success("重跑监控策略成功！")
                 load_data((curPage.value - 1) * curPageSize.value)
             })
             .catch(error => {
-                ElMessage.success("重跑流程失败：" + error)
+                ElMessage.success("重跑监控策略失败：" + error)
             })
     }).catch((error) => {
     })
 }
 
 const runAllNext = (index, task_info) => {
-    ElMessageBox.confirm('确定要重新执行任务以及其后续任务吗？', '提示', {
+    ElMessageBox.confirm('确定要重新执行策略以及其后续策略吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -477,18 +487,18 @@ const runAllNext = (index, task_info) => {
                 'run_time': task_info.run_time,
             }))
             .then(response => {
-                ElMessage.success("重跑任务成功！")
+                ElMessage.success("重跑策略成功！")
                 load_data((curPage.value - 1) * curPageSize.value)
             })
             .catch(error => {
-                ElMessage.success("重跑任务失败：" + error)
+                ElMessage.success("重跑策略失败：" + error)
             })
     }).catch((error) => {
     })
 }
 
 const setSuccess = (index, task_info) => {
-    ElMessageBox.confirm('确定要将任务设置为成功吗？', '提示', {
+    ElMessageBox.confirm('确定要将策略设置为成功吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -499,11 +509,11 @@ const setSuccess = (index, task_info) => {
                 'run_time': task_info.run_time,
             }))
             .then(response => {
-                ElMessage.success("设置任务成功！")
+                ElMessage.success("设置策略成功！")
                 load_data((curPage.value - 1) * curPageSize.value)
             })
             .catch(error => {
-                ElMessage.success("设置任务失败：" + error)
+                ElMessage.success("设置策略失败：" + error)
             })
     }).catch((error) => {
     })
@@ -544,7 +554,7 @@ const status_options = ref([
     },
     {
         value: '4',
-        label: '任务超时',
+        label: '策略超时',
     },
     {
         value: '5',
@@ -571,11 +581,11 @@ const options = [
     },
     {
         value: '2',
-        label: '单跑任务',
+        label: '重跑策略',
     },
     {
         value: '3',
-        label: '单跑任务和后续',
+        label: '单跑策略和后续',
     },
     {
         value: '4',
@@ -625,6 +635,7 @@ const load_data = async (start) => {
             'search_use_time': use_time,
             'order_name': order_name.value,
             'order_type': order_type.value,
+            'type': 2,
         }))
         .then(response => {
             console.log(response.data)
@@ -648,28 +659,8 @@ emitter.on("reload_task_table_data_with_page_size", (pageSize) => {
 })
 
 emitter.on('auto_refresh_task_table_data', (auto) => {
-    auto_refresh.value = auto
-    if (!auto_refresh.value) {
-        pauseTimer()
-    } else {
-        startTimer()
-    }
+    load_data((curPage.value - 1) * curPageSize.value)
 })
-
-const startTimer = () => {
-    if (!auto_refresh.value) return
-    if (intervalId != null) {
-        clearInterval(intervalId)
-    }
-    intervalId = setInterval(() => {
-        load_data((curPage.value - 1) * curPageSize.value)
-    }, 5000)
-}
-
-const pauseTimer = () => {
-    clearInterval(intervalId)
-    intervalId = null
-}
 
 const changeRunTime = () => {
     load_data((curPage.value - 1) * curPageSize.value)
@@ -708,23 +699,17 @@ const useTimeSecondChange = () => {
     load_data((curPage.value - 1) * curPageSize.value)
 }
 
-
-onUnmounted(() => {
-    clearInterval(intervalId)
-})
-
 onMounted(() => {
     curPage.value = 1
     curPageSize.value = props.page_size
     pl_name_search.value = "=" + props.pipeline_name
     load_data(0)
-    auto_refresh.value = props.auto_refresh
-    if (auto_refresh.value) {
-        startTimer()
-    }
-
     table_margin_top.value = props.table_margin_top
 });
+
+onUnmounted(() => {
+
+})
 
 emitter.on('table_order_changed', (data) => {
     order_name.value = data.order_name
@@ -747,7 +732,7 @@ emitter.on('batch_run_table_tasks', (data) => {
 
     task_id_list = task_id_list.slice(0, -1);
     runt_time_list = runt_time_list.slice(0, -1);
-    ElMessageBox.confirm('确定要重新执行选中的所有任务吗？', '提示', {
+    ElMessageBox.confirm('确定要重新执行选中的所有策略吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -758,18 +743,18 @@ emitter.on('batch_run_table_tasks', (data) => {
                 'runtimelist': runt_time_list,
             }))
             .then(response => {
-                ElMessage.success("重跑任务成功！")
+                ElMessage.success("重跑策略成功！")
                 load_data((curPage.value - 1) * curPageSize.value)
             })
             .catch(error => {
-                ElMessage.success("重跑任务失败：" + error)
+                ElMessage.success("重跑策略失败：" + error)
             })
     }).catch((error) => {
     })
 })
 
 emitter.on('batch_stop_table_tasks', (data) => {
-    ElMessageBox.confirm('确定要停止选中的所有任务吗？', '提示', {
+    ElMessageBox.confirm('确定要停止选中的所有策略吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -784,11 +769,11 @@ emitter.on('batch_stop_table_tasks', (data) => {
                     load_data((curPage.value - 1) * curPageSize.value)
                 })
                 .catch(error => {
-                    ElMessage.success("停止任务失败：" + error)
+                    ElMessage.success("停止策略失败：" + error)
                 })
         }
 
-        ElMessage.success("停止所有任务成功！")
+        ElMessage.success("停止所有策略成功！")
     }).catch((error) => {
     })
 })

@@ -54,6 +54,7 @@
     "use-element-plus-theme": "^0.0.3",
     "vue": "^3.5.18",
     "vue-clipboard3": "^2.0.0",
+    "vue-count-to": "^1.0.13",
     "vue-echarts": "^7.0.3",
     "vue-router": "^4.5.1",
     "web3": "^4.16.0"

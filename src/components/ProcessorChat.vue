@@ -27,7 +27,7 @@ export default {
 import { ref, onMounted, onBeforeUnmount, defineProps } from 'vue';
 import emitter from './EventBus';
 
-const project_path_str = ref('我的项目')
+const project_path_str = ref('我的监控策略')
 const choosed_processor = ref(false)
 const choosed_processor_id = ref('')
 const dynamicMargin = ref(10000)

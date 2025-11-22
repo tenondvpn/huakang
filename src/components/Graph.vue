@@ -1,39 +1,39 @@
 <template>
     <div v-if="!show_history_graph">
-        <el-tooltip class="box-item" effect="dark" content="基于插件创建新的任务！">
+        <el-tooltip class="box-item" effect="dark" content="基于配置参数创建新的策略！">
             <el-button class="!ml-0" plain
                 @click="show_task_vue = true; update_task = false; clicked_task_info = {}; taskType = 1;" size=""
                 style="margin-top: 4px; margin-left: 4px; z-index:1051;position: fixed;" :icon="Plus" />
         </el-tooltip>
-        <el-tooltip class="box-item" effect="dark" content="创建shell任务！">
+        <el-tooltip class="box-item" effect="dark" content="创建shell策略！">
             <el-button class="!ml-0" plain
                 @click="show_task_vue = true; update_task = false; clicked_task_info = {}; taskType = 5;" size=""
                 style="margin-top: 4px; margin-left: 54px; z-index:1051;position: fixed;" :icon="DArrowRight" />
         </el-tooltip>
-        <el-tooltip class="box-item" effect="dark" content="创建确权溯源数据库-SQL任务！">
+        <el-tooltip class="box-item" effect="dark" content="创建确权溯源数据库-SQL策略！">
             <el-button class="!ml-0" plain
                 @click="show_task_vue = true; update_task = false; clicked_task_info = {}; taskType = 7;"
                 style="width: 46px;margin-top: 4px; margin-left: 104px; z-index:1051;position: fixed;">
                 <sqlIcon src="/images/sql.png" />
             </el-button>
         </el-tooltip>
-        <el-tooltip class="box-item" effect="dark" content="查询修改流程详情！">
+        <el-tooltip class="box-item" effect="dark" content="查询修改监控策略详情！">
             <el-button class="!ml-0" plain @click="show_pipeline_info" size=""
                 style="margin-top: 4px; margin-left: 154px; z-index:1051;position: fixed;" :icon="View" />
         </el-tooltip>
-        <el-tooltip class="box-item" effect="dark" content="执行流程！">
+        <el-tooltip class="box-item" effect="dark" content="执行监控策略！">
             <el-button class="!ml-0" plain @click="run_tasks = true" size=""
                 style="margin-top: 4px; margin-left: 204px; z-index:1051;position: fixed;" :icon="CaretRight" />
         </el-tooltip>
-        <el-tooltip class="box-item" effect="dark" content="删除流程！">
+        <el-tooltip class="box-item" effect="dark" content="删除监控策略！">
             <el-button class="!ml-0" plain @click="DeletePipeline" size=""
                 style="margin-top: 4px; margin-left: 254px; z-index:1051;position: fixed;" :icon="DeleteFilled" />
         </el-tooltip>
-        <el-tooltip class="box-item" effect="dark" content="查看流程执行状态列表！">
+        <el-tooltip class="box-item" effect="dark" content="查看监控策略执行状态列表！">
             <el-button class="!ml-0" plain @click="show_task_status = true" size=""
                 style="margin-top: 4px; margin-left: 304px; z-index:1051;position: fixed;" :icon="DataAnalysis" />
         </el-tooltip>
-        <el-tooltip class="box-item" effect="dark" content="重新自动布局,生成新的流程图！">
+        <el-tooltip class="box-item" effect="dark" content="重新自动布局,生成新的监控策略图！">
             <el-button class="!ml-0" plain @click="relayout" size=""
                 style="margin-top: 4px; margin-left: 354px; z-index:1051;position: fixed;" :icon="PictureFilled" />
         </el-tooltip>
@@ -41,18 +41,18 @@
             <el-button class="!ml-0" plain @click="export_graph = true" size=""
                 style="margin-top: 4px; margin-left: 404px; z-index:1051;position: fixed;" :icon="Download" />
         </el-tooltip>
-        <el-tooltip v-if="!isOnline" class="box-item" effect="dark" content="上线流程，按照执行周期自动执行！">
+        <el-tooltip v-if="!isOnline" class="box-item" effect="dark" content="上线监控策略，按照执行周期自动执行！">
             <el-button class="!ml-0" plain @click="callOnline" size=""
                 style="margin-top: 4px; margin-left: 454px; z-index:1051;position: fixed;" :icon="VideoPause" />
         </el-tooltip>
-        <el-tooltip v-else class="box-item" effect="dark" content="流程当前已上线，点击下线流程，停止自动执行！">
+        <el-tooltip v-else class="box-item" effect="dark" content="监控策略当前已上线，点击下线监控策略，停止自动执行！">
             <el-button type="success" class="!ml-0" plain @click="callOffline" size=""
                 style="margin-top: 4px; margin-left: 454px; z-index:1051;position: fixed;" :icon="VideoPlay" />
         </el-tooltip>
-        <el-tooltip class="box-item" effect="dark" content="通过AI自动生成用户需要的流程">
+        <!-- <el-tooltip class="box-item" effect="dark" content="通过AI自动生成用户需要的监控策略">
             <el-button class="!ml-0" plain @click="ai_generate = true" size=""
                 style="margin-top: 4px; margin-left: 504px; z-index:1051;position: fixed;" :icon="aiIcon" />
-        </el-tooltip>
+        </el-tooltip> -->
         <!-- <el-tooltip v-if="graph_locked" class="box-item" effect="dark" content="解锁，使画布可拖拽！">
             <el-button class="!ml-0" plain @click="show_task_vue = true" size=""
                 style="margin-top: 4px; margin-left: 404px; z-index:1051;position: fixed;" :icon="Lock" />
@@ -83,20 +83,20 @@
         <el-menu default-active="2" class="el-menu-vertical-demo" style="border: 0px">
             <el-menu-item index="2">
                 <el-icon><icon-menu /></el-icon>
-                <span>修改任务</span>
+                <span>修改策略</span>
             </el-menu-item>
             <el-menu-item index="1" @click="RemoveNode">
                 <el-icon>
                     <Delete />
                 </el-icon>
-                <span>删除任务</span>
+                <span>删除策略</span>
             </el-menu-item>
         </el-menu>
     </el-popover>
     <el-drawer v-model="show_task_vue" :direction="drawer_direction" size="50%" :destroy-on-close="true">
         <template #header>
-            <h4 v-if="!update_task" style="width: 100px">创建任务</h4>
-            <h4 v-else>修改任务</h4>
+            <h4 v-if="!update_task" style="width: 100px">创建策略</h4>
+            <h4 v-else>修改策略</h4>
         </template>
         <template #default>
             <CreateNode :pipeline_id="pipeline_id" :task_info="clicked_task_info" :task_type="taskType" />
@@ -104,7 +104,7 @@
     </el-drawer>
     <el-drawer v-model="run_tasks" :direction="drawer_direction" size="50%" :destroy-on-close="true">
         <template #header>
-            <h4 tyle="width: 100px">执行任务</h4>
+            <h4 tyle="width: 100px">执行策略</h4>
         </template>
         <template #default>
             <RunPipeline :all_tasks="allTasks" />
@@ -149,7 +149,7 @@
     </el-drawer>
     <el-drawer v-model="ai_generate" :direction="drawer_direction" size="30%" :destroy-on-close="true">
         <template #header>
-            <h4>AI自动生成流程图
+            <h4>AI自动生成监控策略图
             </h4>
         </template>
         <template #default>
@@ -242,7 +242,7 @@ const run_tasks = ref(false)
 const allTasks = ref({})
 const show_task_status = ref(false)
 const choosed_task = ref(false)
-const pageSize2 = ref(10)
+const pageSize2 = ref(50)
 const currentPage2 = ref(1)
 const currentTotalSize = ref(0)
 const show_history_graph = ref(false)
@@ -273,9 +273,9 @@ onUnmounted(() => {
 
 const callOnline = () => {
     ElMessageBox({
-        title: '上线流程',
+        title: '上线监控策略',
         message: h('p', null, [
-            h('span', null, '确定要上线流程名？'),
+            h('span', null, '确定要上线监控策略名？'),
         ]),
         showCancelButton: true,
         confirmButtonText: '确认',
@@ -285,7 +285,7 @@ const callOnline = () => {
                 isOnline.value = true
                 ElMessage({
                     type: 'success',
-                    message: "流程上线成功！",
+                    message: "监控策略上线成功！",
                 })
                 done()
             } else {
@@ -298,9 +298,9 @@ const callOnline = () => {
 
 const callOffline = () => {
     ElMessageBox({
-        title: '下线流程',
+        title: '下线监控策略',
         message: h('p', null, [
-            h('span', null, '确定要下线流程名？'),
+            h('span', null, '确定要下线监控策略名？'),
         ]),
         showCancelButton: true,
         confirmButtonText: '确认',
@@ -310,7 +310,7 @@ const callOffline = () => {
                 isOnline.value = false
                 ElMessage({
                     type: 'success',
-                    message: "流程下线成功！",
+                    message: "监控策略下线成功！",
                 })
                 done()
             } else {
@@ -687,7 +687,7 @@ const initGraph = () => {
     })
     // #endregion
 
-    // #region 使用插件
+    // #region 使用模板策略
     graph
         .use(
             new Transform({
@@ -716,7 +716,7 @@ const initGraph = () => {
         collapsable: false,
         groups: [
             {
-                title: '基础流程图',
+                title: '基础监控策略图',
                 name: 'group1',
                 // },
                 // {
@@ -1533,7 +1533,7 @@ const initLoadHistoryGraph = async (task_info) => {
                         graph_data["task_list"].push({
                             "id": task.task_id,
                             "proc_type": task.proc_type,
-                            "name": "流程名：" + task.pl_name + "\n任务名：" + task.task_name + "\n负责人：" + managers + "\n\n任务描述：" + task.task_desc,
+                            "name": "监控策略名：" + task.pl_name + "\n策略名：" + task.task_name + "\n负责人：" + managers + "\n\n策略描述：" + task.task_desc,
                             "description": '',
                         })
 

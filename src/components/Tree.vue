@@ -34,16 +34,16 @@
                                         <el-button plain type="info" size="small" :icon="Folder"
                                             @click="callCreateProject(node)" />
                                     </el-tooltip>
-                                    <el-tooltip class="box-item" effect="dark" content="点击新建流程！">
+                                    <el-tooltip class="box-item" effect="dark" content="点击新建监控策略！">
                                         <el-button plain type="success" size="small" :icon="Plus"
                                             @click="addPipelineClicked(node)" />
                                     </el-tooltip>
-                                    <el-tooltip v-if="node.label != '我的项目'" class="box-item" effect="dark"
+                                    <el-tooltip v-if="node.label != '我的监控策略'" class="box-item" effect="dark"
                                         content="编辑分类">
                                         <el-button plain type="primary" size="small" :icon="Edit"
                                             @click="callUpdateProject(node)" />
                                     </el-tooltip>
-                                    <el-tooltip v-if="node.label != '我的项目'" class="box-item" effect="dark"
+                                    <el-tooltip v-if="node.label != '我的监控策略'" class="box-item" effect="dark"
                                         content="删除分类">
                                         <el-button plain type="warning" size="small" :icon="Delete"
                                             @click="deleteProject(node)" />
@@ -54,11 +54,11 @@
                         <div v-else>
                             <span class="node-buttons">
                                 <el-button-group class="ml-4">
-                                    <el-tooltip class="box-item" effect="dark" content="点击编辑流程信息！">
+                                    <el-tooltip class="box-item" effect="dark" content="点击编辑监控策略信息！">
                                         <el-button plain type="primary" @click="addPipelineClicked(node)" size="small"
                                             :icon="Edit" />
                                     </el-tooltip>
-                                    <el-tooltip class="box-item" effect="dark" content="点击删除流程！">
+                                    <el-tooltip class="box-item" effect="dark" content="点击删除监控策略！">
                                         <el-button plain type="warning" size="small" :icon="Delete"
                                             @click="clickDeletePipeline(node)" />
                                     </el-tooltip>
@@ -122,9 +122,9 @@ const treeHeight = ref(0);
 let resizeObserver = null;
 const query = ref('')
 const treeRef = ref()
-const project_path = ref('我的项目')
+const project_path = ref('我的监控策略')
 const project_id = ref('1')
-const openPipelineModelTitle = ref("创建流程")
+const openPipelineModelTitle = ref("创建监控策略")
 const pipeline_detail = ref({})
 const showed_init_expand = ref(false)
 const selectedPipelineValue = {
@@ -266,7 +266,7 @@ emitter.on('show_graph_called', (data) => {
 })
 
 emitter.on('click_show_pipeline', (key) => {
-    openPipelineModelTitle.value = "修改流程"
+    openPipelineModelTitle.value = "修改监控策略"
     axios
         .post('/pipeline/get_pipeline_detail/', qs.stringify({
             'pipe_id': key.split("-")[1],
@@ -396,7 +396,8 @@ const handleNodeExpand = (nodeData, nodeInstance) => {
     axios
         .get('/pipeline/get_project_tree_async/', {
             params: {
-                "id": nodeData.id
+                "id": nodeData.id,
+                "type": 2
             }
         })
         .then(response => {
@@ -417,7 +418,7 @@ const handleNodeExpand = (nodeData, nodeInstance) => {
 }
 
 const addPipelineClicked = (nodeData) => {
-    openPipelineModelTitle.value = "创建流程"
+    openPipelineModelTitle.value = "创建监控策略"
     selectedPipeline.value = structuredClone(selectedPipelineValue);
     console.log("ttttt:", nodeData.key)
     var str_key = "" + nodeData.key
@@ -435,7 +436,7 @@ const addPipelineClicked = (nodeData) => {
         return;
     }
 
-    openPipelineModelTitle.value = "修改流程"
+    openPipelineModelTitle.value = "修改监控策略"
     axios
         .post('/pipeline/get_pipeline_detail/', qs.stringify({
             'pipe_id': nodeData.key.split("-")[1],
@@ -497,9 +498,9 @@ const handleDelete = (node) => {
 
 const clickDeletePipeline = (nodeData) => {
     ElMessageBox({
-        title: '删除流程',
+        title: '删除监控策略',
         message: h('p', null, [
-            h('span', null, '确定要删除流程吗? 流程名： '),
+            h('span', null, '确定要删除监控策略吗? 监控策略名： '),
             h('i', { style: 'color: red' }, nodeData.label),
         ]),
         showCancelButton: true,
@@ -523,7 +524,7 @@ const clickDeletePipeline = (nodeData) => {
                         done()
                         ElMessage({
                             type: 'danger',
-                            message: "流程删除失败：" + error,
+                            message: "监控策略删除失败：" + error,
                         })
                     })
             } else {
@@ -533,7 +534,7 @@ const clickDeletePipeline = (nodeData) => {
     }).then((action) => {
         ElMessage({
             type: 'success',
-            message: "流程删除成功！",
+            message: "监控策略删除成功！",
         })
     })
 }
@@ -611,6 +612,7 @@ const GetProjectsAndPipelines = async () => {
     await axios
         .get('/pipeline/get_project_tree_async/', {
             params: {
+                "type": 2
             }
         })
         .then(response => {
@@ -685,9 +687,14 @@ const appendNode = (parentId, item) => {
         return;
     }
 
+    var project_name = item["text"];
+    if (project_name == "我的项目") {
+        project_name = "我的监控策略"
+    }
+
     const newChild = {
         id: item["id"],
-        label: item["text"],
+        label: project_name,
         is_project: item["is_project"],
         children: [],
         valid: true,

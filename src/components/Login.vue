@@ -179,7 +179,7 @@ export default {
             onLoginClick,
             onGetCodeClick,
             onTogglePanelStatus,
-            appName: computed(() => "分布式智能计算实验平台"),
+            appName: computed(() => "华康能源管理监控平台"),
             device: computed(() => "store.state.app.device"),
         };
     },

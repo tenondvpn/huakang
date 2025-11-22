@@ -36,7 +36,7 @@
                                         <el-button type="info" size="small" :icon="Folder"
                                             @click="callCreateProject(node)" />
                                     </el-tooltip>
-                                    <el-tooltip class="box-item" effect="dark" content="点击新建插件！">
+                                    <el-tooltip class="box-item" effect="dark" content="点击新建模板策略！">
                                         <el-button type="success" size="small" :icon="Plus"
                                             @click="updateProcessorClicked(node)" />
                                     </el-tooltip>
@@ -56,11 +56,11 @@
                         <div v-else>
                             <span class="node-buttons">
                                 <el-button-group class="ml-4">
-                                    <el-tooltip class="box-item" effect="dark" content="点击编辑插件信息！">
+                                    <el-tooltip class="box-item" effect="dark" content="点击编辑模板策略信息！">
                                         <el-button type="primary" @click="updateProcessorClicked(node)" size="small"
                                             :icon="Edit" />
                                     </el-tooltip>
-                                    <el-tooltip class="box-item" effect="dark" content="点击删除插件！">
+                                    <el-tooltip class="box-item" effect="dark" content="点击删除模板策略！">
                                         <el-button type="warning" size="small" :icon="Delete"
                                             @click="clickDeleteProcessor(node)" />
                                     </el-tooltip>
@@ -125,9 +125,9 @@ const treeHeight = ref(0);
 let resizeObserver = null;
 const query = ref('')
 const treeRef = ref()
-const project_path = ref('我的项目')
+const project_path = ref('我的监控策略')
 const project_id = ref('1')
-const openProcessorModelTitle = ref("创建流程")
+const openProcessorModelTitle = ref("创建监控策略")
 const pipeline_detail = ref({})
 const selectedProcessorValue = {
     "status": 1,
@@ -271,7 +271,7 @@ emitter.on("graph_call_delete_pipeline", (key) => {
 });
 
 emitter.on('click_show_pipeline', (key) => {
-    openProcessorModelTitle.value = "修改流程"
+    openProcessorModelTitle.value = "修改监控策略"
     axios
         .post('/pipeline/get_pipeline_detail/', qs.stringify({
             'pipe_id': key.split("_")[1],
@@ -351,6 +351,9 @@ emitter.on('home_view_click_create_processor', (data) => {
         }
     }
     updateProcessorClicked(node_data)
+})
+
+onBeforeUnmount(() => {
 })
 
 interface Tree {
@@ -458,7 +461,8 @@ const handleNodeExpand = async (nodeData, nodeInstance) => {
     await axios
         .get('/processor/get_processor_tree_async/', {
             params: {
-                "id": nodeData.id
+                "id": nodeData.id,
+            type: 99,
             }
         })
         .then(response => {
@@ -469,6 +473,10 @@ const handleNodeExpand = async (nodeData, nodeInstance) => {
 
             // var json_obj = JSON.parse(response)
             for (const item of response.data) {
+                if (!item.is_project && item.tag != "huakang") {
+                    continue
+                }
+
                 appendNode(nodeData.id, item);
             }
         })
@@ -476,7 +484,7 @@ const handleNodeExpand = async (nodeData, nodeInstance) => {
 }
 
 const updateProcessorClicked = (nodeData) => {
-    openProcessorModelTitle.value = "创建插件"
+    openProcessorModelTitle.value = "创建模板策略"
     selectedProcessor.value = structuredClone(selectedProcessorValue);
     console.log("ttttt:", nodeData.key)
     var str_key = "" + nodeData.key
@@ -496,7 +504,7 @@ const updateProcessorClicked = (nodeData) => {
         return;
     }
 
-    openProcessorModelTitle.value = "修改插件"
+    openProcessorModelTitle.value = "修改模板策略"
     axios
         .post('/processor/get_processor/', qs.stringify({
             'id': nodeData.key.split("_")[1],
@@ -555,9 +563,9 @@ const handleDelete = (node) => {
 
 const clickDeleteProcessor = (nodeData) => {
     ElMessageBox({
-        title: '删除插件',
+        title: '删除模板策略',
         message: h('p', null, [
-            h('span', null, '确定要删除插件吗? 插件名： '),
+            h('span', null, '确定要删除模板策略吗? 模板策略名： '),
             h('i', { style: 'color: blue' }, nodeData.label),
         ]),
         showCancelButton: true,
@@ -582,7 +590,7 @@ const clickDeleteProcessor = (nodeData) => {
                         done()
                         ElMessage({
                             type: 'danger',
-                            message: "插件删除失败：" + error,
+                            message: "模板策略删除失败：" + error,
                         })
                     })
             } else {
@@ -592,7 +600,7 @@ const clickDeleteProcessor = (nodeData) => {
     }).then((action) => {
         ElMessage({
             type: 'success',
-            message: "插件删除成功！",
+            message: "模板策略删除成功！",
         })
     })
 }
@@ -645,7 +653,7 @@ const handleNodeClick = (nodeData, nodeInstance) => {
             if (response.data.status != 0) {
                 ElMessage({
                     type: 'danger',
-                    message: "获取插件详情失败：" + response.data.msg,
+                    message: "获取模板策略详情失败：" + response.data.msg,
                 })
                 return;
             }
@@ -660,7 +668,7 @@ const handleNodeClick = (nodeData, nodeInstance) => {
         .catch(error => {
             ElMessage({
                 type: 'danger',
-                message: "获取插件详情失败：" + error,
+                message: "获取模板策略详情失败：" + error,
             })
         })
 }
@@ -676,12 +684,17 @@ const GetProjectsAndProcessors = async () => {
     await axios
         .get('/processor/get_processor_tree_async/', {
             params: {
+            type: 99,
             }
         })
         .then(response => {
             console.log(response)
             // var json_obj = JSON.parse(response)
             for (const item of response.data) {
+                if (!item.is_project && item.tag != "huakang") {
+                    continue
+                }
+
                 appendNode(-2, item);
             }
 

@@ -7,13 +7,13 @@
         <el-divider style="float: right;" />
 
         <el-table border :data="tableData" min-height="400" height="100%" style="width: 100%">
-            <el-table-column label="流程名称" header-align="center" align="center">
+            <el-table-column label="监控策略名称" header-align="center" align="center">
                 <template #default="scope">
                     <el-link type="primary" @click="showPipeline(scope.row)">{{ scope.row.pipeline_name }}</el-link>
                 </template>
             </el-table-column>
 
-            <el-table-column label="任务名称" header-align="center" align="center">
+            <el-table-column label="策略名称" header-align="center" align="center">
                 <template #default="scope">
                     <el-link type="primary" @click="showTask(scope.row)">{{ scope.row.task_name }}</el-link>
                 </template>
@@ -38,7 +38,7 @@
     <el-drawer v-model="createPipeline" :direction="drawer_direction" size="50%" :destroy-on-close="true"
         :append-to-body="true">
         <template #header>
-            <h4>更新流程信息</h4>
+            <h4>更新监控策略信息</h4>
         </template>
         <template #default>
             <CreatePipelineVue :pipeline_info="pipeline_info" />
@@ -48,7 +48,7 @@
     <el-drawer v-model="show_task_vue" :direction="drawer_direction" size="50%" :destroy-on-close="true"
         :append-to-body="true">
         <template #header>
-            <h4 style="width: 100px">更新任务配置</h4>
+            <h4 style="width: 100px">更新策略配置</h4>
         </template>
         <template #default>
             <CreateNode :pipeline_id="pipeline_id" :task_info="clicked_task_info" :task_type="taskType" />

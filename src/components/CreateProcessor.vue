@@ -5,13 +5,13 @@
             <el-tree-select v-model="ruleForm.project" lazy :load="load" :props="processor_props" check-strictly
                 :render-after-expand="false" style="width: 100%" />
         </el-form-item>
-        <el-form-item prop="type" label="插件类型" required>
+        <el-form-item prop="type" label="模板策略类型" required>
             <el-select v-model="ruleForm.type" value-key="id" placeholder="Select" style="width: 100%">
                 <el-option v-for="item in type_options" :key="item.id" :label="item.label" :value="item.id" />
             </el-select>
         </el-form-item>
 
-        <el-form-item label="插件名称" prop="name">
+        <el-form-item label="模板策略名称" prop="name">
             <el-input v-model="ruleForm.name" />
         </el-form-item>
         <el-form-item label="负责人:" prop="users" style="margin-top: 17px">
@@ -19,8 +19,8 @@
                 <el-option v-for="item in userOptions" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
         </el-form-item>
-        <el-form-item label="插件描述" prop="desc" required>
-            <el-input v-model="ruleForm.desc" type="textarea" placeholder="请输入插件描述信息！" />
+        <el-form-item label="模板策略描述" prop="desc" required>
+            <el-input v-model="ruleForm.desc" type="textarea" placeholder="请输入模板策略描述信息！" />
         </el-form-item>
         <el-form-item v-if="processorType === TaskTypes.TYPE_SHELL" label="shell命令" prop="shell" required>
             <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入shell命令，可以多行！" />
@@ -33,7 +33,7 @@
         <el-form-item v-if="processorType === TaskTypes.TYPE_ODPS" label="odps-sql命令" prop="shell" required>
             <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入odps的SQL命令，可以多行！" />
         </el-form-item>
-        <el-form-item label="插件标签" prop="tags" required>
+        <el-form-item label="模板策略标签" prop="tags" required>
             <el-input-tag v-model="ruleForm.tags" tag-type="primary" :max="3" placeholder="最多设置三个标签">
                 <template #tag="{ value }">
                     <div class="flex items-center">
@@ -47,22 +47,22 @@
         </el-form-item>
         <el-divider border-style="dashed" />
 
-        <el-form-item label="插件参数" prop="configs">
+        <el-form-item label="模板策略参数" prop="configs">
             <CreateNodeConfig ref="config_vue" :show_description="true" />
         </el-form-item>
         <el-divider border-style="dashed" />
         <el-form-item>
             <el-button v-if="update_processor" type="primary" @click="submitForm(ruleFormRef)" :icon="Edit">
-                修改插件
+                修改模板策略
             </el-button>
             <el-button v-else type="primary" @click="submitForm(ruleFormRef)">
-                创建插件
+                创建模板策略
             </el-button>
             <el-popconfirm confirm-button-text="确定" cancel-button-text="取消" :icon="InfoFilled" icon-color="#626AEF"
-                title="确定删除插件吗?" @confirm="DeleteProcessor" @cancel="cancelEvent">
+                title="确定删除模板策略吗?" @confirm="DeleteProcessor" @cancel="cancelEvent">
                 <template #reference>
                     <el-button v-if="update_processor" style="margin-left: 10px;" type="warning"
-                        :icon="Delete">删除插件</el-button>
+                        :icon="Delete">删除模板策略</el-button>
                 </template>
             </el-popconfirm>
 
@@ -139,10 +139,10 @@ const rules = reactive<FormRules<RuleForm>>({
         { required: true, message: '请选择项目', trigger: 'blur' },
     ],
     type: [
-        { required: true, message: '请选择插件类型', trigger: 'blur' },
+        { required: true, message: '请选择模板策略类型', trigger: 'blur' },
     ],
     name: [
-        { required: true, message: '请输入插件名称', trigger: 'blur' },
+        { required: true, message: '请输入模板策略名称', trigger: 'blur' },
         { min: 1, max: 30, message: '长度不超过30个字符。', trigger: 'blur' },
     ],
     configs: [
@@ -155,7 +155,7 @@ const rules = reactive<FormRules<RuleForm>>({
     desc: [
         {
             required: true,
-            message: '请输入任务描述',
+            message: '请输入策略描述',
             trigger: 'change',
         },
     ],
@@ -266,15 +266,15 @@ const DeleteProcessor = () => {
         .post('/pipeline/delete_task/' + props.pipeline_id + '/', qs.stringify(params))
         .then(response => {
             if (response.status != 200 || response.data.status != 0) {
-                ElMessage.warning("删除任务失败：" + response.data.info)
+                ElMessage.warning("删除策略失败：" + response.data.info)
             } else {
                 console.log(response.data)
                 emitter.emit("delete_task_success", props.task_info.task.id)
-                ElMessage.success("删除任务成功！")
+                ElMessage.success("删除策略成功！")
             }
         })
         .catch(error => {
-            ElMessage.error("创建任务失败：" + error)
+            ElMessage.error("创建策略失败：" + error)
             console.log(error)
         })
 }
@@ -332,15 +332,15 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                     .post('/processor/update/' + props.processor_info.processor.id + '/', qs.stringify(params))
                     .then(response => {
                         if (response.status != 200 || response.data.status != 0) {
-                            ElMessage.warning("修改插件失败：" + response.data.msg)
+                            ElMessage.warning("修改模板策略失败：" + response.data.msg)
                         } else {
                             console.log(response.data)
                             emitter.emit("update_processor_success", { "id": props.processor_info.processor.project_id + "_" + props.processor_info.processor.id })
-                            ElMessage.success("修改插件成功！")
+                            ElMessage.success("修改模板策略成功！")
                         }
                     })
                     .catch(error => {
-                        ElMessage.error("修改插件失败：" + error)
+                        ElMessage.error("修改模板策略失败：" + error)
                         console.log(error)
                     })
             } else {
@@ -348,7 +348,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                     .post('/processor/create/', qs.stringify(params))
                     .then(response => {
                         if (response.status != 200 || response.data.status != 0) {
-                            ElMessage.warning("创建插件失败：" + response.data.msg)
+                            ElMessage.warning("创建模板策略失败：" + response.data.msg)
                         } else {
                             console.log(response.data)
                             var tmp_project_id = ruleForm.project 
@@ -369,11 +369,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                                 }
                             }
                             emitter.emit("create_processor_success", emit_data)
-                            ElMessage.success("创建插件成功！")
+                            ElMessage.success("创建模板策略成功！")
                         }
                     })
                     .catch(error => {
-                        ElMessage.error("创建插件失败：" + error)
+                        ElMessage.error("创建模板策略失败：" + error)
                         console.log(error)
                     })
             }
@@ -406,9 +406,12 @@ const load = (node, resolve) => {
     var params;
 
     if (node_id == undefined) {
-        params = {}
+        params = {
+            type: 99,
+        }
     } else {
         params = {
+            type: 99,
             id: node_id
         }
     }

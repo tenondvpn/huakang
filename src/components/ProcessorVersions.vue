@@ -41,16 +41,16 @@
             <el-table-column align="center" label="操作">
                 <template #default="scope">
                     <el-button-group class="ml-4">
-                        <el-tooltip class="box-item" effect="dark" content="点击查看插件详情！">
+                        <el-tooltip class="box-item" effect="dark" content="点击查看模板策略详情！">
                             <el-button v-if="scope.row.type == 'zip'" plain type="primary" size="small"
                                 @click="detail(scope.row)" :icon="InfoFilled">
                             </el-button>
                         </el-tooltip>
-                        <el-tooltip class="box-item" effect="dark" content="点击重新上传插件版本！">
+                        <el-tooltip class="box-item" effect="dark" content="点击重新上传模板策略版本！">
                             <el-button plain type="primary" size="small" @click="handleEdit(scope.row)" :icon="Edit">
                             </el-button>
                         </el-tooltip>
-                        <el-tooltip class="box-item" effect="dark" content="点击删除插件！">
+                        <el-tooltip class="box-item" effect="dark" content="点击删除模板策略！">
                             <el-button plain size="small" type="danger" @click="handleDelete(scope.row)" :icon="Delete">
                             </el-button>
                         </el-tooltip>
@@ -111,7 +111,7 @@
 
 import axios from 'axios'
 import qs from 'qs'
-import { ref, onMounted, h } from 'vue'
+import { ref, onMounted, h, onUnmounted } from 'vue'
 import emitter from './EventBus'
 import { Edit, Delete, InfoFilled } from '@element-plus/icons-vue'
 import gitIcon from './gitIcon.vue'
@@ -174,7 +174,7 @@ const handleDelete = (row) => {
     ElMessageBox({
         title: '删除版本',
         message: h('p', null, [
-            h('span', null, '确定要删除插件版本吗? '),
+            h('span', null, '确定要删除模板策略版本吗? '),
         ]),
         showCancelButton: true,
         confirmButtonText: '确认',
@@ -193,7 +193,7 @@ const handleDelete = (row) => {
                         if (response.data.status != 0) {
                             ElMessage({
                                 type: 'danger',
-                                message: "删除插件版本失败：" + response.data.msg,
+                                message: "删除模板策略版本失败：" + response.data.msg,
                             })
 
                             done()
@@ -203,7 +203,7 @@ const handleDelete = (row) => {
                         loadAllData()
                         ElMessage({
                             type: 'success',
-                            message: "删除插件版本成功！",
+                            message: "删除模板策略版本成功！",
                         })
                         done()
                         instance.confirmButtonLoading = false
@@ -212,7 +212,7 @@ const handleDelete = (row) => {
                         done()
                         ElMessage({
                             type: 'danger',
-                            message: "删除插件版本失败：" + error,
+                            message: "删除模板策略版本失败：" + error,
                         })
                     })
             } else {
@@ -292,6 +292,8 @@ emitter.on('upate_processor_to_show_detail', (proc_info) => {
     update_processor(proc_info)
 })
 
+onUnmounted(() => {
+})
 </script>
 
 <style scoped></style>

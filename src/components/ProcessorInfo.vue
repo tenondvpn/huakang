@@ -5,8 +5,8 @@
 
         </el-badge>
         <el-button-group class="ml-4" style="float: right;margin-top: 0px;margin-top: 10px;">
-                <el-button plain type="primary" @click="clickDeleteProcessor" :icon="Delete">删除插件</el-button>
-                <el-button plain type="primary" @click="clickUpdateProcessor" :icon="Edit">修改插件</el-button>
+                <el-button plain type="primary" @click="clickDeleteProcessor" :icon="Delete">删除模板策略</el-button>
+                <el-button plain type="primary" @click="clickUpdateProcessor" :icon="Edit">修改模板策略</el-button>
                 </el-button-group>
         <el-divider style="float: right;" />
 
@@ -51,12 +51,12 @@
                     </div>
                 </template>
                 <div v-if="isPrivate == 1"><el-tag type="warning" style="margin-left: 3px;">私有</el-tag>
-                    <el-tooltip class="box-item" effect="dark" content="点击开放共享插件，所有人可见可用！">
+                    <el-tooltip class="box-item" effect="dark" content="点击开放共享模板策略，所有人可见可用！">
                         <el-button size="small" :icon="Share" circle style="border: 0px;" @click="shareProcessor" />
                     </el-tooltip>
                 </div>
                 <div v-else><el-tag type="warning" style="margin-left: 3px;">已开放</el-tag>
-                    <el-tooltip class="box-item" effect="dark" content="点击回收共享插件，其他人不可用！">
+                    <el-tooltip class="box-item" effect="dark" content="点击回收共享模板策略，其他人不可用！">
                         <el-button size="small" :icon="SwitchButton" circle style="border: 0px;"
                             @click="shareProcessor" />
                     </el-tooltip>
@@ -115,7 +115,7 @@
     </el-scrollbar>
     <el-drawer v-model="share_processor" :direction="drawer_direction" size="50%" :destroy-on-close="true">
         <template #header>
-            <h4 v-if="isPrivate == 1">发布插件</h4>
+            <h4 v-if="isPrivate == 1">发布模板策略</h4>
             <h4 v-else>取消共享</h4>
         </template>
         <template #default>
@@ -196,7 +196,7 @@ const toPrivate = () => {
     ElMessageBox({
         title: '取消共享',
         message: h('p', null, [
-            h('span', null, '确定要取消插件共享吗?  '),
+            h('span', null, '确定要取消模板策略共享吗?  '),
         ]),
         showCancelButton: true,
         confirmButtonText: '确认',
@@ -212,16 +212,16 @@ const toPrivate = () => {
                     }))
                     .then(response => {
                         if (response.status != 200 || response.data.status != 0) {
-                            ElMessage.warning("取消共享插件失败：" + response.data.msg)
+                            ElMessage.warning("取消共享模板策略失败：" + response.data.msg)
                         } else {
                             done()
                             console.log(response.data)
                             isPrivate.value = 1
-                            ElMessage.success("取消共享插件成功！")
+                            ElMessage.success("取消共享模板策略成功！")
                         }
                     })
                     .catch(error => {
-                        ElMessage.error("取消共享插件失败：" + error)
+                        ElMessage.error("取消共享模板策略失败：" + error)
                         console.log(error)
                     })
             } else {

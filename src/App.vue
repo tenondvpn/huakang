@@ -2,23 +2,18 @@
     <el-menu :default-active="activeIndex" mode="horizontal" style="height: 44px;" :ellipsis="false"
         @select="handleSelect">
         <el-menu-item index="0">
-            <img v-if="isDark" style="width: 100px" src="./images/shardora.png" alt="Element logo" />
-            <img v-else style="width: 100px" src="./images/blue_shardora.png" alt="Element logo" />
+            <H2>华康能管监控管理</H2>
+            <!-- <img v-if="isDark" style="width: 100px" src="./images/shardora.png" alt="Element logo" />
+            <img v-else style="width: 100px" src="./images/blue_shardora.png" alt="Element logo" /> -->
         </el-menu-item>
-        <el-tooltip class="box-item" content="进入流程管理页面，管理自己的流程！">
-            <el-menu-item v-if="show_menu" index="1" @click="toPipeline">流程管理</el-menu-item>
+        <el-tooltip class="box-item" content="进入监控策略管理页面，管理自己的监控策略！">
+            <el-menu-item v-if="show_menu" index="1" @click="toPipeline">监控策略管理</el-menu-item>
         </el-tooltip>
-        <el-tooltip class="box-item" content="管理所有的计算任务！">
-            <el-menu-item v-if="show_menu" index="2" @click="toRuning">所有任务</el-menu-item>
+        <el-tooltip class="box-item" content="管理模板策略！">
+            <el-menu-item v-if="show_menu" index="3" @click="toProcessor">用户策略模板</el-menu-item>
         </el-tooltip>
-        <el-tooltip class="box-item" content="管理插件，实现算法、数据、算力、模型的共享复用！">
-            <el-menu-item v-if="show_menu" index="3" @click="toProcessor">插件管理</el-menu-item>
-        </el-tooltip>
-        <el-tooltip class="box-item" content="进入平台统计大屏，包括算力，数据，模型，任务，用户统计信息！">
-            <el-menu-item v-if="show_menu" index="4" @click="toDashboard">平台大屏</el-menu-item>
-        </el-tooltip>
-        <el-tooltip class="box-item" content="solidity智能合约编辑管理！">
-            <el-menu-item v-if="show_solidty" index="5" @click="toSolidty">智能合约</el-menu-item>
+        <el-tooltip class="box-item" content="管理所有的计算策略！">
+            <el-menu-item v-if="show_menu" index="2" @click="toRuning">监控策略状态</el-menu-item>
         </el-tooltip>
         <el-menu-item index="5" style="margin-top:0px" class="no-underline">
             <el-tooltip class="box-item" content="切换背景色！">
@@ -42,7 +37,7 @@
             </template>
         </el-dropdown>
     </el-menu>
-    <router-view></router-view>
+    <router-view :key="$route.fullPath" ></router-view>
 </template>
 <script lang="ts">
 export default {

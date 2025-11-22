@@ -27,7 +27,7 @@ export default {
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import emitter from './EventBus';
 
-const project_path_str = ref('我的项目')
+const project_path_str = ref('我的监控策略')
 const project_id = ref(1)
 const choosed_pipeline = ref(false)
 const choosed_pipeline_id = ref('')

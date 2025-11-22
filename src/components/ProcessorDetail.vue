@@ -4,7 +4,7 @@
       <template #label>
         <span class="custom-tabs-label">
           <el-icon><calendar /></el-icon>
-          <span>插件详情</span>
+          <span>模板策略详情</span>
         </span>
       </template>
       <ProcessorInfo :processor_info="processor_info"/>
