@@ -512,7 +512,7 @@ const updateProcessorClicked = (nodeData) => {
         .then(response => {
             selectedProcessor.value = response.data
             selectedProcessor.value.project_path = nodeData.parent.label
-            selectedProcessor.value.project_id = response.data.processor.id
+            selectedProcessor.value.project_id = response.data.processor.project_id
             createProcessor.value = true;
             const str_id = "" + nodeData.key;
 

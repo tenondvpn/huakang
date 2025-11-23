@@ -258,6 +258,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         "description": ruleForm.desc,
         "project_id": project_id,
         "tags": ruleForm.tags.toString(),
+        "type": 2,
     }
     console.log(params)
     if (!formEl) return
@@ -327,7 +328,7 @@ const getProjectTree = async () => {
     await axios
         .get('/pipeline/get_project_tree/', {
             params: {
-                "type": 0
+                "type": 2
             }
         })
         .then(response => {

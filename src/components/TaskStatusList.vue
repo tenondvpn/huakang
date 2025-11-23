@@ -64,12 +64,12 @@
             </template>
             <template #default="scope">
                 <el-tag v-if="scope.row.status == 0" type="warning">等待中</el-tag>
-                <el-tag v-if="scope.row.status == 1" type="primary">正在执行</el-tag>
-                <el-tag v-if="scope.row.status == 2" type="success">执行成功</el-tag>
-                <el-tag v-if="scope.row.status == 3" type="danger">执行失败</el-tag>
-                <el-tag v-if="scope.row.status == 4" type="danger">策略超时</el-tag>
+                <el-tag v-if="scope.row.status == 1" type="primary">正在监测</el-tag>
+                <el-tag v-if="scope.row.status == 2" type="success">监测通过</el-tag>
+                <el-tag v-if="scope.row.status == 3" type="danger">监测失败</el-tag>
+                <el-tag v-if="scope.row.status == 4" type="danger">监测运行超时</el-tag>
                 <el-tag v-if="scope.row.status == 5" type="warning">等待调度</el-tag>
-                <el-tag v-if="scope.row.status == 6" type="danger">用户停止</el-tag>
+                <el-tag v-if="scope.row.status == 6" type="danger">停止</el-tag>
                 <el-tag v-if="scope.row.status == 7" type="danger">上游失败</el-tag>
             </template>
         </el-table-column>
@@ -542,19 +542,19 @@ const status_options = ref([
     },
     {
         value: '1',
-        label: '正在执行',
+        label: '正在监测',
     },
     {
         value: '2',
-        label: '执行成功',
+        label: '监测通过',
     },
     {
         value: '3',
-        label: '执行失败',
+        label: '监测失败',
     },
     {
         value: '4',
-        label: '策略超时',
+        label: '监测超时',
     },
     {
         value: '5',
@@ -562,7 +562,7 @@ const status_options = ref([
     },
     {
         value: '6',
-        label: '用户终止',
+        label: '用户终止监测',
     },
     {
         value: '7',

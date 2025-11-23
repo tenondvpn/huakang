@@ -553,8 +553,8 @@ const handleNodeClick = (nodeData, nodeInstance) => {
             parent_node = parent_node.parent
         }
 
-        emitter.emit('update_graph', { "tag": "-1", "project_path": project_path.value, 'project_id': nodeData.id });
-        emitter.emit('show_update_graph', { "tag": "-1", "project_path": project_path.value, 'project_id': nodeData.id });
+        emitter.emit('update_graph', { "tag": "-1", "project_path": project_path.value, 'project_id': ""+ nodeData.id });
+        emitter.emit('show_update_graph', { "tag": "-1", "project_path": project_path.value, 'project_id': ""+nodeData.id });
         console.log('update_graph node click 0', project_path.value, 'project_id', nodeData.id)
         return;
     }
@@ -617,19 +617,19 @@ const GetProjectsAndPipelines = async () => {
             }
         })
         .then(response => {
-            console.log(response)
+            console.log("0 get_project_tree_async:", response)
             // var json_obj = JSON.parse(response)
             for (const item of response.data) {
                 appendNode(-1, item);
             }
 
-            console.log('treeRef.value.getNode():', treeRef.value.getNode('1'))
-            handleNodeExpand({ "id": 1 }, null)
+            console.log('treeRef.value.getNode():', treeRef.value.getNode('46'))
+            handleNodeExpand({ "id": 46 }, null)
 
         })
         .catch(error => console.log(error))
 
-            treeRef.value.expandNode(treeRef.value.getNode(1))
+            treeRef.value.expandNode(treeRef.value.getNode(46))
     
 }
 

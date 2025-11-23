@@ -1,7 +1,7 @@
 <template>
     <el-form ref="ruleFormRef" style="max-width: 600px" :model="ruleForm" :rules="rules" label-width="auto"
         label-position="left">
-        <el-form-item v-if="(update_task || taskType === TaskTypes.TYPE_SCRIPT)" prop="processor" required>
+        <el-form-item v-if="(srctaskType === TaskTypes.TYPE_SCRIPT)" prop="processor" required>
             <el-col :span="11">
                 <el-form-item prop="processor" label="选择模板策略" required>
                     <el-tree-select v-model="ruleForm.processor" lazy :load="load" :props="processor_props"
@@ -13,6 +13,7 @@
             <el-col :span="10">
                 <el-form-item prop="processor_version" label="选择版本" required>
                     <el-select v-model="ruleForm.processor_version" value-key="id" placeholder="Select"
+                        @change="changeTaskInfo"
                         style="width: 240px">
                         <el-option v-for="item in version_options" :key="item.id" :label="item.label"
                             :value="item.id" />
@@ -190,6 +191,7 @@ const prev_tasks_vue = ref(null)
 const retry_times_radio = ref('1')
 const priority_radio = ref('6')
 const update_task = ref(false)
+const now_history_list = ref(null)
 
 const TaskTypes = {
     TYPE_STREAM_DATA: -1,
@@ -205,6 +207,7 @@ const TaskTypes = {
 
 
 const taskType = ref(TaskTypes.TYPE_SCRIPT)
+const srctaskType = ref(TaskTypes.TYPE_SCRIPT)
 
 interface RuleForm {
     processor: string
@@ -306,6 +309,7 @@ const rules = reactive<FormRules<RuleForm>>({
 
 onMounted(() => {
     taskType.value = props.task_type!
+    srctaskType.value = props.task_type!
     console.log("0 init create node: ", taskType.value, props.task_info)
 
     if (taskType.value == TaskTypes.TYPE_SCRIPT) {
@@ -364,8 +368,9 @@ onMounted(() => {
         var configs = props.task_info.task.config.split('\r\n')
         for (const config of configs) {
             var config_item = config.split('=')
+            var val_split = config_item[1].split('H0')
             console.log("config: ", config_item)
-            config_vue.value.AddConfig(config_item[0], config_item[1])
+            config_vue.value.AddConfig(config_item[0], val_split[0])
         }
 
         prev_tasks_vue.value.AddPrevTasks(props.task_info.rely_tasks)
@@ -375,6 +380,41 @@ onMounted(() => {
     }
 });
 
+const changeTaskInfo = () => {
+    var history = null;
+    for (const item of now_history_list.value) {
+        console.log("get changed history: ", item, ruleForm.processor_version)
+        if (item.id == ruleForm.processor_version) {
+            history = item;
+            break
+        }
+    }
+
+    if (history == null) {
+        return
+    }
+
+    taskType.value = history.type
+    procId.value = history.id
+    ruleForm.task_name = ""
+    ruleForm.retry_times = 1
+    retry_times_radio.value = "" + ruleForm.retry_times
+    priority_radio.value = "" + 6
+    ruleForm.priority = 6
+    ruleForm.timeout = 0
+    ruleForm.power_tag = "ALL"
+    ruleForm.desc = ""
+    var configs = history.config.split('\r\n')
+    for (const config of configs) {
+        var config_item = config.split('=')
+        console.log("config: ", config_item)
+        var val_split = config_item[1].split('H0')
+        config_vue.value.AddConfig(config_item[0], val_split[0])
+    }
+
+    console.log(ruleForm)
+    ruleForm.shell = history.template
+}
 const handleSelectionChange = (value) => {
     // `value` 参数就是新选中的节点的 value 值
     console.log('新选中的节点值:', value);
@@ -393,6 +433,7 @@ const handleSelectionChange = (value) => {
                 })
             }
 
+            now_history_list.value = response.data.history_list
             version_options.value = get_processor_data;
             console.log(get_processor_data)
             ChangcePowerNodes("script")

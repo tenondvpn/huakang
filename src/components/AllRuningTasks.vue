@@ -75,7 +75,6 @@
         </template>
         <template #default>
             <TaskStatusList :table_margin_top="-5" :pipeline_name="pipeline_name" :task_name="task_name"
-            :key="$route.fullPath" 
                 :page_size="pageSize2" />
         </template>
     </el-card>

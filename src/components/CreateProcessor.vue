@@ -6,7 +6,7 @@
                 :render-after-expand="false" style="width: 100%" />
         </el-form-item>
         <el-form-item prop="type" label="模板策略类型" required>
-            <el-select v-model="ruleForm.type" value-key="id" placeholder="Select" style="width: 100%">
+            <el-select v-model="processorType" value-key="id" placeholder="Select" style="width: 100%">
                 <el-option v-for="item in type_options" :key="item.id" :label="item.label" :value="item.id" />
             </el-select>
         </el-form-item>
@@ -229,6 +229,7 @@ onMounted(() => {
         var processor = props.processor_info.processor
         ruleForm.type = processor.type
         ruleForm.name = processor.name
+        processorType.value = processor.type
         var users = processor.userid_list.split(',')
         for (const user of users) {
             if (user == "") {
@@ -313,9 +314,9 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     var params = {
         "name": ruleForm.name,
         "config": config_str,
-        'template': "",
+        'template': ruleForm.shell,
         "description": ruleForm.desc,
-        "type": ruleForm.type,
+        "type": processorType.value,
         "project_id": tmp_project_id,
         'principal': selectedUsers.value.toString(),
         'input_config': '',

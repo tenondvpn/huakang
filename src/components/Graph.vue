@@ -282,12 +282,33 @@ const callOnline = () => {
         cancelButtonText: '取消',
         beforeClose: (action, instance, done) => {
             if (action === 'confirm') {
-                isOnline.value = true
-                ElMessage({
-                    type: 'success',
-                    message: "监控策略上线成功！",
-                })
-                done()
+                axios
+                    .post('/pipeline/on_line/', qs.stringify({
+                        "pipe_id": pipeline_id.value,
+                        "reason": 0,
+                        "on_line": 1
+                    }))
+                    .then(response => {
+                        done()
+                        if (response.data.status != 0) {
+                            ElMessage({
+                                type: 'warning',
+                                message: "上线失败：" + response.data.msg,
+                            })
+                        } else {
+                            isOnline.value = true
+                            ElMessage({
+                                type: 'warning',
+                                message: "上线成功！"
+                            })
+                        }
+                    })
+                    .catch(error => {
+                        ElMessage({
+                                type: 'warning',
+                                message: "上线失败：" + error,
+                            })
+                    })
             } else {
                 done()
             }
@@ -307,12 +328,33 @@ const callOffline = () => {
         cancelButtonText: '取消',
         beforeClose: (action, instance, done) => {
             if (action === 'confirm') {
-                isOnline.value = false
-                ElMessage({
-                    type: 'success',
-                    message: "监控策略下线成功！",
-                })
-                done()
+                axios
+                    .post('/pipeline/on_line/', qs.stringify({
+                        "pipe_id": pipeline_id.value,
+                        "reason": 0,
+                        "on_line": 0
+                    }))
+                    .then(response => {
+                        done()
+                        if (response.data.status != 0) {
+                            ElMessage({
+                                type: 'warning',
+                                message: "下线失败：" + response.data.msg,
+                            })
+                        } else {
+                            isOnline.value = false
+                            ElMessage({
+                                type: 'warning',
+                                message: "下线成功！"
+                            })
+                        }
+                    })
+                    .catch(error => {
+                        ElMessage({
+                                type: 'warning',
+                                message: "下线失败：" + error,
+                            })
+                    })
             } else {
                 done()
             }
@@ -1107,6 +1149,7 @@ const relayout = () => {
                 selectedPipeline.monitor_way |= 2
             }
 
+            isOnline.value = response.data.enable == 1 ? true : false
             var pipline_data = response.data
             axios
                 .post('/pipeline/get_tasks/', qs.stringify({
@@ -1141,9 +1184,14 @@ const update_graph = (data) => {
     if (data["pipeline_detail"]) {
         pipeline_name.value = data["pipeline_detail"]["name"];
     }
+            
+    if (data.pipeline_detail) {
+        isOnline.value = data.pipeline_detail.enable == 1 ? true : false
+    }
+    
     pipeline_id.value = data["pipe_id"];
     nodeKey.value = data["project_id"] + "-" + data["pipe_id"];
-    console.log("pipeline_id.value: ", nodeKey.value, pipeline_id.value)
+    console.log("pipeline_id.value: ", nodeKey.value, pipeline_id.value, data)
 
     allTasks.value = data
     const graph_data: Model.FromJSONData = {

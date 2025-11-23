@@ -1,6 +1,6 @@
 <template>
     <div v-if="!choosed_pipeline">
-        <HomeView :project_path="project_path_str" :project_id="project_id" />
+        <HomeView :project_path="project_path_str" :project_id="project_id" :key="project_path_str"/>
     </div>
 
     <div :style="{ marginTop: dynamicMargin + 'px' }">
@@ -27,8 +27,8 @@ export default {
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import emitter from './EventBus';
 
-const project_path_str = ref('我创建的')
-const project_id = ref(1)
+const project_path_str = ref('我的策略')
+const project_id = ref("46")
 const choosed_pipeline = ref(false)
 const choosed_pipeline_id = ref('')
 const dynamicMargin = ref(10000)
@@ -71,7 +71,7 @@ const update_graph = (data) => {
         project_path_str.value = data["project_path"]
         project_id.value = data["project_id"]
         choosed_pipeline_id.value = ''
-        console.log("0 update_graph: ", project_id.value, choosed_pipeline_id.value, data)
+        console.log("0 update_graph: ", project_path_str.value, project_id.value, choosed_pipeline_id.value, data)
         return;
     }
 

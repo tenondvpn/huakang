@@ -5,14 +5,14 @@
 
         </el-badge>
         <el-button-group class="ml-4" style="float: right;margin-top: 0px;margin-top: 10px;">
-                <el-button plain type="primary" @click="clickDeleteProcessor" :icon="Delete">删除模板策略</el-button>
-                <el-button plain type="primary" @click="clickUpdateProcessor" :icon="Edit">修改模板策略</el-button>
-                </el-button-group>
+            <el-button plain type="primary" @click="clickDeleteProcessor" :icon="Delete">删除模板策略</el-button>
+            <el-button plain type="primary" @click="clickUpdateProcessor" :icon="Edit">修改模板策略</el-button>
+        </el-button-group>
         <el-divider style="float: right;" />
 
         <el-descriptions label-width=150 class="margin-top" :column="2" size="large" border>
             <template #extra>
-        
+
             </template>
             <el-descriptions-item>
                 <template #label>
@@ -96,7 +96,12 @@
                 <el-text type="" size="">{{ description }}</el-text>
 
             </el-descriptions-item>
-
+            <el-descriptions-item v-if="procTypeId === 5 || procTypeId === 6 || procTypeId === 7" label="命令">
+                <el-text type="info" tag="pre">
+{{ procTemplate }}
+</el-text>
+                
+            </el-descriptions-item>
         </el-descriptions>
 
         <el-divider />
@@ -155,6 +160,7 @@ const updateTime = ref('')
 const description = ref('')
 const procType = ref('python')
 const procTypeId = ref(1)
+const procTemplate = ref("")
 var tableData = ref([])
 const share_processor = ref(false)
 const processor_id = ref(-1)
@@ -246,6 +252,7 @@ const update_processor = (proc_info) => {
     }
     procName.value = proc_info.proc_detail.processor.name
     procOwnerName.value = proc_info.proc_detail.owner_name
+    procTemplate.value = proc_info.proc_detail.processor.template
     userList.value = []
     if (proc_info.proc_detail.processor.user_list != '') {
         userList.value = proc_info.proc_detail.processor.user_list.split(',')

@@ -2,7 +2,7 @@
     <el-menu :default-active="activeIndex" mode="horizontal" style="height: 44px;" :ellipsis="false"
         @select="handleSelect">
         <el-menu-item index="0">
-            <H2>华康能管监控管理</H2>
+            <H2>华康能管监控系统</H2>
             <!-- <img v-if="isDark" style="width: 100px" src="./images/shardora.png" alt="Element logo" />
             <img v-else style="width: 100px" src="./images/blue_shardora.png" alt="Element logo" /> -->
         </el-menu-item>
@@ -37,7 +37,7 @@
             </template>
         </el-dropdown>
     </el-menu>
-    <router-view :key="$route.fullPath" ></router-view>
+    <router-view  ></router-view>
 </template>
 <script lang="ts">
 export default {
@@ -58,7 +58,7 @@ import { ElMessage } from 'element-plus';
 import emitter from './components/EventBus';
 import { ElNotification } from 'element-plus';
 
-const show_menu = ref(false)
+const show_menu = ref(true)
 const show_solidty = ref(true)
 const checked1 = ref(true)
 emitter.on("show_menu", (show) => {
@@ -124,7 +124,7 @@ const handleCommand = async (command) => {
             localStorage.setItem('access_token', '')
             axios.defaults.headers.common['Authorization'] = ''; // 设置默认请求头
             ElMessage.success('已退出登录');
-            show_menu.value = false
+            show_menu.value = true
             router.push('/login'); // 登录成功后跳转到主页
         } catch (error) {
             ElNotification({ title: "出现错误", message: "退出失败：" + error, type: "danger", position: 'top-left', })
