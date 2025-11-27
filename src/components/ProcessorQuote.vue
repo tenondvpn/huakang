@@ -60,7 +60,7 @@
 
 import axios from 'axios'
 import qs from 'qs'
-import { ref, onMounted, h } from 'vue'
+import { ref, onMounted, h, onBeforeUnmount } from 'vue'
 import emitter from './EventBus'
 import { DrawerProps } from 'element-plus'
 import CreatePipelineVue from './CreatePipeline.vue'
@@ -82,11 +82,22 @@ const pipeline_info = ref()
 const clicked_task_info = ref()
 const taskType = ref()
 
-emitter.on('success_upload_processor', (data) => {
-    show_upload_file.value = false
-    show_upload_git.value = false
-    loadAllData()
-})
+const emitterOn = () => {
+    emitter.on('success_upload_processor', (data) => {
+        show_upload_file.value = false
+        show_upload_git.value = false
+        loadAllData()
+    })
+
+    emitter.on('upate_processor_to_show_detail', (proc_info) => {
+        update_processor(proc_info)
+    })
+}
+
+const emitterOff = () => {
+    emitter.off('success_upload_processor', null);
+    emitter.off('upate_processor_to_show_detail', null);
+}
 
 const props = defineProps({
     processor_info: Map,
@@ -166,11 +177,16 @@ const loadAllData = () => {
 }
 
 onMounted(() => {
+    emitterOn()
     if (props.processor_info) {
         procDetail.value = props.processor_info
         update_processor(procDetail.value)
     }
 });
+
+onBeforeUnmount(() => {
+    emitterOff()
+})
 
 const update_processor = (proc_info) => {
     if (!proc_info || !proc_info.proc_detail || !proc_info.proc_detail.processor) {
@@ -191,10 +207,6 @@ const update_processor = (proc_info) => {
     procId.value = proc_info.proc_detail.processor.id
     loadAllData()
 }
-
-emitter.on('upate_processor_to_show_detail', (proc_info) => {
-    update_processor(proc_info)
-})
 
 </script>
 

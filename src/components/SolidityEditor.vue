@@ -127,6 +127,8 @@ const form = reactive({
     function: '',
 })
 
+const emitterOn = () => {
+
 emitter.on('update_soldity_height', (height: number | string) => {
     run_loading.value = false
     const numericHeight = Number(height); // convert to number
@@ -164,6 +166,70 @@ emitter.on('compile_solidity_code', (code: string) => {
             console.log(error)
         })
 });
+
+emitter.on('deploy_solidity_code', (code: string) => {
+    run_loading.value = false
+    not_constructer.value = false
+    if (!preivateKey.value || preivateKey.value.length == 0) {
+        ElMessage({
+            type: 'warning',
+            message: '请先输入私钥！',
+        })
+        return;
+    }
+
+    parseSolidity()
+    form.args = []
+    if (constructor.value) {
+        form.args = constructor.value.parameters.map(param => ({
+            type: param.type,
+            key: param.name,
+            value: ''
+        }));
+        dialogFormVisible.value = true;
+    } else {
+        deploySolidity();
+    }
+});
+
+emitter.on('call_function_solidity_code', (code: string) => {
+    run_loading.value = false
+    dialogTitle.value = '调用合约函数'
+    parseSolidity()
+    form.args = []
+    if (otherFunctions.value.length == 0) {
+        ElMessage({
+            type: 'warning',
+            message: '合约中没有可调用的函数！',
+        })
+        return;
+    }
+
+    form.function = otherFunctions.value[0].name
+    changeFunction()
+    dialogFormVisible.value = true;
+    not_constructer.value = true
+});
+
+
+emitter.on("theme_changed", (data) => {
+    if (isDark) {
+        setTheme('one-dark')
+    } else {
+        setTheme('default')
+    }
+});
+
+}
+
+const emitterOff = () => {
+    emitter.off('update_soldity_height', null);
+    emitter.off('set_solidity_private_key', null);
+    emitter.off('compile_solidity_code', null);
+    emitter.off('deploy_solidity_code', null);
+    emitter.off('call_function_solidity_code', null);
+    emitter.off("theme_changed", null);
+}
 
 function confirmDialog() {
     run_loading.value = true
@@ -338,30 +404,6 @@ function deploySolidity() {
         })
 }
 
-emitter.on('deploy_solidity_code', (code: string) => {
-    run_loading.value = false
-    not_constructer.value = false
-    if (!preivateKey.value || preivateKey.value.length == 0) {
-        ElMessage({
-            type: 'warning',
-            message: '请先输入私钥！',
-        })
-        return;
-    }
-
-    parseSolidity()
-    form.args = []
-    if (constructor.value) {
-        form.args = constructor.value.parameters.map(param => ({
-            type: param.type,
-            key: param.name,
-            value: ''
-        }));
-        dialogFormVisible.value = true;
-    } else {
-        deploySolidity();
-    }
-});
 
 const changeFunction = () => {
     const selectedFunction = otherFunctions.value.find(func => func.name === form.function);
@@ -376,24 +418,6 @@ const changeFunction = () => {
     }
 }
 
-emitter.on('call_function_solidity_code', (code: string) => {
-    run_loading.value = false
-    dialogTitle.value = '调用合约函数'
-    parseSolidity()
-    form.args = []
-    if (otherFunctions.value.length == 0) {
-        ElMessage({
-            type: 'warning',
-            message: '合约中没有可调用的函数！',
-        })
-        return;
-    }
-
-    form.function = otherFunctions.value[0].name
-    changeFunction()
-    dialogFormVisible.value = true;
-    not_constructer.value = true
-});
 
 // 响应式数据
 const codeValue = ref(`// SPDX-License-Identifier: GPL-3.0
@@ -647,14 +671,6 @@ const initEditor = () => {
     editorView.dom.addEventListener('keydown', updateCursorFromEvent)
 }
 
-emitter.on("theme_changed", (data) => {
-    if (isDark) {
-        setTheme('one-dark')
-    } else {
-        setTheme('default')
-    }
-});
-
 function setTheme(name) {
   if (!editorView) return
   const theme = themes[name] || []
@@ -680,6 +696,7 @@ const updateCursorFromEvent = () => {
 
 // 生命周期
 onMounted(() => {
+    emitterOn()
     console.log('SolidityEditor mounted.')
     nextTick(() => {
         console.log('Calling initEditor...')
@@ -689,6 +706,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+    emitterOff()
     if (editorView) {
         editorView.destroy()
     }

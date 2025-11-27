@@ -1,7 +1,7 @@
 <template>
     <el-form ref="ruleFormRef" style="max-width: 600px" :model="ruleForm" :rules="rules" label-width="auto"
         label-position="left">
-        <el-form-item v-if="(srctaskType === TaskTypes.TYPE_SCRIPT)" prop="processor" required>
+        <el-form-item  prop="processor" required>
             <el-col :span="11">
                 <el-form-item prop="processor" label="选择模板策略" required>
                     <el-tree-select v-model="ruleForm.processor" lazy :load="load" :props="processor_props"
@@ -22,7 +22,7 @@
             </el-col>
             <el-col :span="2">
                         <el-tooltip class="box-item" effect="dark" content="点击查看模板策略文件列表！">
-            <el-button v-if="ruleForm.processor_version != '' && taskType === TaskTypes.TYPE_SCRIPT" type="primary" @click="show_detail = true" style="margin-top:-3px;margin-left: 3px;" :icon="Files" plain></el-button>
+            <el-button  type="primary" @click="show_detail = true" style="margin-top:-3px;margin-left: 3px;" :icon="Files" plain></el-button>
         </el-tooltip>    
         </el-col>
         </el-form-item>
@@ -184,6 +184,7 @@ const props = defineProps({
     pipeline_id: String,
     task_info: Map,
     task_type: Number,
+    update_task: Boolean
 });
 
 const config_vue = ref(null)
@@ -368,16 +369,23 @@ onMounted(() => {
         var configs = props.task_info.task.config.split('\r\n')
         for (const config of configs) {
             var config_item = config.split('=')
-            var val_split = config_item[1].split('H0')
+            if (config_item.length < 2) {
+                break
+            }
+
             console.log("config: ", config_item)
+            var val_split = config_item[1].split('H0')
             config_vue.value.AddConfig(config_item[0], val_split[0])
         }
 
         prev_tasks_vue.value.AddPrevTasks(props.task_info.rely_tasks)
         console.log(ruleForm)
-        update_task.value = true
         ruleForm.shell = props.task_info.processor.template
     }
+
+    update_task.value = props.update_task
+    console.log("init create node is update_task: ", update_task.value)
+
 });
 
 const changeTaskInfo = () => {

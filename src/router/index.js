@@ -38,7 +38,6 @@ const whiteList = ['/external', '/public']
 
 // 路由守卫：检查用户是否登录
 router.beforeEach((to, from, next) => {
-  emitter.all.clear()
   document.title = to.meta.title || '华康能管'
   console.log("each url: ", to.path)
   emitter.emit('change_el_menu_item', to.path)

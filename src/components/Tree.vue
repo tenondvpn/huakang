@@ -2,7 +2,7 @@
     <el-input class="esponsive-input" v-model="query" placeholder="Please enter keyword" @input="onQueryChanged"
         :prefix-icon="Search" />
 
-    <div :class="{ appContainerDark: isDark, appContainerLight: !isDark }" style="min-height: 77.2vh;">
+    <div :class="{ appContainerDark: isDark, appContainerLight: !isDark }" :style="`min-height: ${dynamicTreeHeight}px;`">
         <div class="tree-container" ref="treeContainerRef">
             <el-tree-v2 ref="treeRef" :data="data" :props="props" :height="treeHeight" :filter-method="filterMethod"
                 :expand-on-click-node="false" @node-expand="handleNodeExpand" @node-click="handleNodeClick"
@@ -62,6 +62,10 @@
                                         <el-button plain type="warning" size="small" :icon="Delete"
                                             @click="clickDeletePipeline(node)" />
                                     </el-tooltip>
+                                    <el-tooltip class="box-item" effect="dark" content="点击拷贝流程">
+                                        <el-button plain type="primary" @click="copyPipelineClicked(node)" size="small"
+                                            :icon="CopyDocument" />
+                                    </el-tooltip>
                                 </el-button-group>
                             </span>
                         </div>
@@ -97,11 +101,39 @@
             <UpdateFolder :current_folder_info="selectedProject" />
         </template>
     </el-drawer>
+
+    <el-dialog
+        v-model="centerDialogVisible"
+        title="拷贝流程"
+        width="500"
+        destroy-on-close
+        center>
+        <span>
+            <el-form :model="form" label-width="auto" style="max-width: 600px" :label-position="labelPosition">
+                <el-form-item prop="project" label="选择项目">
+                    <el-tree-select v-model="projectToCopy" :data="treeData"  check-strictly
+                                node-key="id" />
+                </el-form-item>
+                <el-form-item label="新流程名">
+                    <el-input v-model="pipelineNameToCopy" />
+                </el-form-item>
+            </el-form>
+        </span>
+
+        <template #footer>
+        <div class="dialog-footer" style="margin-top: 20px">
+            <el-button @click="centerDialogVisible = false">取消</el-button>
+            <el-button type="primary" @click="callCopyPipeline">
+            确认
+            </el-button>
+        </div>
+        </template>
+    </el-dialog>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted, onBeforeUnmount, h } from 'vue';
-import { Plus, Edit, Delete, Search, Folder, SetUp, Fold, Expand } from '@element-plus/icons-vue'
+import { Plus, Edit, Delete, Search, Folder, SetUp, Fold, Expand, CopyDocument } from '@element-plus/icons-vue'
 import type { TreeNodeData } from 'element-plus'
 import { useDark } from "@vueuse/core";
 import axios from 'axios';
@@ -114,6 +146,7 @@ import CreateFolder from './CreateFolder.vue'
 import UpdateFolder from './UpdateFolder.vue'
 import { ElMessageBox } from 'element-plus';
 import { ElMessage } from 'element-plus';
+import { useEventListener } from '@vueuse/core'
 
 const createPipeline = ref(false)
 const drawer_direction = ref<DrawerProps['direction']>('rtl')
@@ -153,8 +186,16 @@ const selectedPipeline = ref(structuredClone(selectedPipelineValue))
 const selectedProject = ref({})
 const createProject = ref(false)
 const updateProject = ref(false)
-
+const dynamicTreeHeight = ref(1000)
+const centerDialogVisible = ref(false)
+const projectToCopy = ref(46)
+const treeData = ref([
+]);
+const labelPosition = ref<FormProps['labelPosition']>('top')
 const isDark = useDark();
+const pipelineNameToCopy = ref("")
+
+const emitterOn = () => {
 
 emitter.on("success_create_pipeline", (payload) => {
     appendNode(payload["pid"], payload)
@@ -293,6 +334,18 @@ emitter.on('click_show_pipeline', (key) => {
             emitter.emit('update_graph', "-1");
         })
 })
+}
+
+const emitterOff = () => {
+    emitter.off("success_create_pipeline", null);
+    emitter.off('create_folder', null)
+    emitter.off('update_folder', null)
+    emitter.off("success_update_pipeline", null);
+    emitter.off('home_view_click_create_pipeline', null);
+    emitter.off("graph_call_delete_pipeline", null);
+    emitter.off('show_graph_called', null)
+    emitter.off('click_show_pipeline', null)
+}
 
 interface Tree {
     id: string
@@ -311,6 +364,74 @@ const props = {
 }
 const data = ref<Tree[]>([
 ])
+
+
+const getProjectTree = async () => {
+    await axios
+        .get('/pipeline/get_project_tree/', {
+            params: {
+                "type": 2
+            }
+        })
+        .then(response => {
+            treeData.value = response.data
+        })
+        .catch(error => {
+            ElMessage.error("创建监控策略失败: " + error)
+        })
+}
+
+const callCopyPipeline = () => {
+    if (pipelineNameToCopy.value.trim() == "") {
+        ElMessage({
+            type: 'warning',
+            message: "请输入新的流程名",
+        })
+        return;
+    }
+
+    console.log("Get pipeline detail: ", pipeline_detail.value)
+    axios
+        .post('/pipeline/copy_pipeline/', qs.stringify({
+            'project_id': projectToCopy.value,
+            'pl_name': pipelineNameToCopy.value.trim(),
+            'pl_id': pipeline_detail.value.id,
+            'use_src_type': 1
+        }))
+        .then(response => {
+            if (response.data.status != 0) {
+                ElMessage({
+                    type: 'danger',
+                    message: "拷贝流程失败：" + response.data.msg,
+                })
+            } else {
+                centerDialogVisible.value = false
+                var params = {}
+                params["pid"] = projectToCopy.value
+                params["text"] = pipelineNameToCopy.value.trim()
+                params["is_project"] = false
+                params["id"] = projectToCopy.value + "-" + response.data.pl_id
+                params["pipe_id"] = response.data.pl_id
+                console.log("copy pipeline: ", params)
+                appendNode(projectToCopy.value, params)
+                ElMessage({
+                    type: 'success',
+                    message: "拷贝流程成功！",
+                })
+            }
+        })
+        .catch(error => {
+            ElMessage({
+                type: 'danger',
+                message: "拷贝流程失败：" + error,
+            })
+        })
+}
+
+const copyPipelineClicked = (node) => {
+    getProjectTree()
+    centerDialogVisible.value = true
+}
 
 const callUpdateProject = (node) => {
     var path = node.label
@@ -411,8 +532,6 @@ const handleNodeExpand = (nodeData, nodeInstance) => {
             for (const item of response.data) {
                 appendNode(nodeData.id, item);
             }
-
-
 
         })
         .catch(error => console.log(error))
@@ -576,6 +695,7 @@ const handleNodeClick = (nodeData, nodeInstance) => {
             console.log('get pipeline detail:', response.data)
             console.log("11111:", str_id, str_id.split("-")[1], str_id.split("-").length)
             pipeline_detail.value = response.data
+            projectToCopy.value = pipeline_detail.value.project_id
             var pipline_data = response.data
             axios
                 .post('/pipeline/get_tasks/', qs.stringify({
@@ -633,7 +753,13 @@ const GetProjectsAndPipelines = async () => {
     
 }
 
+useEventListener(window, 'resize', () => {
+    dynamicTreeHeight.value = window.innerHeight - 130
+})
+
 onMounted(() => {
+    dynamicTreeHeight.value = window.innerHeight - 130
+    emitterOn()
     if (treeContainerRef.value) {
         treeHeight.value = treeContainerRef.value.clientHeight;
     }
@@ -654,6 +780,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+    emitterOff()
     if (resizeObserver && treeContainerRef.value) {
         resizeObserver.unobserve(treeContainerRef.value);
     }

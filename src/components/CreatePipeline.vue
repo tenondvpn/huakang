@@ -5,7 +5,7 @@
             <el-col :span="24">
                 <el-form-item prop="project" label="选择项目" required>
                     <el-tree-select v-model="ruleForm.project" :data="treeData"  check-strictly
-                        node-key="id" @change="choosed_project = true" />
+                        node-key="id"  />
                 </el-form-item>
             </el-col>
         </el-form-item>
@@ -138,7 +138,6 @@ const props = defineProps({
     pipeline_info: Map
 });
 
-const choosed_project = ref(false)
 const treeData = ref([
 ]);
 

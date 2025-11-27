@@ -46,7 +46,7 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, onBeforeUnmount } from 'vue'
 import { reactive, toRefs } from 'vue'
 import { Sunny, Moon } from "@element-plus/icons-vue";
 import { useDark, useToggle } from "@vueuse/core";
@@ -61,10 +61,6 @@ import { ElNotification } from 'element-plus';
 const show_menu = ref(true)
 const show_solidty = ref(true)
 const checked1 = ref(true)
-emitter.on("show_menu", (show) => {
-    show_menu.value = show
-    console.log("show_menu: ", show_menu.value)
-})
 // 从 localStorage 获取或设置默认主题色
 const themeColor = ref(localStorage.getItem('themeColor') || '#5F95FF');
 
@@ -81,6 +77,7 @@ watch(themeColor, (newColor) => {
 });
 
 onMounted(() => {
+    emitterOn();
     const token = localStorage.getItem('access_token');
     if (token) {
         show_menu.value = true
@@ -88,6 +85,9 @@ onMounted(() => {
 
 });
 
+onBeforeUnmount(() => {
+    emitterOff();
+})
 
 // 保存颜色到 localStorage
 const saveTheme = () => {
@@ -174,19 +174,31 @@ const handleSelect = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)
 }
 
-emitter.on('change_el_menu_item', (path) => {
-    if (path.indexOf('/dashboard') >= 0) {
-        activeIndex.value = '4'
-    } else if (path.indexOf('/pipeline') >= 0) {
-        activeIndex.value = '1'
-    } else if (path.indexOf('/runing') >= 0) {
-        activeIndex.value = '2'
-    } else if (path.indexOf('/processor') >= 0) {
-        activeIndex.value = '3'
-    } else {
-        activeIndex.value = '5'
-    }
-})
+const emitterOn = () => {
+    emitter.on("show_menu", (show) => {
+        show_menu.value = show
+        console.log("show_menu: ", show_menu.value)
+    })
+
+    emitter.on('change_el_menu_item', (path) => {
+        if (path.indexOf('/dashboard') >= 0) {
+            activeIndex.value = '4'
+        } else if (path.indexOf('/pipeline') >= 0) {
+            activeIndex.value = '1'
+        } else if (path.indexOf('/runing') >= 0) {
+            activeIndex.value = '2'
+        } else if (path.indexOf('/processor') >= 0) {
+            activeIndex.value = '3'
+        } else {
+            activeIndex.value = '5'
+        }
+    })
+}
+
+const emitterOff = () => {
+    emitter.off("show_menu", null)
+    emitter.off("change_el_menu_item", null)
+}
 
 const state = reactive({
     circleUrl:

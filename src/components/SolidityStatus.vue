@@ -85,9 +85,6 @@ const toSetPrivateKey = () => {
         type: 'success',
         message: '私钥设置成功！',
     })
-
-
-    
 }
 
 const CallGasPrepayment = () => {
@@ -122,6 +119,8 @@ const CallGasPrepayment = () => {
 
 
 }
+
+const emitterOn = () => {
 
 emitter.on('compile_solidity_code_res', (data) => {
     textarea.value += "\n------------------------\n";
@@ -176,4 +175,21 @@ emitter.on('update_soldity_status_height', (height: number | string) => {
         editorContainer.style.height = adjustedHeight + 'px';
     }
 });
+
+}
+
+const emitterOff = () => {
+    emitter.off('compile_solidity_code_res', null)
+    emitter.off('deploy_solidity_code_res', null)
+    emitter.off('update_soldity_status_height', null)
+}
+
+onMounted(() => {
+    emitterOn()
+})
+
+onBeforeUnmount(() => {
+    emitterOff()
+})
+
 </script>

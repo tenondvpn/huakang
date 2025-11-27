@@ -37,32 +37,46 @@ const props = defineProps({
     task_info: Map,
 });
 
+const emitterOn = () => {
+    // 正确接收事件
+    emitter.on('show_update_graph', (payload) => {
+        update_graph(payload)
+    });
+
+
+    emitter.on('success_delete_pipeline', (payload) => {
+        if (payload == choosed_pipeline_id.value) {
+            choosed_pipeline.value = false;
+            dynamicMargin.value = 10000;
+        }
+    });
+
+    emitter.on("success_create_pipeline", (payload) => {
+        choosed_pipeline.value = true;
+        dynamicMargin.value = 0;
+        choosed_pipeline_id.value = payload["id"]
+        console.log("create pipeline: ", choosed_pipeline_id.value)
+    });
+}
+
+const emitterOff = () => {
+    emitter.off('show_update_graph', null);
+    emitter.off('success_delete_pipeline', null);
+    emitter.off('success_create_pipeline', null);
+}
+
 onMounted(() => {
+    emitterOn();
     if (props.show_history_graph) {
         choosed_pipeline.value = true
         dynamicMargin.value = 0;
     }
 });
 
-// 正确接收事件
-emitter.on('show_update_graph', (payload) => {
-    update_graph(payload)
-});
+onBeforeUnmount(() => {
+    emitterOff();
+})
 
-
-emitter.on('success_delete_pipeline', (payload) => {
-    if (payload == choosed_pipeline_id.value) {
-        choosed_pipeline.value = false;
-        dynamicMargin.value = 10000;
-    }
-});
-
-emitter.on("success_create_pipeline", (payload) => {
-    choosed_pipeline.value = true;
-    dynamicMargin.value = 0;
-    choosed_pipeline_id.value = payload["id"]
-    console.log("create pipeline: ", choosed_pipeline_id.value)
-});
 
 const update_graph = (data) => {
     if (data["tag"] == "-1") {

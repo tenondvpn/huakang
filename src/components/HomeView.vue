@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue'
 import emitter from './EventBus';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, onBeforeUnmount } from 'vue';
 
 const props = defineProps({
     project_path: String,
@@ -36,10 +36,16 @@ const crate_pipeline = () => {
     }
 }
 
-emitter.on('upate_processor_to_show_detail', (payload) => {
-    project_id.value = Number(payload['project_id'])
-    project_path.value = payload['project_path']
-});
+const emitterOn = () => {
+    // emitter.on('upate_processor_to_show_detail', (payload) => {
+    //     project_id.value = Number(payload['project_id'])
+    //     project_path.value = payload['project_path']
+    // });
+}
+
+const emitterOff = () => {
+    // emitter.off('upate_processor_to_show_detail', null);
+}
 
 onMounted(() => {
     is_processor.value = props.is_processor
@@ -47,5 +53,9 @@ onMounted(() => {
     project_path.value = props.project_path
     console.log("home view coming: ", props.project_id, props.project_path)
 });
+
+onBeforeUnmount(() => {
+    emitterOff()
+})
 
 </script>

@@ -132,7 +132,7 @@
 
 <script setup lang="ts">
 
-import { computed, ref, onMounted, h } from 'vue'
+import { computed, ref, onMounted, h, onBeforeUnmount } from 'vue'
 import {
     Iphone,
     Location,
@@ -171,19 +171,36 @@ const props = defineProps({
 });
 
 onMounted(() => {
+    emitterOn()
     update_processor(props.processor_info)
 });
 
-emitter.on("share_processor_success", (data) => {
-    if (isPrivate.value == 1) {
-        isPrivate.value = 0
-    } else {
-        isPrivate.value = 1
-    }
-
-    share_processor.value = false
-    project_id.value = data["project_id"]
+onBeforeUnmount(() => {
+    emitterOff();
 })
+
+const emitterOn = () => {
+    emitter.on("share_processor_success", (data) => {
+        if (isPrivate.value == 1) {
+            isPrivate.value = 0
+        } else {
+            isPrivate.value = 1
+        }
+
+        share_processor.value = false
+        project_id.value = data["project_id"]
+    })
+
+    emitter.on('upate_processor_to_show_detail', (proc_info) => {
+        update_processor(proc_info)
+    })
+}
+
+const emitterOff = () => {
+    emitter.off("share_processor_success", null);
+    emitter.off("upate_processor_to_show_detail", null);
+}
+
 
 const clickUpdateProcessor = () => {
     console.log('clickUpdateProcessor', procDetail.value)
@@ -294,9 +311,7 @@ const update_processor = (proc_info) => {
     }
     console.log("processor info coming: ", procDetail.value)
 }
-emitter.on('upate_processor_to_show_detail', (proc_info) => {
-    update_processor(proc_info)
-})
+
 
 const iconStyle = computed(() => {
     const marginMap = {

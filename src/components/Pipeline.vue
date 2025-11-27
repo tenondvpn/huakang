@@ -89,7 +89,7 @@ const handleClose = (key, keyPath) => {
         <el-container>
             <el-container style="margin-top: 0px;">
                 <el-main style="padding: 0px;">
-                    <splitpanes horizontal :push-other-panes="true" style="height: 88vh;">
+                    <splitpanes horizontal :push-other-panes="true" style="height: 100vh;">
                         <pane>
                             <splitpanes :push-other-panes="false">
                                 <pane size="25">

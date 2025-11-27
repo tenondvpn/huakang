@@ -140,11 +140,22 @@ var tableData = ref([])
 const nowVersionList = ref<Set<String>>()
 const drawer_direction = ref<DrawerProps['direction']>('rtl')
 
-emitter.on('success_upload_processor', (data) => {
-    show_upload_file.value = false
-    show_upload_git.value = false
-    loadAllData()
-})
+const emitterOn = () => {
+    emitter.on('success_upload_processor', (data) => {
+        show_upload_file.value = false
+        show_upload_git.value = false
+        loadAllData()
+    })
+
+    emitter.on('upate_processor_to_show_detail', (proc_info) => {
+        update_processor(proc_info)
+    })
+}
+
+const emitterOff = () => {
+    emitter.off('success_upload_processor', null);
+    emitter.off('upate_processor_to_show_detail', null);
+}
 
 const detail = (row) => {
     show_detail.value = true
@@ -262,6 +273,7 @@ const loadAllData = () => {
 }
 
 onMounted(() => {
+    emitterOn()
     if (props.processor_info) {
         procDetail.value = props.processor_info
         update_processor(procDetail.value)
@@ -288,11 +300,8 @@ const update_processor = (proc_info) => {
     loadAllData()
 }
 
-emitter.on('upate_processor_to_show_detail', (proc_info) => {
-    update_processor(proc_info)
-})
-
 onUnmounted(() => {
+    emitterOff()
 })
 </script>
 

@@ -25,7 +25,7 @@
             <div class="info">
               <div class="title">{{ card.title }}</div>
               <div class="value">
-                <count-to :start-val="0" :end-val="card.value" :duration="2600" />
+                <span class="unit" :key="refreshSt">{{ card.value }}</span>
                 <span v-if="card.unit" class="unit">{{ card.unit }}</span>
               </div>
               <!-- <div class="trend" :class="card.trend > 0 ? 'up' : 'down'">
@@ -41,9 +41,9 @@
       </el-col>
     </el-row>
   </div>
-    <el-card v-model="show_task_status" :direction="drawer_direction" size="100%" :destroy-on-close="true">
-        <template #header>
-            <el-row justify="end">
+    <el-card v-model="show_task_status" :direction="drawer_direction" size="100%" :destroy-on-close="true" body-class="my-card-body">
+        <template #header >
+            <el-row justify="end" >
                 <el-col :span="6" style="float: left;">
                     <el-tooltip class="box-item" effect="dark" content="手动刷新数据列表！" style="text-align: left;"
                         placement="top-start">
@@ -73,8 +73,8 @@
             </el-row>
 
         </template>
-        <template #default>
-            <TaskStatusList :table_margin_top="-5" :pipeline_name="pipeline_name" :task_name="task_name"
+        <template #default >
+            <TaskStatusList :table_margin_top="-25" :pipeline_name="pipeline_name" :task_name="task_name" 
                 :page_size="pageSize2" />
         </template>
     </el-card>
@@ -110,7 +110,7 @@ import { Refresh } from '@element-plus/icons-vue'
 import { User, ShoppingCart, Files,Crop,VideoPlay,Wallet,WarnTriangleFilled, Promotion, TrendCharts,SuccessFilled } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
-
+import axios from 'axios'
 const auto_refresh_task = ref(true)
 
 const drawer_direction = ref<DrawerProps['direction']>('rtl')
@@ -123,71 +123,112 @@ const pageSize2 = ref(50)
 const currentPage2 = ref(1)
 const currentTotalSize = ref(0)
 const intervalId = ref(null)
+const statisticIntervalId = ref(null)
+
+const st_all_failes_count = ref(0)
+const st_all_count = ref(0)
+const st_my_create_count = ref(0)
+const st_all_my_count = ref(0)
+const st_runing_count = ref(0)
+const st_handled_count = ref(0)
+const refreshSt = ref(0)
 
 import { ArrowUp, ArrowDown } from '@element-plus/icons-vue'
 
 const cards = ref([
 {
     title: '未处理告警',
-    value: 58420,
+    value: st_all_failes_count,
     unit: '个',
     trend: 18.9,
     icon: WarnTriangleFilled,
     iconBg: 'rgba(249, 0, 0, 0.15)',
     glowColor: 'rgba(252, 0, 0, 0.25)',
-    onClick: () => console.log('跳转到销售报表')
+    onClick: () =>  {
+        emitter.emit('change_search_status', [3])
+    }
   },
   {
     title: '总计运行监控策略',
-    value: 58420,
+    value: st_all_count,
     unit: '个',
     trend: 18.9,
     icon: Files,
     iconBg: 'rgba(102, 126, 234, 0.15)',
     glowColor: 'rgba(102, 126, 234, 0.25)',
-    onClick: () => console.log('跳转到销售报表')
+    onClick: () => {
+        emitter.emit('change_search_status', [0, 1, 2, 3, 4, 5, 6, 7])
+    }
   },
   {
     title: '我负责的监控策略',
-    value: 1234,
+    value: st_all_my_count,
     unit: '个',
     trend: 12.5,
     icon: User,
     iconBg: 'rgba(56, 217, 169, 0.15)',
     glowColor: 'rgba(56, 217, 169, 0.25)',
-    onClick: () => console.log('跳转到销售报表')
+    onClick: () => {
+        emitter.emit('change_search_owner', 1)
+    }
   },
   {
     title: '我创建的监控策略',
     unit: '个',
-    value: 892,
+    value: st_my_create_count,
     trend: -2.3,
     icon: Crop,
     iconBg: 'rgba(250, 173, 20, 0.15)',
     glowColor: 'rgba(250, 173, 20, 0.25)',
-    onClick: () => console.log('跳转到销售报表')
+    onClick: () => {
+        emitter.emit('change_search_owner', 2)
+    }
   },
   {
     title: '运行中的策略',
-    value: 8567,
+    value: st_runing_count,
     unit: '个',
     trend: 8.1,
     icon: VideoPlay,
     iconBg: 'rgba(152, 253, 134, 0.25)',
     glowColor: 'rgba(152, 253, 134, 0.25)',
-    onClick: () => console.log('跳转到销售报表')
+    onClick: () => {
+        emitter.emit('change_search_status', [0, 1, 5])
+    }
   },
   {
     title: '已处理告警',
-    value: 1234,
+    value: st_handled_count,
     unit: '个',
     trend: 12.5,
     icon: SuccessFilled,
     iconBg: 'rgba(56, 217, 169, 0.15)',
     glowColor: 'rgba(210, 222, 219, 0.25)',
-    onClick: () => console.log('跳转到销售报表')
+    onClick: () => {
+        emitter.emit('change_search_status', [2])
+    }
   }
 ])
+
+const getStatistics = () => {
+    axios
+        .get('/pipeline/get_statistics/', {
+            params: {
+                "type": 2
+            }
+        })
+        .then(response => {
+            console.log(response.data)
+            st_all_failes_count.value = response.data['all_failes_count']
+            st_all_count.value = response.data['all_count']
+            st_all_my_count.value = response.data['all_my_count']
+            st_my_create_count.value = response.data['my_create_count']
+            st_runing_count.value = response.data['runing_count']
+            st_handled_count.value = response.data['handled_count']
+            refreshSt.val += 1
+        })
+        .catch(error => console.log(error))
+}
 
 const handleClick = (card) => {
   card.onClick?.()
@@ -200,17 +241,25 @@ const handleDocumentClick = (e) => {
     }
 };
 
-emitter.on('success_load_task_table_data', (tasks_info) => {
-    currentTotalSize.value = tasks_info.recordsTotal
-});
+const emitterOn = () => {
+    emitter.on('success_load_task_table_data', (tasks_info) => {
+        currentTotalSize.value = tasks_info.recordsTotal
+    });
 
-emitter.on('table_selected_changed', (checked_length) => {
-    if (checked_length > 0) {
-        choosed_task.value = true
-    } else {
-        choosed_task.value = false
-    }
-})
+    emitter.on('table_selected_changed', (checked_length) => {
+        if (checked_length > 0) {
+            choosed_task.value = true
+        } else {
+            choosed_task.value = false
+        }
+    })
+}
+
+const emitterOff = () => {
+    emitter.off('success_load_task_table_data', null);
+    emitter.off('success_load_task_table_data', null);
+}
+
 
 const batchRun = () => {
     emitter.emit('batch_run_table_tasks', '');
@@ -244,21 +293,26 @@ const userRefreshData = () => {
 
 // Initialize on mount
 onMounted(() => {
+    emitterOn()
+    getStatistics()
     show_task_status.value = true
     document.addEventListener('click', handleDocumentClick);
-        clearInterval(intervalId.value)
+    clearInterval(intervalId.value)
     if (auto_refresh_task.value) {
         intervalId.value = window.setInterval(() => {
-            console.log("tttt 0")
             emitter.emit('user_refresh_table_data', '')
-            console.log("tttt")
-            console.log("tttt1")
         }, 5000)
     }
+
+    statisticIntervalId.value = window.setInterval(() => {
+        getStatistics()
+    }, 3000)
 });
 
 onBeforeUnmount(() => {
+    emitterOff()
     window.clearInterval(intervalId.value)
+    clearInterval(statisticIntervalId.value)
 })
 
 onUnmounted(() => {
@@ -362,9 +416,15 @@ onUnmounted(() => {
     border-bottom: 1px solid #eee;
     /* 添加底部边框 */
 }
+
+
 </style>
 
 <style>
+
+.my-card-body {
+  padding: 0px!important;
+}
 /* 关键样式: 在非作用域样式中，使用变量和 !important 覆盖默认行为 */
 .context-menu-popover {
     position: fixed !important;
@@ -383,7 +443,7 @@ onUnmounted(() => {
 
 .kpi-card {
   position: relative;
-  height: 116px;
+  height: 86px;
   margin: 12px 0;
   border-radius: 16px;
   background: var(--el-bg-color-overlay);
