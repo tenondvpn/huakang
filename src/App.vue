@@ -2,18 +2,18 @@
     <el-menu :default-active="activeIndex" mode="horizontal" style="height: 44px;" :ellipsis="false"
         @select="handleSelect">
         <el-menu-item index="0">
-            <H2>华康能管监控系统</H2>
+            <!-- <H2>华康能管监控系统</H2> -->
             <!-- <img v-if="isDark" style="width: 100px" src="./images/shardora.png" alt="Element logo" />
             <img v-else style="width: 100px" src="./images/blue_shardora.png" alt="Element logo" /> -->
         </el-menu-item>
         <el-tooltip class="box-item" content="进入监控策略管理页面，管理自己的监控策略！">
-            <el-menu-item v-if="show_menu" index="1" @click="toPipeline">监控策略管理</el-menu-item>
+            <el-menu-item v-if="show_menu" index="1" @click="toPipeline">策略</el-menu-item>
         </el-tooltip>
         <el-tooltip class="box-item" content="管理模板策略！">
-            <el-menu-item v-if="show_menu" index="3" @click="toProcessor">用户策略模板</el-menu-item>
+            <el-menu-item v-if="show_menu" index="3" @click="toProcessor">指令集</el-menu-item>
         </el-tooltip>
         <el-tooltip class="box-item" content="管理所有的计算策略！">
-            <el-menu-item v-if="show_menu" index="2" @click="toRuning">监控策略状态</el-menu-item>
+            <el-menu-item v-if="show_menu" index="2" @click="toRuning">监控结果</el-menu-item>
         </el-tooltip>
         <el-menu-item index="5" style="margin-top:0px" class="no-underline">
             <el-tooltip class="box-item" content="切换背景色！">
@@ -25,17 +25,16 @@
                     v-model="themeColor" show-alpha :predefine="predefineColors" @change="logColor" />
             </el-tooltip>
         </el-menu-item>
-        <el-dropdown trigger="click" @command="handleCommand">
+        <!-- <el-dropdown trigger="click" @command="handleCommand">
             <div class="user-menu-trigger">
                 <el-avatar :size="27" :src="circleUrl" style="margin-top: 7px;" />
             </div>
             <template #dropdown>
                 <el-dropdown-menu>
-                    <!-- <el-dropdown-item command="settings">修改密码</el-dropdown-item> -->
                     <el-dropdown-item v-if="show_menu" divided command="logout">退出登录</el-dropdown-item>
                 </el-dropdown-menu>
             </template>
-        </el-dropdown>
+        </el-dropdown> -->
     </el-menu>
     <router-view  ></router-view>
 </template>

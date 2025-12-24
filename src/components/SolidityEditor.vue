@@ -423,25 +423,7 @@ const changeFunction = () => {
 const codeValue = ref(`// SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.7.0 <0.9.0;
 
-contract ContractName {
-    uint256 public myUint;
-    bytes public myData;
-    bytes public myInfo;
-
-    constructor(uint256 _myUint, bytes memory _data, bytes memory _info) {
-        myUint = _myUint;
-        myData = _data;
-        myInfo = _info;
-    }
-
-    function setUint(uint256 _myUint) public {
-        myUint = _myUint;
-    }
-
-    function getUint() public view returns (uint256) {
-        return myUint;
-    }
-}`)
+`)
 
 
 function parseSolidity() {

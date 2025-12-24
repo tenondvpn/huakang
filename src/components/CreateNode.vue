@@ -1,10 +1,10 @@
 <template>
     <el-form ref="ruleFormRef" style="max-width: 600px" :model="ruleForm" :rules="rules" label-width="auto"
         label-position="left">
-        <el-form-item  prop="processor" required>
+        <el-form-item v-if="taskType == 1" prop="processor" required>
             <el-col :span="11">
                 <el-form-item prop="processor" label="选择模板策略" required>
-                    <el-tree-select v-model="ruleForm.processor" lazy :load="load" :props="processor_props"
+                    <el-tree-select v-model="ruleForm.processor" lazy :load="load" :props="processor_props" placeholder=""
                         @change="handleSelectionChange" style="width: 240px" :disabled="update_task" />
                 </el-form-item>
             </el-col>
@@ -12,7 +12,7 @@
             </el-col>
             <el-col :span="10">
                 <el-form-item prop="processor_version" label="选择版本" required>
-                    <el-select v-model="ruleForm.processor_version" value-key="id" placeholder="Select"
+                    <el-select v-model="ruleForm.processor_version" value-key="id" placeholder=""
                         @change="changeTaskInfo"
                         style="width: 240px">
                         <el-option v-for="item in version_options" :key="item.id" :label="item.label"
@@ -98,20 +98,20 @@
         <el-divider border-style="dashed" />
         <el-form-item>
             <el-button v-if="update_task" type="primary" @click="submitForm(ruleFormRef)" :icon="Edit">
-                修改策略
+                修改
             </el-button>
             <el-button v-else type="primary" @click="submitForm(ruleFormRef)">
-                创建策略
+                创建
             </el-button>
             <el-popconfirm confirm-button-text="确定" cancel-button-text="取消" :icon="InfoFilled" icon-color="#626AEF"
                 title="确定删除策略吗?" @confirm="DeleteTask" @cancel="cancelEvent">
                 <template #reference>
                     <el-button v-if="update_task" style="margin-left: 10px;" type="warning"
-                        :icon="Delete">删除策略</el-button>
+                        :icon="Delete">删除</el-button>
                 </template>
             </el-popconfirm>
 
-            <el-button @click="resetForm(ruleFormRef)" :icon="RefreshLeft">重置参数</el-button>
+            <el-button @click="resetForm(ruleFormRef)" :icon="RefreshLeft">重置</el-button>
         </el-form-item>
     </el-form>
         <el-drawer v-model="show_detail" :direction="drawer_direction" size="80%" :destroy-on-close="true"

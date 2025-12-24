@@ -12,7 +12,7 @@
             </el-col>
             <el-col :span="11">
                 <el-form-item prop="processor_version" label="选择版本" required>
-                    <el-select v-model="ruleForm.processor_version" value-key="id" placeholder="Select"
+                    <el-select v-model="ruleForm.processor_version" value-key="id" placeholder=""
                         style="width: 240px">
                         <el-option v-for="item in version_options" :key="item.id" :label="item.label" :value="item" />
                     </el-select>

@@ -6,7 +6,7 @@
                 :render-after-expand="false" style="width: 100%" />
         </el-form-item>
         <el-form-item prop="type" label="模板策略类型" required>
-            <el-select v-model="processorType" value-key="id" placeholder="Select" style="width: 100%">
+            <el-select v-model="processorType" value-key="id" style="width: 100%">
                 <el-option v-for="item in type_options" :key="item.id" :label="item.label" :value="item.id" />
             </el-select>
         </el-form-item>
@@ -15,7 +15,7 @@
             <el-input v-model="ruleForm.name" />
         </el-form-item>
         <el-form-item label="负责人:" prop="users" style="margin-top: 17px">
-            <el-select v-model="selectedUsers" multiple clearable filterable placeholder="Select">
+            <el-select v-model="selectedUsers" multiple clearable filterable placeholder="">
                 <el-option v-for="item in userOptions" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
         </el-form-item>
@@ -53,20 +53,20 @@
         <el-divider border-style="dashed" />
         <el-form-item>
             <el-button v-if="update_processor" type="primary" @click="submitForm(ruleFormRef)" :icon="Edit">
-                修改模板策略
+                修改
             </el-button>
             <el-button v-else type="primary" @click="submitForm(ruleFormRef)">
-                创建模板策略
+                创建
             </el-button>
             <el-popconfirm confirm-button-text="确定" cancel-button-text="取消" :icon="InfoFilled" icon-color="#626AEF"
                 title="确定删除模板策略吗?" @confirm="DeleteProcessor" @cancel="cancelEvent">
                 <template #reference>
                     <el-button v-if="update_processor" style="margin-left: 10px;" type="warning"
-                        :icon="Delete">删除模板策略</el-button>
+                        :icon="Delete">删除</el-button>
                 </template>
             </el-popconfirm>
 
-            <el-button @click="resetForm(ruleFormRef)" :icon="RefreshLeft">重置参数</el-button>
+            <el-button @click="resetForm(ruleFormRef)" :icon="RefreshLeft">重置</el-button>
         </el-form-item>
     </el-form>
 </template>
@@ -429,10 +429,21 @@ const load = (node, resolve) => {
                     continue;
                 }
 
+                var label = item.text
+                if (label == "标准库") {
+                    label = "公共监控模板"
+                    continue;
+                }
+
+                if (label == "共享给我的") {
+                    label = "协作监控模板"
+                    continue;
+                }
+
                 get_processor_data.push({
                     id: item.id,
                     value: item.id,
-                    label: item.text,
+                    label: label,
                     isLeaf: !item.is_project,
                 })
             }

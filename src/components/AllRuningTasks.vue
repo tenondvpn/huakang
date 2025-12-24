@@ -1,6 +1,6 @@
 <template>
     <div class="kpi-dashboard">
-    <el-row :gutter="24">
+    <el-row :gutter="24" style="margin-left: -12px; margin-right: -12px;margin-top:-5px;margin-bottom:-5px;">
       <el-col
         v-for="card in cards"
         :key="card.title"
@@ -137,7 +137,7 @@ import { ArrowUp, ArrowDown } from '@element-plus/icons-vue'
 
 const cards = ref([
 {
-    title: '未处理告警',
+    title: '监测异常',
     value: st_all_failes_count,
     unit: '个',
     trend: 18.9,
@@ -149,7 +149,7 @@ const cards = ref([
     }
   },
   {
-    title: '总计运行监控策略',
+    title: '总计运行',
     value: st_all_count,
     unit: '个',
     trend: 18.9,
@@ -161,7 +161,7 @@ const cards = ref([
     }
   },
   {
-    title: '我负责的监控策略',
+    title: '我负责的',
     value: st_all_my_count,
     unit: '个',
     trend: 12.5,
@@ -173,7 +173,7 @@ const cards = ref([
     }
   },
   {
-    title: '我创建的监控策略',
+    title: '华康电能',
     unit: '个',
     value: st_my_create_count,
     trend: -2.3,
@@ -185,7 +185,7 @@ const cards = ref([
     }
   },
   {
-    title: '运行中的策略',
+    title: '运行中的',
     value: st_runing_count,
     unit: '个',
     trend: 8.1,
@@ -438,12 +438,12 @@ onUnmounted(() => {
     border-bottom: 1px solid var(--el-color-info);
 }
 .kpi-dashboard {
-  padding: 8px 0;
+  padding: 0px 0;
 }
 
 .kpi-card {
   position: relative;
-  height: 86px;
+  height: 56px;
   margin: 12px 0;
   border-radius: 16px;
   background: var(--el-bg-color-overlay);
@@ -484,8 +484,8 @@ onUnmounted(() => {
 }
 
 .icon-wrapper {
-  width: 56px;
-  height: 56px;
+  width: 36px;
+  height: 36px;
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -504,7 +504,7 @@ onUnmounted(() => {
 }
 
 .value {
-  font-size: 28px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--el-text-color-primary);
   display: flex;

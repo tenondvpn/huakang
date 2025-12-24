@@ -5,7 +5,7 @@
     <div :class="{ appContainerDark: isDark, appContainerLight: !isDark }" :style="`min-height: ${dynamicTreeHeight}px;`">
         <div class="tree-container" ref="treeContainerRef">
             <el-tree-v2 ref="treeRef" :data="data" :props="props" :height="treeHeight" :filter-method="filterMethod"
-                :expand-on-click-node="false" @node-expand="handleNodeExpand" @node-click="handleNodeClick"
+                :expand-on-click-node="true" @node-expand="handleNodeExpand" @node-click="handleNodeClick"
                 :highlight-current="true" node-key="id">
 
                 <template #default="{ node }">
@@ -30,7 +30,7 @@
                         <div v-if="node.data.is_project">
                             <span class="node-buttons">
                                 <el-button-group class="ml-4">
-                                    <el-tooltip class="box-item" effect="dark" content="点击新建文件夹！">
+                                    <el-tooltip class="box-item" effect="dark" content="点击新建目录！">
                                         <el-button plain type="info" size="small" :icon="Folder"
                                             @click="callCreateProject(node)" />
                                     </el-tooltip>
@@ -86,7 +86,7 @@
 
     <el-drawer v-model="createProject" :direction="drawer_direction" size="50%" :destroy-on-close="true">
         <template #header>
-            <h4>创建项目文件夹</h4>
+            <h4>创建项目目录</h4>
         </template>
         <template #default>
             <CreateFolder :current_folder_info="selectedProject" />
@@ -95,7 +95,7 @@
 
     <el-drawer v-model="updateProject" :direction="drawer_direction" size="50%" :destroy-on-close="true">
         <template #header>
-            <h4>修改项目文件夹</h4>
+            <h4>修改项目目录</h4>
         </template>
         <template #default>
             <UpdateFolder :current_folder_info="selectedProject" />
@@ -213,7 +213,7 @@ emitter.on('create_folder', (data) => {
             if (response.data.status != 0) {
                 ElMessage({
                     type: 'error',
-                    message: '创建项目文件夹失败：' + response.data.msg,
+                    message: '创建项目目录失败：' + response.data.msg,
                 })
             } else {
                 createProject.value = false
@@ -235,14 +235,14 @@ emitter.on('create_folder', (data) => {
                 }
                 ElMessage({
                     type: 'success',
-                    message: '创建项目文件夹成功！',
+                    message: '创建项目目录成功！',
                 })
             }
         })
         .catch(error => {
             ElMessage({
                 type: 'error',
-                message: '创建项目文件夹失败：' + error,
+                message: '创建项目目录失败：' + error,
             })
         })
 })
@@ -257,7 +257,7 @@ emitter.on('update_folder', (node_data) => {
             if (response.data.status != 0) {
                 ElMessage({
                     type: 'error',
-                    message: '修改项目文件夹失败：' + response.data.msg,
+                    message: '修改项目目录失败：' + response.data.msg,
                 })
             } else {
                 updateProject.value = false
@@ -274,14 +274,14 @@ emitter.on('update_folder', (node_data) => {
 
                 ElMessage({
                     type: 'success',
-                    message: '修改项目文件夹成功！',
+                    message: '修改项目目录成功！',
                 })
             }
         })
         .catch(error => {
             ElMessage({
                 type: 'error',
-                message: '修改项目文件夹失败：' + error,
+                message: '修改项目目录失败：' + error,
             })
         })
 })
@@ -451,9 +451,9 @@ const callUpdateProject = (node) => {
 
 const deleteProject = (node) => {
     ElMessageBox({
-        title: '删除项目文件夹',
+        title: '删除项目目录',
         message: h('p', null, [
-            h('span', null, '确定要删除项目文件夹吗? 项目文件夹名： '),
+            h('span', null, '确定要删除项目目录吗? 项目目录名： '),
             h('i', { style: 'color: red' }, node.label),
         ]),
         showCancelButton: true,
@@ -471,12 +471,12 @@ const deleteProject = (node) => {
                         if (response.data.status != 0) {
                             ElMessage({
                                 type: 'danger',
-                                message: "项目文件夹删除失败：" + response.data.msg,
+                                message: "项目目录删除失败：" + response.data.msg,
                             })
                         } else {
                             ElMessage({
                                 type: 'success',
-                                message: "项目文件夹删除成功！",
+                                message: "项目目录删除成功！",
                             })
                             handleDelete(node)
                         }
@@ -487,7 +487,7 @@ const deleteProject = (node) => {
                     .catch(error => {
                         ElMessage({
                             type: 'danger',
-                            message: "项目文件夹删除失败：" + error,
+                            message: "项目目录删除失败：" + error,
                         })
                     })
             } else {
@@ -660,6 +660,11 @@ const clickDeletePipeline = (nodeData) => {
 }
 
 const handleNodeClick = (nodeData, nodeInstance) => {
+    // if(nodeInstance) {
+    //     nodeInstance.expanded = !nodeInstance.expanded
+    //     handleNodeExpand(nodeData, nodeInstance)
+    // }
+
     const str_id = "" + nodeData.id;
     selectedPipeline.value = structuredClone(selectedPipelineValue)
     console.log(str_id, str_id.split("-")[1], str_id.split("-").length)

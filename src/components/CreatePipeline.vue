@@ -83,7 +83,7 @@
         </el-form-item>
 
         <el-form-item label="负责人:" prop="users" style="margin-top: 17px">
-            <el-select v-model="selectedUsers" multiple clearable filterable placeholder="Select">
+            <el-select v-model="selectedUsers" multiple clearable filterable >
                 <el-option v-for="item in userOptions" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
         </el-form-item>
@@ -108,12 +108,12 @@
         <el-divider border-style="dashed" />
         <el-form-item>
             <el-button v-if="updatePipeline" type="primary" @click="submitForm(ruleFormRef)">
-                修改监控策略
+                修改
             </el-button>
             <el-button v-else type="primary" @click="submitForm(ruleFormRef)">
-                创建监控策略
+                创建
             </el-button>
-            <el-button @click="resetForm(ruleFormRef)">重置参数</el-button>
+            <el-button @click="resetForm(ruleFormRef)">重置</el-button>
         </el-form-item>
     </el-form>
 </template>

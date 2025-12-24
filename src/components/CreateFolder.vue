@@ -7,7 +7,7 @@
         <el-form-item label="目录类型" label-position="right" style="margin-top: 30px;" required>
             <el-radio-group v-model="folder_type" aria-label="选择创建的目录类型">
                 <el-radio-button value='子目录'>子目录</el-radio-button>
-                <el-radio-button :disabled="current_folder=='我创建的' || current_folder=='共享给我的' || current_folder=='公共策略'" value='平级目录'>平级目录</el-radio-button>
+                <el-radio-button :disabled="current_folder=='华康电能' || current_folder=='协作监控模板' || current_folder=='公共监控模板'" value='平级目录'>平级目录</el-radio-button>
             </el-radio-group>
         </el-form-item>
 

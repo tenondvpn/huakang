@@ -40,12 +40,12 @@
                                         <el-button type="success" size="small" :icon="Plus"
                                             @click="updateProcessorClicked(node)" />
                                     </el-tooltip>
-                                    <el-tooltip v-if="node.label != '我创建的'" class="box-item" effect="dark"
+                                    <el-tooltip v-if="node.label != '华康电能'" class="box-item" effect="dark"
                                         content="编辑分类">
                                         <el-button type="primary" size="small" :icon="Edit"
                                             @click="callUpdateProject(node)" />
                                     </el-tooltip>
-                                    <el-tooltip v-if="node.label != '我创建的'" class="box-item" effect="dark"
+                                    <el-tooltip v-if="node.label != '华康电能'" class="box-item" effect="dark"
                                         content="删除分类">
                                         <el-button type="warning" size="small" :icon="Delete"
                                             @click="deleteProject(node)" />
@@ -126,7 +126,7 @@ const treeHeight = ref(0);
 let resizeObserver = null;
 const query = ref('')
 const treeRef = ref()
-const project_path = ref('我创建的')
+const project_path = ref('华康电能')
 const project_id = ref('1')
 const openProcessorModelTitle = ref("创建监控策略")
 const pipeline_detail = ref({})
@@ -737,6 +737,7 @@ useEventListener(window, 'resize', () => {
 })
 
 onMounted(() => {
+    emitterOn()
     dynamicTreeHeight.value = window.innerHeight - 130
     if (treeContainerRef.value) {
         treeHeight.value = treeContainerRef.value.clientHeight;
@@ -792,9 +793,20 @@ const appendNode = (parentId, item) => {
         return;
     }
 
+    var label = item.text
+    if (label == "标准库") {
+        label = "公共监控模板"
+        return;
+    }
+
+    if (label == "共享给我的") {
+        label = "协作监控模板"
+        return;
+    } 
+    
     const newChild = {
         id: item["id"],
-        label: item["text"],
+        label: label,
         is_project: item["is_project"],
         children: [],
         valid: true,

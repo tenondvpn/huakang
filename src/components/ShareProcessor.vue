@@ -66,7 +66,7 @@ const procType = ref(1)
 const isPrivate = ref(1)
 const showTree = ref(false)
 const ruleForm = reactive<RuleForm>({
-    project: "公共策略",
+    project: "公共监控模板",
 })
 
 onMounted(() => {
@@ -77,9 +77,9 @@ onMounted(() => {
     isPrivate.value = props.is_private
     showTree.value = true
     if (isPrivate.value) {
-        ruleForm.project = "公共策略"
+        ruleForm.project = "公共监控模板"
     } else {
-        ruleForm.project = "我创建的"
+        ruleForm.project = "华康电能"
     }
     console.log("share process mounted: ", isPrivate.value)
 });
@@ -89,11 +89,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     await formEl.validate((valid, fields) => {
         if (valid) {
             var project_id = -3
-            if (ruleForm.project == "我创建的") {
+            if (ruleForm.project == "华康电能") {
                 project_id = -1
             }
             
-            if (ruleForm.project != "公共策略" && ruleForm.project != "我创建的") {
+            if (ruleForm.project != "公共监控模板" && ruleForm.project != "华康电能") {
                 project_id = ruleForm.project
             }
 
@@ -171,10 +171,21 @@ const load = (node, resolve) => {
                     continue;
                 }
 
+                var label = item.text
+                if (label == "标准库") {
+                    label = "公共监控模板"
+                    continue;
+                }
+
+                if (label == "共享给我的") {
+                    label = "协作监控模板"
+                    continue;
+                } 
+
                 get_processor_data.push({
                     id: item.id,
                     value: item.id,
-                    label: item.text,
+                    label: label,
                     isLeaf: !item.is_project,
                 })
             }

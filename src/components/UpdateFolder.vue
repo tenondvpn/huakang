@@ -9,7 +9,7 @@
             <el-input v-model="folder_name" />
         </el-form-item>
 
-        <el-button plain :icon="Plus" style="margin-top: 30px;" type="primary" @click="updateFolder">修改项目</el-button>
+        <el-button plain :icon="Plus" style="margin-top: 30px;" type="primary" @click="updateFolder">修改</el-button>
     </el-form>
 </template>
 

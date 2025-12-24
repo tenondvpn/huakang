@@ -143,14 +143,16 @@
         </el-select>
       </template>
       <template #default="scope">
-        <el-tag v-if="scope.row.status == 0" type="warning">等待中</el-tag>
-        <el-tag v-if="scope.row.status == 1" type="primary">正在监测</el-tag>
-        <el-tag v-if="scope.row.status == 2" type="success">监测通过</el-tag>
-        <el-tag v-if="scope.row.status == 3" type="danger">监测失败</el-tag>
-        <el-tag v-if="scope.row.status == 4" type="danger">监测运行超时</el-tag>
-        <el-tag v-if="scope.row.status == 5" type="warning">等待调度</el-tag>
-        <el-tag v-if="scope.row.status == 6" type="danger">停止</el-tag>
-        <el-tag v-if="scope.row.status == 7" type="danger">上游失败</el-tag>
+        <el-tag v-if="scope.row.status == 0" type="success" @click="showUserMessage(scope.row)">等待中</el-tag>
+        <el-tag v-if="scope.row.status == 1" type="primary" @click="showUserMessage(scope.row)">正在监测</el-tag>
+        <el-tag v-if="scope.row.status == 2" type="success" @click="showUserMessage(scope.row)">正常</el-tag>
+        <el-tag v-if="scope.row.status == 3 && scope.row.ret_code != 1 && scope.row.ret_code != 2" type="danger" @click="showUserMessage(scope.row)">严重</el-tag>
+        <el-tag v-if="scope.row.status == 3 && scope.row.ret_code == 1" type="danger" @click="showUserMessage(scope.row)">严重</el-tag>
+        <el-tag v-if="scope.row.status == 3 && scope.row.ret_code == 2" type="warning" @click="showUserMessage(scope.row)">一般</el-tag>
+        <el-tag v-if="scope.row.status == 4" type="danger" @click="showUserMessage(scope.row)">监测运行超时</el-tag>
+        <el-tag v-if="scope.row.status == 5" type="success" @click="showUserMessage(scope.row)">等待调度</el-tag>
+        <el-tag v-if="scope.row.status == 6" type="danger" @click="showUserMessage(scope.row)">停止</el-tag>
+        <el-tag v-if="scope.row.status == 7" type="danger" @click="showUserMessage(scope.row)">上游失败</el-tag>
       </template>
     </el-table-column>
 
@@ -199,7 +201,7 @@
       </template>
       <template #default="scope">{{ scope.row.start_time }}</template>
     </el-table-column>
-    <el-table-column
+    <!-- <el-table-column
       sortable
       column-key="use_time"
       label="耗时"
@@ -247,7 +249,7 @@
       <template #default="scope">
         <el-tag type="warning">{{ getUseTime(scope.row.use_time) }}</el-tag>
       </template>
-    </el-table-column>
+    </el-table-column> -->
     <el-table-column
       label="执行操作"
       min-width="10%"
@@ -333,7 +335,6 @@
         <span style="color: var(--el-color-primary)">策略管理</span>
       </template>
       <template #default="scope" style="text-align: center">
-        <el-button-group style="text-align: center">
           <el-button
             v-if="
               scope.row.status == 2 ||
@@ -347,7 +348,6 @@
           >
             查看日志
           </el-button>
-        </el-button-group>
       </template>
     </el-table-column>
 
@@ -387,6 +387,7 @@
       <CreateNode
         :pipeline_id="pipeline_id"
         :task_info="clicked_task_info"
+        :update_task="true"
         :task_type="taskType"
       />
     </template>
@@ -419,6 +420,21 @@
     </template>
     <template #default>
       <LogInfo :schedule_id="clicked_schedule_id" />
+    </template>
+  </el-drawer>
+
+  <el-drawer
+    v-model="show_user_info"
+    :direction="drawer_direction"
+    size="50%"
+    :destroy-on-close="true"
+    :append-to-body="true"
+  >
+    <template #header>
+      <h4 style="width: 100px"></h4>
+    </template>
+    <template #default>
+      <TagUserInfo :schedule_id="clicked_schedule_id" />
     </template>
   </el-drawer>
 
@@ -526,6 +542,7 @@ const history_graph_info = ref({});
 const history_graph_show = ref(false);
 const history_graph_url = ref("");
 const show_log_info = ref(false);
+const show_user_info = ref(false); 
 const clicked_schedule_id = ref(0);
 const table_margin_top = ref(0);
 const search_owner_type = ref(0);
@@ -561,9 +578,14 @@ const getUseTime = (use_time) => {
   }
 };
 
+const showUserMessage = (task_info) => {
+    clicked_schedule_id.value = task_info.schedule_id;
+    show_user_info.value = true;
+}
+
 const clickShowLog = (task_info) => {
-  show_log_info.value = true;
   clicked_schedule_id.value = task_info.schedule_id;
+  show_log_info.value = true;
 };
 
 const clickShowGraph = (task_info) => {
@@ -787,11 +809,11 @@ const status_options = ref([
   },
   {
     value: "2",
-    label: "监测通过",
+    label: "正常",
   },
   {
     value: "3",
-    label: "监测失败",
+    label: "监测异常",
   },
   {
     value: "4",
@@ -931,7 +953,7 @@ useEventListener(window, "resize", () => {
   if (is_graph_task_list_ref.value) {
     dynamicListHeight.value = window.innerHeight - 100;
   } else {
-    dynamicListHeight.value = window.innerHeight - 300;
+    dynamicListHeight.value = window.innerHeight - 220;
   }
 });
 
@@ -940,7 +962,7 @@ onMounted(() => {
   if (is_graph_task_list_ref.value) {
     dynamicListHeight.value = window.innerHeight - 100;
   } else {
-    dynamicListHeight.value = window.innerHeight - 300;
+    dynamicListHeight.value = window.innerHeight - 220;
   }
   emitterOn();
   curPage.value = 1;
@@ -1083,7 +1105,8 @@ import CreatePipelineVue from "./CreatePipeline.vue";
 import logInfo from "./logInfo.vue";
 import router from "../router";
 import { roleTypes } from "element-plus";
-import LogInfo from "./logInfo.vue";
+import TagUserInfo from "./TagUserInfo.vue";
+import LogInfo from "./LogInfo.vue";
 const multipleTableRef = ref<TableInstance>();
 const header_clicked = ref(false);
 
@@ -1140,5 +1163,22 @@ export default {
   border: 1px solid #ccc;
   border-radius: 8px;
   overflow: hidden;
+}
+
+/* 让 tag 看起来像按钮 */
+.el-tag {
+  cursor: pointer;
+  user-select: none; /* 防止文字被选中 */
+  transition: all 0.3s;
+}
+
+.el-tag:hover {
+  opacity: 0.85;
+  transform: scale(1.05);
+}
+
+/* 可选：点击时的按下效果 */
+.el-tag:active {
+  transform: scale(0.98);
 }
 </style>
