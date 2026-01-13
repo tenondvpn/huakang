@@ -1,5 +1,5 @@
 <template>
-    <el-form ref="formRef" :model="dynamicForm" :rules="rules" label-width="0px" class="dynamic-form-container">
+    <el-form ref="formRef" :model="dynamicForm" style="max-width: 600px;width: 800px; margin: 0 auto;" :rules="rules" label-width="0px" class="dynamic-form-container">
         <el-form-item style="margin-top: 10px;" v-for="(item, index) in dynamicForm.items" :key="index"
             :prop="'items.' + index + '.value'" :rules="{
                 required: false,

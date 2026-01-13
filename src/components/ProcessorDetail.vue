@@ -4,12 +4,12 @@
       <template #label>
         <span class="custom-tabs-label">
           <el-icon><calendar /></el-icon>
-          <span>模板策略详情</span>
+          <span>模板模型详情</span>
         </span>
       </template>
       <ProcessorInfo :processor_info="processor_info"/>
     </el-tab-pane>
-    <el-tab-pane >
+    <!-- <el-tab-pane >
         <template #label>
         <span class="custom-tabs-label">
           <el-icon><calendar /></el-icon>
@@ -26,7 +26,7 @@
         </span>
       </template>
       <ProcessorQuote :processor_info="processor_info"/>
-    </el-tab-pane>
+    </el-tab-pane> -->
   </el-tabs>
 </template>
 

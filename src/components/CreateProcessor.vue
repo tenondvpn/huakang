@@ -1,17 +1,17 @@
 <template>
-    <el-form ref="ruleFormRef" style="max-width: 750px" :model="ruleForm" :rules="rules" label-width="auto"
-        label-position="left">
+    <el-form ref="ruleFormRef" style="max-width: 600px;width: 800px; margin: 0 auto;" :model="ruleForm" :rules="rules" label-width="auto"
+        label-position="center">
         <el-form-item prop="project" label="选择项目" required>
             <el-tree-select v-model="ruleForm.project" lazy :load="load" :props="processor_props" check-strictly
                 :render-after-expand="false" style="width: 100%" />
         </el-form-item>
-        <el-form-item prop="type" label="模板策略类型" required>
+        <el-form-item prop="type" label="模板指令类型" required>
             <el-select v-model="processorType" value-key="id" style="width: 100%">
                 <el-option v-for="item in type_options" :key="item.id" :label="item.label" :value="item.id" />
             </el-select>
         </el-form-item>
 
-        <el-form-item label="模板策略名称" prop="name">
+        <el-form-item label="模板指令名称" prop="name">
             <el-input v-model="ruleForm.name" />
         </el-form-item>
         <el-form-item label="负责人:" prop="users" style="margin-top: 17px">
@@ -19,21 +19,21 @@
                 <el-option v-for="item in userOptions" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
         </el-form-item>
-        <el-form-item label="模板策略描述" prop="desc" required>
-            <el-input v-model="ruleForm.desc" type="textarea" placeholder="请输入模板策略描述信息！" />
+        <el-form-item label="模板指令描述" prop="desc" required>
+            <el-input v-model="ruleForm.desc" type="textarea" placeholder="请输入模板指令描述信息！" />
         </el-form-item>
-        <el-form-item v-if="processorType === TaskTypes.TYPE_SHELL" label="shell命令" prop="shell" required>
-            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入shell命令，可以多行！" />
-        </el-form-item>
-
-        <el-form-item v-if="processorType === TaskTypes.TYPE_CLICKHOUSE" label="ck-sql命令" prop="shell" required>
-            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入clickhouse的SQL命令，可以多行！" />
+        <el-form-item v-if="processorType === TaskTypes.TYPE_SHELL" label="shell命令" prop="" required>
+            <el-input v-model="ruleForm." type="textarea" :rows="6" placeholder="输入shell命令，可以多行！" />
         </el-form-item>
 
-        <el-form-item v-if="processorType === TaskTypes.TYPE_ODPS" label="odps-sql命令" prop="shell" required>
-            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入odps的SQL命令，可以多行！" />
+        <el-form-item v-if="processorType === TaskTypes.TYPE_CLICKHOUSE" label="ck-sql命令" prop="" required>
+            <el-input v-model="ruleForm." type="textarea" :rows="6" placeholder="输入clickhouse的命令，可以多行！" />
         </el-form-item>
-        <el-form-item label="模板策略标签" prop="tags" required>
+
+        <el-form-item v-if="processorType === TaskTypes.TYPE_ODPS" label="odps-sql命令" prop="" required>
+            <el-input v-model="ruleForm." type="textarea" :rows="6" placeholder="输入odps的命令，可以多行！" />
+        </el-form-item>
+        <el-form-item label="模板指令标签" prop="tags" required>
             <el-input-tag v-model="ruleForm.tags" tag-type="primary" :max="3" placeholder="最多设置三个标签">
                 <template #tag="{ value }">
                     <div class="flex items-center">
@@ -47,7 +47,7 @@
         </el-form-item>
         <el-divider border-style="dashed" />
 
-        <el-form-item label="模板策略参数" prop="configs">
+        <el-form-item label="模板指令参数" prop="configs">
             <CreateNodeConfig ref="config_vue" :show_description="true" />
         </el-form-item>
         <el-divider border-style="dashed" />
@@ -59,7 +59,7 @@
                 创建
             </el-button>
             <el-popconfirm confirm-button-text="确定" cancel-button-text="取消" :icon="InfoFilled" icon-color="#626AEF"
-                title="确定删除模板策略吗?" @confirm="DeleteProcessor" @cancel="cancelEvent">
+                title="确定删除模板指令吗?" @confirm="DeleteProcessor" @cancel="cancelEvent">
                 <template #reference>
                     <el-button v-if="update_processor" style="margin-left: 10px;" type="warning"
                         :icon="Delete">删除</el-button>
@@ -131,7 +131,7 @@ interface RuleForm {
     desc: string
     tags: Array<String>
     users: string
-    shell: string
+    : string
 }
 
 const rules = reactive<FormRules<RuleForm>>({
@@ -139,10 +139,10 @@ const rules = reactive<FormRules<RuleForm>>({
         { required: true, message: '请选择项目', trigger: 'blur' },
     ],
     type: [
-        { required: true, message: '请选择模板策略类型', trigger: 'blur' },
+        { required: true, message: '请选择模板指令类型', trigger: 'blur' },
     ],
     name: [
-        { required: true, message: '请输入模板策略名称', trigger: 'blur' },
+        { required: true, message: '请输入模板指令名称', trigger: 'blur' },
         { min: 1, max: 30, message: '长度不超过30个字符。', trigger: 'blur' },
     ],
     configs: [
@@ -155,7 +155,7 @@ const rules = reactive<FormRules<RuleForm>>({
     desc: [
         {
             required: true,
-            message: '请输入策略描述',
+            message: '请输入指令描述',
             trigger: 'change',
         },
     ],
@@ -173,7 +173,7 @@ const rules = reactive<FormRules<RuleForm>>({
             trigger: 'change',
         },
     ],
-    shell: [
+    : [
         {
             required: true,
             message: '请输入命令！',
@@ -251,7 +251,7 @@ onMounted(() => {
 
         console.log(ruleForm)
         update_processor.value = true
-        ruleForm.shell = processor.template
+        ruleForm. = processor.template
     }
 });
 
@@ -267,15 +267,15 @@ const DeleteProcessor = () => {
         .post('/pipeline/delete_task/' + props.pipeline_id + '/', qs.stringify(params))
         .then(response => {
             if (response.status != 200 || response.data.status != 0) {
-                ElMessage.warning("删除策略失败：" + response.data.info)
+                ElMessage.warning("删除指令失败：" + response.data.info)
             } else {
                 console.log(response.data)
                 emitter.emit("delete_task_success", props.task_info.task.id)
-                ElMessage.success("删除策略成功！")
+                ElMessage.success("删除指令成功！")
             }
         })
         .catch(error => {
-            ElMessage.error("创建策略失败：" + error)
+            ElMessage.error("创建指令失败：" + error)
             console.log(error)
         })
 }
@@ -314,7 +314,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     var params = {
         "name": ruleForm.name,
         "config": config_str,
-        'template': ruleForm.shell,
+        'template': ruleForm.,
         "description": ruleForm.desc,
         "type": processorType.value,
         "project_id": tmp_project_id,
@@ -333,15 +333,15 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                     .post('/processor/update/' + props.processor_info.processor.id + '/', qs.stringify(params))
                     .then(response => {
                         if (response.status != 200 || response.data.status != 0) {
-                            ElMessage.warning("修改模板策略失败：" + response.data.msg)
+                            ElMessage.warning("修改模板指令失败：" + response.data.msg)
                         } else {
                             console.log(response.data)
                             emitter.emit("update_processor_success", { "id": props.processor_info.processor.project_id + "_" + props.processor_info.processor.id })
-                            ElMessage.success("修改模板策略成功！")
+                            ElMessage.success("修改模板指令成功！")
                         }
                     })
                     .catch(error => {
-                        ElMessage.error("修改模板策略失败：" + error)
+                        ElMessage.error("修改模板指令失败：" + error)
                         console.log(error)
                     })
             } else {
@@ -349,7 +349,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                     .post('/processor/create/', qs.stringify(params))
                     .then(response => {
                         if (response.status != 200 || response.data.status != 0) {
-                            ElMessage.warning("创建模板策略失败：" + response.data.msg)
+                            ElMessage.warning("创建模板指令失败：" + response.data.msg)
                         } else {
                             console.log(response.data)
                             var tmp_project_id = ruleForm.project 
@@ -370,11 +370,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                                 }
                             }
                             emitter.emit("create_processor_success", emit_data)
-                            ElMessage.success("创建模板策略成功！")
+                            ElMessage.success("创建模板指令成功！")
                         }
                     })
                     .catch(error => {
-                        ElMessage.error("创建模板策略失败：" + error)
+                        ElMessage.error("创建模板指令失败：" + error)
                         console.log(error)
                     })
             }
@@ -430,6 +430,10 @@ const load = (node, resolve) => {
                 }
 
                 var label = item.text
+                if (label == "我创建的") {
+                    label = "华康电量"
+                }
+
                 if (label == "标准库") {
                     label = "公共监控模板"
                     continue;
@@ -481,7 +485,7 @@ const type_options = ref([
 
     {
         "id": TaskTypes.TYPE_SHELL,
-        "label": "shell",
+        "label": "",
     },
 
     {

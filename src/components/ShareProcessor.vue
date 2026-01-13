@@ -1,6 +1,6 @@
 <template>
-    <el-form ref="ruleFormRef" style="max-width: 750px" :model="ruleForm" :rules="rules" label-width="auto"
-        label-position="left">
+    <el-form ref="ruleFormRef" style="max-width: 600px;width: 800px; margin: 0 auto;" :model="ruleForm" :rules="rules" label-width="auto"
+        label-position="center">
         <el-form-item v-if="showTree" prop="project" label="选择项目" required>
             <el-tree-select v-model="ruleForm.project" lazy :load="load" :props="processor_props" check-strictly
                 :render-after-expand="false" style="width: 100%" />
@@ -9,7 +9,7 @@
         <el-divider border-style="dashed" />
         <el-form-item>
             <el-button plain v-if="isPrivate == 1" type="primary" @click="submitForm(ruleFormRef)" :icon="Edit">
-                共享模板策略
+                共享模板模型
             </el-button>
             <el-button plain v-else type="primary" @click="submitForm(ruleFormRef)" :icon="Edit">
                 取消共享
@@ -79,7 +79,7 @@ onMounted(() => {
     if (isPrivate.value) {
         ruleForm.project = "公共监控模板"
     } else {
-        ruleForm.project = "华康电能"
+        ruleForm.project = "华康电量"
     }
     console.log("share process mounted: ", isPrivate.value)
 });
@@ -89,11 +89,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     await formEl.validate((valid, fields) => {
         if (valid) {
             var project_id = -3
-            if (ruleForm.project == "华康电能") {
+            if (ruleForm.project == "华康电量") {
                 project_id = -1
             }
             
-            if (ruleForm.project != "公共监控模板" && ruleForm.project != "华康电能") {
+            if (ruleForm.project != "公共监控模板" && ruleForm.project != "华康电量") {
                 project_id = ruleForm.project
             }
 
@@ -105,10 +105,10 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 }))
                 .then(response => {
                     if (response.status != 200 || response.data.status != 0) {
-                        ElMessage.warning("共享模板策略失败：" + response.data.msg)
+                        ElMessage.warning("共享模板模型失败：" + response.data.msg)
                     } else {
                         console.log(response.data)
-                        ElMessage.success("共享模板策略成功！")
+                        ElMessage.success("共享模板模型成功！")
                         emitter.emit("share_processor_success", {
                             "id": processor_id.value,
                             "project_id": project_id,
@@ -119,7 +119,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                     }
                 })
                 .catch(error => {
-                    ElMessage.error("共享模板策略失败：" + error)
+                    ElMessage.error("共享模板模型失败：" + error)
                     console.log(error)
                 })
         } else {
@@ -172,6 +172,10 @@ const load = (node, resolve) => {
                 }
 
                 var label = item.text
+                if (label == "我创建的") {
+                    label = "华康电量"
+                }
+                
                 if (label == "标准库") {
                     label = "公共监控模板"
                     continue;

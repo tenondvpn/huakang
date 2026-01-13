@@ -1,5 +1,5 @@
 <template>
-    <el-form ref="ruleFormRef" :rules="rules" label-position="right" label-width="auto" style="max-width: 900px">
+    <el-form ref="ruleFormRef" style="max-width: 900px;width: 800px; margin: 0 auto;" :rules="rules" label-position="right" label-width="auto">
         <el-form-item prop="version" label="版本号" >
             <el-input  v-model="ruleForm.version" />
         </el-form-item>

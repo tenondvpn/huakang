@@ -1,5 +1,5 @@
 <template>
-    <div class="kpi-dashboard">
+    <!-- <div class="kpi-dashboard">
     <el-row :gutter="24" style="margin-left: -12px; margin-right: -12px;margin-top:-5px;margin-bottom:-5px;">
       <el-col
         v-for="card in cards"
@@ -12,38 +12,28 @@
           @click="handleClick(card)"
         >
 
-          <!-- 背景光晕（纯 CSS 实现） -->
           <div class="glow" :style="{ background: card.glowColor }" />
 
           <div class="content">
-            <!-- 左侧图标区 -->
             <div class="icon-wrapper" :style="{ background: card.iconBg }">
               <el-icon :size="28" ><component :is="card.icon" /></el-icon>
             </div>
 
-            <!-- 右侧数据区 -->
             <div class="info">
               <div class="title">{{ card.title }}</div>
               <div class="value">
                 <span class="unit" :key="refreshSt">{{ card.value }}</span>
                 <span v-if="card.unit" class="unit">{{ card.unit }}</span>
               </div>
-              <!-- <div class="trend" :class="card.trend > 0 ? 'up' : 'down'">
-                <el-icon size="14">
-                  <ArrowUp v-if="card.trend > 0" />
-                  <ArrowDown v-else />
-                </el-icon>
-                {{ Math.abs(card.trend) }}%
-              </div> -->
             </div>
           </div>
         </div>
       </el-col>
     </el-row>
-  </div>
-    <el-card v-model="show_task_status" :direction="drawer_direction" size="100%" :destroy-on-close="true" body-class="my-card-body">
+  </div> -->
+    <el-card v-model="show_task_status" :direction="drawer_direction" size="100%" :destroy-on-close="true" body-class="my-card-body" >
         <template #header >
-            <el-row justify="end" >
+            <el-row justify="end" style="height:20px;margin-top: -10px;">
                 <el-col :span="6" style="float: left;">
                     <el-tooltip class="box-item" effect="dark" content="手动刷新数据列表！" style="text-align: left;"
                         placement="top-start">
@@ -63,12 +53,9 @@
                 </el-col>
 
                 <el-col :span="18">
-
-
-                        <el-pagination style="margin-left: 196px;float:right" v-model:current-page="currentPage2"
-                            v-model:page-size="pageSize2" :page-sizes="[10, 50, 100, 200]" background
-                            layout="sizes, prev, pager, next" :total="currentTotalSize" />
-
+                    <el-pagination style="margin-left: 196px;float:right" v-model:current-page="currentPage2"
+                        v-model:page-size="pageSize2" :page-sizes="[10, 50, 100, 200]" background
+                        layout="sizes, prev, pager, next" :total="currentTotalSize" />
                 </el-col>
             </el-row>
 
@@ -111,9 +98,9 @@ import { User, ShoppingCart, Files,Crop,VideoPlay,Wallet,WarnTriangleFilled, Pro
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-const auto_refresh_task = ref(true)
+const auto_refresh_task = ref(false)
 
-const drawer_direction = ref<DrawerProps['direction']>('rtl')
+const drawer_direction = ref<DrawerProps['direction']>('ltr')
 const popoverVisible = ref(false);
 const pipeline_name = ref('');
 const task_name = ref('');
@@ -173,7 +160,7 @@ const cards = ref([
     }
   },
   {
-    title: '华康电能',
+    title: '华康电量',
     unit: '个',
     value: st_my_create_count,
     trend: -2.3,
@@ -394,7 +381,7 @@ onUnmounted(() => {
 }
 
 ::v-deep .my-icon-kucun {
-    background: '/images/shell.png';
+    background: '/images/.png';
     font-size: 12px;
     background-size: cover;
 }

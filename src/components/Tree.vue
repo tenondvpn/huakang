@@ -1,5 +1,5 @@
 <template>
-    <el-input class="esponsive-input" v-model="query" placeholder="Please enter keyword" @input="onQueryChanged"
+    <el-input class="esponsive-input" v-model="query" placeholder="输入搜索词" @input="onQueryChanged"
         :prefix-icon="Search" />
 
     <div :class="{ appContainerDark: isDark, appContainerLight: !isDark }" :style="`min-height: ${dynamicTreeHeight}px;`">
@@ -34,16 +34,16 @@
                                         <el-button plain type="info" size="small" :icon="Folder"
                                             @click="callCreateProject(node)" />
                                     </el-tooltip>
-                                    <el-tooltip class="box-item" effect="dark" content="点击新建监控策略！">
+                                    <el-tooltip class="box-item" effect="dark" content="点击新建监控模型！">
                                         <el-button plain type="success" size="small" :icon="Plus"
                                             @click="addPipelineClicked(node)" />
                                     </el-tooltip>
-                                    <el-tooltip v-if="node.label != '我的监控策略'" class="box-item" effect="dark"
+                                    <el-tooltip v-if="node.label != '我的监控模型'" class="box-item" effect="dark"
                                         content="编辑分类">
                                         <el-button plain type="primary" size="small" :icon="Edit"
                                             @click="callUpdateProject(node)" />
                                     </el-tooltip>
-                                    <el-tooltip v-if="node.label != '我的监控策略'" class="box-item" effect="dark"
+                                    <el-tooltip v-if="node.label != '我的监控模型'" class="box-item" effect="dark"
                                         content="删除分类">
                                         <el-button plain type="warning" size="small" :icon="Delete"
                                             @click="deleteProject(node)" />
@@ -54,11 +54,11 @@
                         <div v-else>
                             <span class="node-buttons">
                                 <el-button-group class="ml-4">
-                                    <el-tooltip class="box-item" effect="dark" content="点击编辑监控策略信息！">
+                                    <el-tooltip class="box-item" effect="dark" content="点击编辑监控模型信息！">
                                         <el-button plain type="primary" @click="addPipelineClicked(node)" size="small"
                                             :icon="Edit" />
                                     </el-tooltip>
-                                    <el-tooltip class="box-item" effect="dark" content="点击删除监控策略！">
+                                    <el-tooltip class="box-item" effect="dark" content="点击删除监控模型！">
                                         <el-button plain type="warning" size="small" :icon="Delete"
                                             @click="clickDeletePipeline(node)" />
                                     </el-tooltip>
@@ -75,7 +75,7 @@
         </div>
     </div>
 
-    <el-drawer v-model="createPipeline" :direction="drawer_direction" size="50%" :destroy-on-close="true">
+    <el-drawer v-model="createPipeline" :direction="drawer_direction" size="100%" :destroy-on-close="true">
         <template #header>
             <h4>{{ openPipelineModelTitle }}</h4>
         </template>
@@ -84,7 +84,7 @@
         </template>
     </el-drawer>
 
-    <el-drawer v-model="createProject" :direction="drawer_direction" size="50%" :destroy-on-close="true">
+    <el-drawer v-model="createProject" :direction="drawer_direction" size="100%" :destroy-on-close="true">
         <template #header>
             <h4>创建项目目录</h4>
         </template>
@@ -93,7 +93,7 @@
         </template>
     </el-drawer>
 
-    <el-drawer v-model="updateProject" :direction="drawer_direction" size="50%" :destroy-on-close="true">
+    <el-drawer v-model="updateProject" :direction="drawer_direction" size="100%" :destroy-on-close="true">
         <template #header>
             <h4>修改项目目录</h4>
         </template>
@@ -149,15 +149,15 @@ import { ElMessage } from 'element-plus';
 import { useEventListener } from '@vueuse/core'
 
 const createPipeline = ref(false)
-const drawer_direction = ref<DrawerProps['direction']>('rtl')
+const drawer_direction = ref<DrawerProps['direction']>('ltr')
 const treeContainerRef = ref(null);
 const treeHeight = ref(0);
 let resizeObserver = null;
 const query = ref('')
 const treeRef = ref()
-const project_path = ref('我的监控策略')
+const project_path = ref('我的监控模型')
 const project_id = ref('1')
-const openPipelineModelTitle = ref("创建监控策略")
+const openPipelineModelTitle = ref("创建监控模型")
 const pipeline_detail = ref({})
 const showed_init_expand = ref(false)
 const selectedPipelineValue = {
@@ -308,7 +308,7 @@ emitter.on('show_graph_called', (data) => {
 })
 
 emitter.on('click_show_pipeline', (key) => {
-    openPipelineModelTitle.value = "修改监控策略"
+    openPipelineModelTitle.value = "修改监控模型"
     axios
         .post('/pipeline/get_pipeline_detail/', qs.stringify({
             'pipe_id': key.split("-")[1],
@@ -377,7 +377,7 @@ const getProjectTree = async () => {
             treeData.value = response.data
         })
         .catch(error => {
-            ElMessage.error("创建监控策略失败: " + error)
+            ElMessage.error("创建监控模型失败: " + error)
         })
 }
 
@@ -538,7 +538,7 @@ const handleNodeExpand = (nodeData, nodeInstance) => {
 }
 
 const addPipelineClicked = (nodeData) => {
-    openPipelineModelTitle.value = "创建监控策略"
+    openPipelineModelTitle.value = "创建监控模型"
     selectedPipeline.value = structuredClone(selectedPipelineValue);
     console.log("ttttt:", nodeData.key)
     var str_key = "" + nodeData.key
@@ -556,7 +556,7 @@ const addPipelineClicked = (nodeData) => {
         return;
     }
 
-    openPipelineModelTitle.value = "修改监控策略"
+    openPipelineModelTitle.value = "修改监控模型"
     axios
         .post('/pipeline/get_pipeline_detail/', qs.stringify({
             'pipe_id': nodeData.key.split("-")[1],
@@ -618,9 +618,9 @@ const handleDelete = (node) => {
 
 const clickDeletePipeline = (nodeData) => {
     ElMessageBox({
-        title: '删除监控策略',
+        title: '删除监控模型',
         message: h('p', null, [
-            h('span', null, '确定要删除监控策略吗? 监控策略名： '),
+            h('span', null, '确定要删除监控模型吗? 监控模型名： '),
             h('i', { style: 'color: red' }, nodeData.label),
         ]),
         showCancelButton: true,
@@ -644,7 +644,7 @@ const clickDeletePipeline = (nodeData) => {
                         done()
                         ElMessage({
                             type: 'danger',
-                            message: "监控策略删除失败：" + error,
+                            message: "监控模型删除失败：" + error,
                         })
                     })
             } else {
@@ -654,7 +654,7 @@ const clickDeletePipeline = (nodeData) => {
     }).then((action) => {
         ElMessage({
             type: 'success',
-            message: "监控策略删除成功！",
+            message: "监控模型删除成功！",
         })
     })
 }
@@ -793,6 +793,11 @@ onBeforeUnmount(() => {
 
 
 const onQueryChanged = (query: string) => {
+    if (query == "") {
+        GetProjectsAndPipelines();
+        return;
+    }
+
     treeRef.value!.filter(query)
 }
 const filterMethod = (query: string, node: TreeNodeData) =>
@@ -822,7 +827,7 @@ const appendNode = (parentId, item) => {
 
     var project_name = item["text"];
     if (project_name == "我的项目") {
-        project_name = "我的监控策略"
+        project_name = "我的监控模型"
     }
 
     const newChild = {

@@ -97,9 +97,9 @@
         </el-form-item>
 
 
-        <el-form-item label="执行的策略">
+        <el-form-item label="执行的模型">
             <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange" style="color: var(--el-color-primary);">
-                选择所有策略
+                选择所有模型
             </el-checkbox>
         <el-divider border-style="dashed" />
             <el-checkbox-group v-model="form.tasks" @change="handleCheckedCitiesChange">
@@ -179,11 +179,11 @@ const runTasks = () => {
             'ordered_num': 0
         }))
         .then(response => {
-            ElMessage.success("重跑监控策略成功！")
+            ElMessage.success("重跑监控模型成功！")
             emitter.emit('success_run_tasks', "")
         })
         .catch(error => {
-            ElMessage.success("重跑监控策略失败：" + error)
+            ElMessage.success("重跑监控模型失败：" + error)
         })
 }
 

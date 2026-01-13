@@ -1,15 +1,18 @@
 <template>
   <!-- <el-skeleton v-if="isLoading" :rows="10" animated /> -->
+   <div :style="`height: ${dynamicListHeight}px; overflow: auto; display: flex; flex-direction: column;`">
+  
+  <div style="flex: 1; overflow: hidden;">
   <el-table
     v-loading="isLoading"
     ref="multipleTableRef"
     border
     :data="tableData"
     row-key="id"
-    :style="`width: 100%; margin-top: ${table_margin_top}px padding:0px`"
+    :style="`width: 100%; `"
     style="width: 100%"
     table-layout="auto"
-    :max-height="`${dynamicListHeight}px`"
+    height="100%"
     element-loading-text="数据加载中"
     element-loading-spinner="el-icon-loading"
     @header-click="handleHeaderClick"
@@ -42,6 +45,7 @@
         <el-input
           clearable
           v-model="run_time_search"
+          v-show="false"
           size="small"
           style="float: right; margin-top: 10px"
           placeholder="搜索"
@@ -53,17 +57,18 @@
     </el-table-column>
 
     <el-table-column
-      label="监控策略名"
+      label="监控模型名"
       column-key="pl_name"
       min-width="20%"
       sortable
       header-align="center"
     >
       <template #header>
-        <span style="color: var(--el-color-primary)">监控策略组</span>
+        <span style="color: var(--el-color-primary)">监控模型组</span>
         <el-input
           clearable
           v-model="pl_name_search"
+          v-show="false"
           size="small"
           style="float: right; margin-top: 10px"
           placeholder="搜索"
@@ -79,16 +84,17 @@
     </el-table-column>
 
     <el-table-column
-      label="策略名"
+      label="模型名"
       column-key="task_name"
       min-width="20%"
       sortable
       header-align="center"
     >
       <template #header>
-        <span style="color: var(--el-color-primary)">策略名</span>
+        <span style="color: var(--el-color-primary)">模型名</span>
         <el-input
           clearable
+          v-show="false"
           v-model="task_name_search"
           size="small"
           style="float: right; margin-top: 10px"
@@ -115,6 +121,7 @@
       <template #header>
         <span style="color: var(--el-color-primary)">状态</span>
         <el-select
+          v-show="false"
           size="small"
           v-model="status_value"
           clearable
@@ -143,16 +150,50 @@
         </el-select>
       </template>
       <template #default="scope">
+        <el-popover
+    placement="top-start"
+    title=""
+    :width="300"
+    trigger="hover"
+    @show="handlePopoverShow(scope.row)"
+  >
+    <div v-loading="loading">
+       <div 
+         class="markdown-body" 
+         v-html="renderMarkdown(user_msg_info)"
+         style="max-height: 300px; overflow-y: auto;"
+       ></div>
+    </div>
+
+    <template #reference>
+      <span class="tag-wrapper">
+        <el-tag v-if="scope.row.status == 0" type="success">等待中</el-tag>
+        <el-tag v-if="scope.row.status == 1" type="primary">正在监测</el-tag>
+        <el-tag v-if="scope.row.status == 2" type="success">正常</el-tag>
+        
+        <el-tag v-if="scope.row.status == 3 && scope.row.ret_code == 1" type="danger" @mouseenter="getFileContent(scope.row)">严重</el-tag>
+        
+        <el-tag v-if="scope.row.status == 3 && scope.row.ret_code == 2" type="warning">一般</el-tag>
+        <el-tag v-if="scope.row.status == 4" type="danger">监测超时</el-tag>
+        <el-tag v-if="scope.row.status == 5" type="success">等待调度</el-tag>
+        <el-tag v-if="scope.row.status == 6" type="danger">停止</el-tag>
+        <el-tag v-if="scope.row.status == 7" type="danger">上游失败</el-tag>
+      </span>
+    </template>
+  </el-popover>
+<!-- 
+        <el-popover placement="top-start" title="Title" :width="200" trigger="hover" :content="user_msg_info"> <template #reference> 
+
         <el-tag v-if="scope.row.status == 0" type="success" @click="showUserMessage(scope.row)">等待中</el-tag>
         <el-tag v-if="scope.row.status == 1" type="primary" @click="showUserMessage(scope.row)">正在监测</el-tag>
         <el-tag v-if="scope.row.status == 2" type="success" @click="showUserMessage(scope.row)">正常</el-tag>
-        <el-tag v-if="scope.row.status == 3 && scope.row.ret_code != 1 && scope.row.ret_code != 2" type="danger" @click="showUserMessage(scope.row)">严重</el-tag>
-        <el-tag v-if="scope.row.status == 3 && scope.row.ret_code == 1" type="danger" @click="showUserMessage(scope.row)">严重</el-tag>
-        <el-tag v-if="scope.row.status == 3 && scope.row.ret_code == 2" type="warning" @click="showUserMessage(scope.row)">一般</el-tag>
+        <el-tag v-if="scope.row.status == 3 && scope.row.ret_code == 1" type="danger" @mouseenter="getFileContent(scope.row)">严重</el-tag>
+        <el-tag v-if="scope.row.status == 3 && scope.row.ret_code == 2" type="warning" @mouseenter="getFileContent(scope.row)">一般</el-tag>
         <el-tag v-if="scope.row.status == 4" type="danger" @click="showUserMessage(scope.row)">监测运行超时</el-tag>
         <el-tag v-if="scope.row.status == 5" type="success" @click="showUserMessage(scope.row)">等待调度</el-tag>
         <el-tag v-if="scope.row.status == 6" type="danger" @click="showUserMessage(scope.row)">停止</el-tag>
         <el-tag v-if="scope.row.status == 7" type="danger" @click="showUserMessage(scope.row)">上游失败</el-tag>
+         </template> </el-popover> -->
       </template>
     </el-table-column>
 
@@ -168,6 +209,7 @@
         <span style="color: var(--el-color-primary)">开始时间</span>
         <el-row
           style="float: right; margin-top: 10px; width: 100%; margin-right: 0px"
+          v-show="false"
         >
           <el-col :span="6">
             <el-select
@@ -283,7 +325,7 @@
           style="width: 110px"
           @click="runSingleTask(scope.$index, scope.row)"
         >
-          重跑策略
+          重跑模型
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click.native="runAll(scope.$index, scope.row)"
@@ -325,14 +367,14 @@
         </el-dropdown>
       </template>
     </el-table-column>
-    <el-table-column
-      label="策略管理"
+    <!-- <el-table-column
+      label="模型管理"
       header-align="center"
       align="center"
       min-width="20%"
     >
       <template #header>
-        <span style="color: var(--el-color-primary)">策略管理</span>
+        <span style="color: var(--el-color-primary)">模型管理</span>
       </template>
       <template #default="scope" style="text-align: center">
           <el-button
@@ -349,7 +391,7 @@
             查看日志
           </el-button>
       </template>
-    </el-table-column>
+    </el-table-column> -->
 
     <template #empty>
       <div v-if="!isLoading" class="flex items-center justify-center h-100%">
@@ -357,16 +399,17 @@
       </div>
     </template>
   </el-table>
-
+</div>
+</div>
   <el-drawer
     v-model="createPipeline"
     :direction="drawer_direction"
-    size="50%"
+    size="100%"
     :destroy-on-close="true"
     :append-to-body="true"
   >
     <template #header>
-      <h4>更新监控策略信息</h4>
+      <h4>更新监控模型信息</h4>
     </template>
     <template #default>
       <CreatePipelineVue :pipeline_info="pipeline_info" />
@@ -376,12 +419,12 @@
   <el-drawer
     v-model="show_task_vue"
     :direction="drawer_direction"
-    size="50%"
+    size="100%"
     :destroy-on-close="true"
     :append-to-body="true"
   >
     <template #header>
-      <h4 style="width: 100px">更新策略配置</h4>
+      <h4 style="width: 100px">更新模型配置</h4>
     </template>
     <template #default>
       <CreateNode
@@ -411,7 +454,7 @@
   <el-drawer
     v-model="show_log_info"
     :direction="drawer_direction"
-    size="80%"
+    size="100%"
     :destroy-on-close="true"
     :append-to-body="true"
   >
@@ -426,7 +469,7 @@
   <el-drawer
     v-model="show_user_info"
     :direction="drawer_direction"
-    size="50%"
+    size="100%"
     :destroy-on-close="true"
     :append-to-body="true"
   >
@@ -438,7 +481,7 @@
     </template>
   </el-drawer>
 
-  <el-dialog v-model="history_graph_show" fullscreen title="全监控策略状态追踪">
+  <el-dialog v-model="history_graph_show" fullscreen title="全监控模型状态追踪">
     <div class="iframe-container" style="border: 0px">
       <iframe
         :src="history_graph_url"
@@ -471,6 +514,7 @@ import { ElMention } from "element-plus";
 import { ElMessage } from "element-plus";
 import { DrawerProps } from "element-plus";
 import { useEventListener } from "@vueuse/core";
+import { marked } from 'marked'; // 引入解析库
 
 interface HistoryInfo {
   id: number;
@@ -499,10 +543,10 @@ const props = defineProps({
 
 // const multipleTableRef = ref<TableInstance>()
 const dynamicListHeight = ref(1000);
-const project_path = ref("我的监控策略");
+const project_path = ref("我的监控模型");
 const project_id = ref("1");
 const show_task_vue = ref(false);
-const drawer_direction = ref<DrawerProps["direction"]>("rtl");
+const drawer_direction = ref<DrawerProps["direction"]>("ltr");
 const multipleSelection = ref<HistoryInfo[]>([]);
 const run_time_search = ref("");
 const pl_name_search = ref("");
@@ -513,14 +557,7 @@ const auto_refresh = ref(false);
 const checkAll = ref(true);
 const indeterminate = ref(false);
 const status_value = ref<CheckboxValueType[]>([
-  "0",
-  "1",
-  "2",
   "3",
-  "4",
-  "5",
-  "6",
-  "7",
 ]);
 const start_time_begin = ref("");
 const start_time_select = ref(">=");
@@ -547,6 +584,7 @@ const clicked_schedule_id = ref(0);
 const table_margin_top = ref(0);
 const search_owner_type = ref(0);
 const is_graph_task_list_ref = ref(false);
+const user_msg_info = ref("正在获取监控数据....");
 
 watch(status_value, (val) => {
   if (val.length === 0) {
@@ -581,6 +619,53 @@ const getUseTime = (use_time) => {
 const showUserMessage = (task_info) => {
     clicked_schedule_id.value = task_info.schedule_id;
     show_user_info.value = true;
+}
+
+const loading = ref(false);
+
+// 解析 Markdown 为 HTML
+const renderMarkdown = (text) => {
+  if (!text) return '暂无信息';
+  return marked.parse(text);
+};
+
+// Popover 显示时触发
+const handlePopoverShow = async (row) => {
+  // 1. 先清空旧数据或显示 loading，防止显示上一次的数据
+  user_msg_info.value = ''; 
+  loading.value = true;
+
+  try {
+    // 2. 模拟你的 getFileContent 逻辑
+    // 如果你的 getFileContent 是异步请求，记得 await
+    // const res = await api.getLog(row.id);
+    // user_msg_info.value = res.data;
+    
+    // 假设你的数据直接在 row 里，或者你只是同步赋值
+    user_msg_info.value = row.message_info || '**正在加载中...**'; 
+    
+    // 如果你需要发请求：
+    // await getFileContent(row); 
+  } finally {
+    loading.value = false;
+  }
+};
+
+const getFileContent = (task_info) => {
+    user_msg_info.value = "正在获取监控数据....";
+    axios
+        .post('/pipeline/get_log_content/', qs.stringify({
+            'schedule_id': task_info.schedule_id,
+            'file_name': "user.md",
+            'rerun_id': 0,
+        }))
+        .then(response => {
+            console.log(response.data)
+            user_msg_info.value = marked.parse(response.data.file_content.replace(/\\n/g, '\n'));
+        })
+        .catch(error => {
+          user_msg_info.value = "获取错误信息失败：" + error;
+        })
 }
 
 const clickShowLog = (task_info) => {
@@ -653,7 +738,7 @@ const handleCheckAll = (val: CheckboxValueType) => {
 };
 
 const stopTask = (task_info) => {
-  ElMessageBox.confirm("确定要终止策略执行吗？", "提示", {
+  ElMessageBox.confirm("确定要终止模型执行吗？", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
@@ -668,18 +753,18 @@ const stopTask = (task_info) => {
           })
         )
         .then((response) => {
-          ElMessage.success("重跑策略成功！");
+          ElMessage.success("重跑模型成功！");
           load_data((curPage.value - 1) * curPageSize.value);
         })
         .catch((error) => {
-          ElMessage.success("重跑策略失败：" + error);
+          ElMessage.success("重跑模型失败：" + error);
         });
     })
     .catch((error) => {});
 };
 
 const runSingleTask = (index, task_info) => {
-  ElMessageBox.confirm("确定要重新执行策略吗？", "提示", {
+  ElMessageBox.confirm("确定要重新执行模型吗？", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
@@ -694,18 +779,18 @@ const runSingleTask = (index, task_info) => {
           })
         )
         .then((response) => {
-          ElMessage.success("重跑策略成功！");
+          ElMessage.success("重跑模型成功！");
           load_data((curPage.value - 1) * curPageSize.value);
         })
         .catch((error) => {
-          ElMessage.success("重跑策略失败：" + error);
+          ElMessage.success("重跑模型失败：" + error);
         });
     })
     .catch((error) => {});
 };
 
 const runAll = (index, task_info) => {
-  ElMessageBox.confirm("确定要重新执行整个监控策略吗？", "提示", {
+  ElMessageBox.confirm("确定要重新执行整个监控模型吗？", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
@@ -720,18 +805,18 @@ const runAll = (index, task_info) => {
           })
         )
         .then((response) => {
-          ElMessage.success("重跑监控策略成功！");
+          ElMessage.success("重跑监控模型成功！");
           load_data((curPage.value - 1) * curPageSize.value);
         })
         .catch((error) => {
-          ElMessage.success("重跑监控策略失败：" + error);
+          ElMessage.success("重跑监控模型失败：" + error);
         });
     })
     .catch((error) => {});
 };
 
 const runAllNext = (index, task_info) => {
-    ElMessageBox.confirm("确定要重新执行策略以及其后续策略吗？", "提示", {
+    ElMessageBox.confirm("确定要重新执行模型以及其后续模型吗？", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
@@ -746,18 +831,18 @@ const runAllNext = (index, task_info) => {
           })
         )
         .then((response) => {
-          ElMessage.success("重跑策略成功！");
+          ElMessage.success("重跑模型成功！");
           load_data((curPage.value - 1) * curPageSize.value);
         })
         .catch((error) => {
-          ElMessage.success("重跑策略失败：" + error);
+          ElMessage.success("重跑模型失败：" + error);
         });
     })
     .catch((error) => {});
 };
 
 const setSuccess = (index, task_info) => {
-  ElMessageBox.confirm("确定要将策略设置为成功吗？", "提示", {
+  ElMessageBox.confirm("确定要将模型设置为成功吗？", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
@@ -772,11 +857,11 @@ const setSuccess = (index, task_info) => {
           })
         )
         .then((response) => {
-          ElMessage.success("设置策略成功！");
+          ElMessage.success("设置模型成功！");
           load_data((curPage.value - 1) * curPageSize.value);
         })
         .catch((error) => {
-          ElMessage.success("设置策略失败：" + error);
+          ElMessage.success("设置模型失败：" + error);
         });
     })
     .catch((error) => {});
@@ -844,11 +929,11 @@ const options = [
   },
   {
     value: "2",
-    label: "重跑策略",
+    label: "重跑模型",
   },
   {
     value: "3",
-    label: "单跑策略和后续",
+    label: "单跑模型和后续",
   },
   {
     value: "4",
@@ -953,8 +1038,9 @@ useEventListener(window, "resize", () => {
   if (is_graph_task_list_ref.value) {
     dynamicListHeight.value = window.innerHeight - 100;
   } else {
-    dynamicListHeight.value = window.innerHeight - 220;
+    dynamicListHeight.value = window.innerHeight - 140;
   }
+  console.log("window reload: ", dynamicListHeight.value, window.innerHeight)
 });
 
 onMounted(() => {
@@ -962,8 +1048,10 @@ onMounted(() => {
   if (is_graph_task_list_ref.value) {
     dynamicListHeight.value = window.innerHeight - 100;
   } else {
-    dynamicListHeight.value = window.innerHeight - 220;
+    dynamicListHeight.value = window.innerHeight - 140;
   }
+
+  console.log("window reload: ", dynamicListHeight.value, window.innerHeight)
   emitterOn();
   curPage.value = 1;
   curPageSize.value = props.page_size;
@@ -1012,7 +1100,7 @@ const emitterOn = () => {
 
     task_id_list = task_id_list.slice(0, -1);
     runt_time_list = runt_time_list.slice(0, -1);
-    ElMessageBox.confirm("确定要重新执行选中的所有策略吗？", "提示", {
+    ElMessageBox.confirm("确定要重新执行选中的所有模型吗？", "提示", {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
       type: "warning",
@@ -1027,18 +1115,18 @@ const emitterOn = () => {
             })
           )
           .then((response) => {
-            ElMessage.success("重跑策略成功！");
+            ElMessage.success("重跑模型成功！");
             load_data((curPage.value - 1) * curPageSize.value);
           })
           .catch((error) => {
-            ElMessage.success("重跑策略失败：" + error);
+            ElMessage.success("重跑模型失败：" + error);
           });
       })
       .catch((error) => {});
   });
 
   emitter.on("batch_stop_table_tasks", (data) => {
-    ElMessageBox.confirm("确定要停止选中的所有策略吗？", "提示", {
+    ElMessageBox.confirm("确定要停止选中的所有模型吗？", "提示", {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
       type: "warning",
@@ -1057,11 +1145,11 @@ const emitterOn = () => {
               load_data((curPage.value - 1) * curPageSize.value);
             })
             .catch((error) => {
-              ElMessage.success("停止策略失败：" + error);
+              ElMessage.success("停止模型失败：" + error);
             });
         }
 
-        ElMessage.success("停止所有策略成功！");
+        ElMessage.success("停止所有模型成功！");
       })
       .catch((error) => {});
   });
@@ -1157,6 +1245,24 @@ export default {
 </script>
 
 <style scoped>
+  /* 4. 简单的 Markdown 样式修正 */
+.markdown-body {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  max-height: 300px; /* 如果内容太长，建议限制高度 */
+  overflow-y: auto;  /* 超出显示滚动条 */
+}
+
+/* 针对 Markdown 生成的标签做一些微调 */
+::v-deep(.markdown-body p) {
+  margin: 5px 0;
+}
+::v-deep(.markdown-body ul) {
+  padding-left: 20px;
+  margin: 5px 0;
+}
+
 .iframe-container {
   width: 99%;
   height: 100vh;

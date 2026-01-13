@@ -45,6 +45,7 @@
     "lodash": "^4.17.21",
     "markdown-it": "^14.1.0",
     "markdown-it-highlightjs": "^4.2.0",
+    "marked": "^17.0.1",
     "mitt": "^3.0.1",
     "mockjs": "^1.1.0",
     "node-html-to-image": "^5.0.0",

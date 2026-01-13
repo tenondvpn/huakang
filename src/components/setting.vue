@@ -38,7 +38,7 @@ const indexRadioChange=(flag: boolean)=>{
 </script>
 
 <template>
-  <el-drawer v-model="settingStore.settingShow" direction="rtl" size="360px">
+  <el-drawer v-model="settingStore.settingShow" direction="ltr" size="360px">
     <template #header>
       <h2 class="setting-title">设置</h2>
     </template>

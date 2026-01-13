@@ -1,39 +1,39 @@
 <template>
     <div v-if="!show_history_graph">
-        <el-tooltip class="box-item" effect="dark" content="基于配置参数创建新的策略！">
+        <el-tooltip class="box-item" effect="dark" content="基于配置参数创建新的模型！">
             <el-button class="!ml-0" plain
                 @click="show_task_vue = true; update_task = false; clicked_task_info = {}; taskType = 1;" size=""
                 style="margin-top: 4px; margin-left: 4px; z-index:1051;position: fixed;" :icon="Plus" />
         </el-tooltip>
-        <el-tooltip class="box-item" effect="dark" content="创建shell策略！">
+        <el-tooltip class="box-item" effect="dark" content="创建shell模型！">
             <el-button class="!ml-0" plain
                 @click="show_task_vue = true; update_task = false; clicked_task_info = {}; taskType = 5;" size=""
                 style="margin-top: 4px; margin-left: 54px; z-index:1051;position: fixed;" :icon="DArrowRight" />
         </el-tooltip>
-        <el-tooltip class="box-item" effect="dark" content="创建确权溯源数据库-SQL策略！">
+        <el-tooltip class="box-item" effect="dark" content="创建确权溯源数据库-模型！">
             <el-button class="!ml-0" plain
                 @click="show_task_vue = true; update_task = false; clicked_task_info = {}; taskType = 7;"
                 style="width: 46px;margin-top: 4px; margin-left: 104px; z-index:1051;position: fixed;">
                 <sqlIcon src="/images/sql.png" />
             </el-button>
         </el-tooltip>
-        <el-tooltip class="box-item" effect="dark" content="查询修改监控策略详情！">
+        <el-tooltip class="box-item" effect="dark" content="查询修改监控模型详情！">
             <el-button class="!ml-0" plain @click="show_pipeline_info" size=""
                 style="margin-top: 4px; margin-left: 154px; z-index:1051;position: fixed;" :icon="View" />
         </el-tooltip>
-        <el-tooltip class="box-item" effect="dark" content="执行监控策略！">
+        <el-tooltip class="box-item" effect="dark" content="执行监控模型！">
             <el-button class="!ml-0" plain @click="run_tasks = true" size=""
                 style="margin-top: 4px; margin-left: 204px; z-index:1051;position: fixed;" :icon="CaretRight" />
         </el-tooltip>
-        <el-tooltip class="box-item" effect="dark" content="删除监控策略！">
+        <el-tooltip class="box-item" effect="dark" content="删除监控模型！">
             <el-button class="!ml-0" plain @click="DeletePipeline" size=""
                 style="margin-top: 4px; margin-left: 254px; z-index:1051;position: fixed;" :icon="DeleteFilled" />
         </el-tooltip>
-        <el-tooltip class="box-item" effect="dark" content="查看监控策略执行状态列表！">
+        <el-tooltip class="box-item" effect="dark" content="查看监控模型执行状态列表！">
             <el-button class="!ml-0" plain @click="show_task_status = true" size=""
                 style="margin-top: 4px; margin-left: 304px; z-index:1051;position: fixed;" :icon="DataAnalysis" />
         </el-tooltip>
-        <el-tooltip class="box-item" effect="dark" content="重新自动布局,生成新的监控策略图！">
+        <el-tooltip class="box-item" effect="dark" content="重新自动布局,生成新的监控模型图！">
             <el-button class="!ml-0" plain @click="relayout" size=""
                 style="margin-top: 4px; margin-left: 354px; z-index:1051;position: fixed;" :icon="PictureFilled" />
         </el-tooltip>
@@ -41,15 +41,15 @@
             <el-button class="!ml-0" plain @click="export_graph = true" size=""
                 style="margin-top: 4px; margin-left: 404px; z-index:1051;position: fixed;" :icon="Download" />
         </el-tooltip>
-        <el-tooltip v-if="!isOnline" class="box-item" effect="dark" content="上线监控策略，按照执行周期自动执行！">
+        <el-tooltip v-if="!isOnline" class="box-item" effect="dark" content="上线监控模型，按照执行周期自动执行！">
             <el-button class="!ml-0" plain @click="callOnline" size=""
                 style="margin-top: 4px; margin-left: 454px; z-index:1051;position: fixed;" :icon="VideoPause" />
         </el-tooltip>
-        <el-tooltip v-else class="box-item" effect="dark" content="监控策略当前已上线，点击下线监控策略，停止自动执行！">
+        <el-tooltip v-else class="box-item" effect="dark" content="监控模型当前已上线，点击下线监控模型，停止自动执行！">
             <el-button type="success" class="!ml-0" plain @click="callOffline" size=""
                 style="margin-top: 4px; margin-left: 454px; z-index:1051;position: fixed;" :icon="VideoPlay" />
         </el-tooltip>
-        <!-- <el-tooltip class="box-item" effect="dark" content="通过AI自动生成用户需要的监控策略">
+        <!-- <el-tooltip class="box-item" effect="dark" content="通过AI自动生成用户需要的监控模型">
             <el-button class="!ml-0" plain @click="ai_generate = true" size=""
                 style="margin-top: 4px; margin-left: 504px; z-index:1051;position: fixed;" :icon="aiIcon" />
         </el-tooltip> -->
@@ -82,28 +82,28 @@
         <el-menu default-active="2" class="el-menu-vertical-demo" style="border: 0px">
             <el-menu-item index="2">
                 <el-icon><icon-menu /></el-icon>
-                <span>修改策略</span>
+                <span>修改模型</span>
             </el-menu-item>
             <el-menu-item index="1" @click="RemoveNode">
                 <el-icon>
                     <Delete />
                 </el-icon>
-                <span>删除策略</span>
+                <span>删除模型</span>
             </el-menu-item>
         </el-menu>
     </el-popover>
-    <el-drawer v-model="show_task_vue" :direction="drawer_direction" size="50%" :destroy-on-close="true">
+    <el-drawer v-model="show_task_vue" :direction="drawer_direction" size="100%" :destroy-on-close="true">
         <template #header>
-            <h4 v-if="!update_task" style="width: 100px">创建策略</h4>
-            <h4 v-else>修改策略</h4>
+            <h4 v-if="!update_task" style="width: 100px">创建模型</h4>
+            <h4 v-else>修改模型</h4>
         </template>
         <template #default>
             <CreateNode :pipeline_id="pipeline_id" :task_info="clicked_task_info" :task_type="taskType", :update_task="update_task" />
         </template>
     </el-drawer>
-    <el-drawer v-model="run_tasks" :direction="drawer_direction" size="50%" :destroy-on-close="true">
+    <el-drawer v-model="run_tasks" :direction="drawer_direction" size="100%" :destroy-on-close="true">
         <template #header>
-            <h4 tyle="width: 100px">执行策略</h4>
+            <h4 tyle="width: 100px">执行模型</h4>
         </template>
         <template #default>
             <RunPipeline :all_tasks="allTasks" />
@@ -137,7 +137,7 @@
                 :task_name="task_name" :page_size="pageSize2" :is_graph_task_list="true" />
         </template>
     </el-drawer>
-    <el-drawer v-model="export_graph" :direction="drawer_direction" size="30%" :destroy-on-close="true">
+    <el-drawer v-model="export_graph" :direction="drawer_direction" size="100%" :destroy-on-close="true">
         <template #header>
             <h4>导出图片</h4>
         </template>
@@ -146,9 +146,9 @@
                 :font_color="export_font_color" />
         </template>
     </el-drawer>
-    <el-drawer v-model="ai_generate" :direction="drawer_direction" size="30%" :destroy-on-close="true">
+    <el-drawer v-model="ai_generate" :direction="drawer_direction" size="100%" :destroy-on-close="true">
         <template #header>
-            <h4>AI自动生成监控策略图
+            <h4>AI自动生成监控模型图
             </h4>
         </template>
         <template #default>
@@ -226,7 +226,7 @@ import { useEventListener } from '@vueuse/core'
 const auto_refresh_task = ref(false)
 
 const show_task_vue = ref(false)
-const drawer_direction = ref<DrawerProps['direction']>('rtl')
+const drawer_direction = ref<DrawerProps['direction']>('ltr')
 const popoverVisible = ref(false);
 const menu_click_node = ref(null);
 const graph_locked = ref(false);
@@ -392,9 +392,9 @@ onUnmounted(() => {
 
 const callOnline = () => {
     ElMessageBox({
-        title: '上线监控策略',
+        title: '上线监控模型',
         message: h('p', null, [
-            h('span', null, '确定要上线监控策略名？'),
+            h('span', null, '确定要上线监控模型名？'),
         ]),
         showCancelButton: true,
         confirmButtonText: '确认',
@@ -438,9 +438,9 @@ const callOnline = () => {
 
 const callOffline = () => {
     ElMessageBox({
-        title: '下线监控策略',
+        title: '下线监控模型',
         message: h('p', null, [
-            h('span', null, '确定要下线监控策略名？'),
+            h('span', null, '确定要下线监控模型名？'),
         ]),
         showCancelButton: true,
         confirmButtonText: '确认',
@@ -527,7 +527,7 @@ const AiAddNode = (index) => {
     for (let i = 0; i < ai_nodes.value.length; i++) {
         var image_path = '/images/python.png'
         if (ai_nodes.value[i]["proc_type"] == 5) {
-            image_path = '/images/shell.png'
+            image_path = '/images/.png'
         }
 
         if (ai_nodes.value[i]["proc_type"] == 7) {
@@ -750,7 +750,7 @@ const initGraph = () => {
     })
     // #endregion
 
-    // #region 使用模板策略
+    // #region 使用模板模型
     graph
         .use(
             new Transform({
@@ -779,7 +779,7 @@ const initGraph = () => {
         collapsable: false,
         groups: [
             {
-                title: '基础监控策略图',
+                title: '基础监控模型图',
                 name: 'group1',
                 // },
                 // {
@@ -859,16 +859,16 @@ graph.unbindKey('backspace')  // 顺便把 Backspace 也干掉
                 .post('/pipeline/delete_task/' + pipeline_id.value + '/', qs.stringify(params))
                 .then(response => {
                     if (response.status != 200 || response.data.status != 0) {
-                        ElMessage.warning("删除策略失败：" + response.data.info)
+                        ElMessage.warning("删除模型失败：" + response.data.info)
                     } else {
                         console.log(response.data)
                         delete_node(selected.id)
                         show_task_vue.value = false
-                        ElMessage.success("删除策略成功！")
+                        ElMessage.success("删除模型成功！")
                     }
                 })
                 .catch(error => {
-                    ElMessage.error("创建策略失败：" + error)
+                    ElMessage.error("创建模型失败：" + error)
                     console.log(error)
                 })
         })
@@ -894,7 +894,7 @@ graph.unbindKey('backspace')  // 顺便把 Backspace 也干掉
                 }))
                 .then(response => {
                     if (response.status != 200 || response.data.status != 0) {
-                        ElMessage.warning("拷贝策略失败：" + response.data.msg)
+                        ElMessage.warning("拷贝模型失败：" + response.data.msg)
                     } else {
                         var task_info = {
                             "id": response.data.data.id,
@@ -905,11 +905,11 @@ graph.unbindKey('backspace')  // 顺便把 Backspace 也干掉
                         }
                         
                         add_new_task(task_info);
-                        ElMessage.success("拷贝策略成功！")
+                        ElMessage.success("拷贝模型成功！")
                     }
                 })
                 .catch(error => {
-                    ElMessage.error("创建策略失败：" + error)
+                    ElMessage.error("创建模型失败：" + error)
                     console.log(error)
                 })
         })
@@ -1322,7 +1322,7 @@ const update_graph = (data) => {
 
             var image_path = '/images/python.png'
             if (data["task_list"][i]["proc_type"] == 5) {
-                image_path = '/images/shell.png'
+                image_path = '/images/.png'
             }
 
             if (data["task_list"][i]["proc_type"] == 7) {
@@ -1517,7 +1517,7 @@ function add_new_task(task_info) {
     console.log("add new task: ", task_info)
     var image_path = '/images/python.png'
     if (task_info["proc_type"] == 5) {
-        image_path = '/images/shell.png'
+        image_path = '/images/.png'
     }
 
     if (task_info["proc_type"] == 6) {
@@ -1696,7 +1696,7 @@ const initLoadHistoryGraph = async (task_info) => {
                         graph_data["task_list"].push({
                             "id": task.task_id,
                             "proc_type": task.proc_type,
-                            "name": "监控策略名：" + task.pl_name + "\n策略名：" + task.task_name + "\n负责人：" + managers + "\n\n策略描述：" + task.task_desc,
+                            "name": "监控模型名：" + task.pl_name + "\n模型名：" + task.task_name + "\n负责人：" + managers + "\n\n模型描述：" + task.task_desc,
                             "description": '',
                         })
 
@@ -1905,7 +1905,7 @@ const handleCurrentChange = (val: number) => {
 }
 
 ::v-deep .my-icon-kucun {
-    background: '/images/shell.png';
+    background: '/images/.png';
     font-size: 12px;
     background-size: cover;
 }

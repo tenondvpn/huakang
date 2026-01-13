@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <el-tooltip class="box-item" effect="dark" content="点击创建新的策略！">
+        <el-tooltip class="box-item" effect="dark" content="点击创建新的模型！">
             <el-button class="!ml-0" plain @click="customDraggingVisible = true" size="small" type="primary"
                 style="margin-top: 4px; margin-left: 4px; z-index:1051;position: fixed;" :icon="Plus" />
         </el-tooltip>
@@ -33,7 +33,7 @@
         </div>
 
         <el-dialog v-model="customDraggingVisible" class="custom-dragging-style" title="" width="500" draggable>
-            <span>添加新的策略</span>
+            <span>添加新的模型</span>
             <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="customDraggingVisible = false">取消</el-button>
@@ -88,22 +88,22 @@ const sizeOptions = ['large', 'default', 'small']
 
 const options = [
     {
-        label: '监控策略图',
+        label: '监控模型图',
         value: 'pipeline',
         icon: Picture,
     },
     {
-        label: '修改监控策略',
+        label: '修改监控模型',
         value: 'edit',
         icon: Edit,
     },
     {
-        label: '执行监控策略',
+        label: '执行监控模型',
         value: 'run',
         icon: VideoPlay,
     },
     {
-        label: '监控策略详情',
+        label: '监控模型详情',
         value: 'info',
         icon: WarningFilled,
     },
@@ -113,7 +113,7 @@ const options = [
         icon: List,
     },
     {
-        label: '删除监控策略',
+        label: '删除监控模型',
         value: 'delete',
         icon: Delete,
     },
@@ -185,7 +185,7 @@ const initGraph = () => {
     })
     // #endregion
 
-    // #region 使用模板策略
+    // #region 使用模板模型
     graph
         .use(
             new Transform({
@@ -214,7 +214,7 @@ const initGraph = () => {
         collapsable: false,
         groups: [
             {
-                title: '基础监控策略图',
+                title: '基础监控模型图',
                 name: 'group1',
                 // },
                 // {

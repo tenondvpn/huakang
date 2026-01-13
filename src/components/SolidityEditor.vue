@@ -6,7 +6,7 @@
     </div>
 
     <el-dialog v-model="dialogFormVisible" :title=dialogTitle width="500">
-        <el-form ref="formRef" :model="form" style="margin-top: 10px;" label-width="0px" class="dynamic-form-container">
+        <el-form ref="formRef" :model="form" style="max-width: 600px;width: 800px; margin: 0 auto;" label-width="0px" class="dynamic-form-container">
             <el-form-item v-if="not_constructer">
                 <el-row :gutter="37">
                     <el-col :span="7" style="padding: 0px; width: 307px; padding-left: 18px;">

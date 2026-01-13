@@ -1,5 +1,5 @@
 <template>
-    <el-form ref="formRef" :model="dynamicForm" :rules="rules" label-width="0px" class="dynamic-form-container">
+    <el-form ref="formRef" :model="dynamicForm" style="max-width: 600px;width: 800px; margin: 0 auto;" :rules="rules" label-width="0px" class="dynamic-form-container">
         <el-form-item style="margin-top: 10px;" v-for="(item, index) in dynamicForm.items" :key="index"
             :prop="'items.' + index + '.value'" :rules="{
                 required: false,
@@ -7,11 +7,11 @@
                 trigger: 'blur',
             }">
             <el-row :gutter="37">
-                <el-select filterable v-model="item.pipeline" value-key="id" placeholder="请选择监控策略"
+                <el-select filterable v-model="item.pipeline" value-key="id" placeholder="请选择监控模型"
                     @change="(val) => handleChange(val, index)" style="width: 220px;margin-left: 18.5px; ">
                     <el-option v-for="titem in pipeline_options" :key="titem.id" :label="titem.name" :value="titem" />
                 </el-select>
-                <el-select filterable v-model="item.task" value-key="id" placeholder="请选择策略"
+                <el-select filterable v-model="item.task" value-key="id" placeholder="请选择模型"
                     style="width: 220px;margin-left: 2px;margin-right: 13px;">
                     <el-option v-for="titem in task_options[index]" :key="titem.id" :label="titem.name"
                         :value="titem" />

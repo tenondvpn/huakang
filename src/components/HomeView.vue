@@ -2,8 +2,8 @@
   <el-empty style="margin-top: 100px;">
     <el-text class="mx-1" type="primary">当前项目路径：{{ project_path }}</el-text>
     <el-divider border-style="dashed" />
-    <el-button v-if="is_processor" size="large" type="primary" :icon="Plus" @click="crate_pipeline">创建模板策略</el-button>
-    <el-button v-else size="large" type="primary" :icon="Plus" @click="crate_pipeline">创建监控策略</el-button>
+    <el-button v-if="is_processor" size="large" type="primary" :icon="Plus" @click="crate_pipeline">创建模板指令</el-button>
+    <el-button v-else size="large" type="primary" :icon="Plus" @click="crate_pipeline">创建监控指令</el-button>
   </el-empty>
 </template>
 

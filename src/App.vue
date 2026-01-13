@@ -1,4 +1,5 @@
 <template>
+
     <el-menu :default-active="activeIndex" mode="horizontal" style="height: 44px;" :ellipsis="false"
         @select="handleSelect">
         <el-menu-item index="0">
@@ -6,14 +7,14 @@
             <!-- <img v-if="isDark" style="width: 100px" src="./images/shardora.png" alt="Element logo" />
             <img v-else style="width: 100px" src="./images/blue_shardora.png" alt="Element logo" /> -->
         </el-menu-item>
-        <el-tooltip class="box-item" content="进入监控策略管理页面，管理自己的监控策略！">
-            <el-menu-item v-if="show_menu" index="1" @click="toPipeline">策略</el-menu-item>
+        <el-tooltip class="box-item" content="进入监控模型管理页面，管理自己的监控模型！">
+            <el-menu-item v-if="show_menu" index="1" @click="toPipeline">模型</el-menu-item>
         </el-tooltip>
-        <el-tooltip class="box-item" content="管理模板策略！">
+        <el-tooltip class="box-item" content="管理模板指令！">
             <el-menu-item v-if="show_menu" index="3" @click="toProcessor">指令集</el-menu-item>
         </el-tooltip>
-        <el-tooltip class="box-item" content="管理所有的计算策略！">
-            <el-menu-item v-if="show_menu" index="2" @click="toRuning">监控结果</el-menu-item>
+        <el-tooltip class="box-item" content="管理所有的计算预警！">
+            <el-menu-item v-if="show_menu" index="2" @click="toRuning">预警结果</el-menu-item>
         </el-tooltip>
         <el-menu-item index="5" style="margin-top:0px" class="no-underline">
             <el-tooltip class="box-item" content="切换背景色！">
@@ -36,7 +37,9 @@
             </template>
         </el-dropdown> -->
     </el-menu>
+    <el-config-provider :locale="zhCn">
     <router-view  ></router-view>
+  </el-config-provider>
 </template>
 <script lang="ts">
 export default {

@@ -7,13 +7,13 @@
         <el-divider style="float: right;" />
 
         <el-table border :data="tableData" min-height="400" height="100%" style="width: 100%">
-            <el-table-column label="监控策略名称" header-align="center" align="center">
+            <el-table-column label="监控模型名称" header-align="center" align="center">
                 <template #default="scope">
                     <el-link type="primary" @click="showPipeline(scope.row)">{{ scope.row.pipeline_name }}</el-link>
                 </template>
             </el-table-column>
 
-            <el-table-column label="策略名称" header-align="center" align="center">
+            <el-table-column label="模型名称" header-align="center" align="center">
                 <template #default="scope">
                     <el-link type="primary" @click="showTask(scope.row)">{{ scope.row.task_name }}</el-link>
                 </template>
@@ -35,20 +35,20 @@
             </template>
         </el-table>
     </el-scrollbar>
-    <el-drawer v-model="createPipeline" :direction="drawer_direction" size="50%" :destroy-on-close="true"
+    <el-drawer v-model="createPipeline" :direction="drawer_direction" size="100%" :destroy-on-close="true"
         :append-to-body="true">
         <template #header>
-            <h4>更新监控策略信息</h4>
+            <h4>更新监控模型信息</h4>
         </template>
         <template #default>
             <CreatePipelineVue :pipeline_info="pipeline_info" />
         </template>
     </el-drawer>
 
-    <el-drawer v-model="show_task_vue" :direction="drawer_direction" size="50%" :destroy-on-close="true"
+    <el-drawer v-model="show_task_vue" :direction="drawer_direction" size="100%" :destroy-on-close="true"
         :append-to-body="true">
         <template #header>
-            <h4 style="width: 100px">更新策略配置</h4>
+            <h4 style="width: 100px">更新模型配置</h4>
         </template>
         <template #default>
             <CreateNode :pipeline_id="pipeline_id" :task_info="clicked_task_info" :task_type="taskType" />
@@ -74,7 +74,7 @@ const show_upload_file = ref(false)
 const show_upload_git = ref(false)
 var tableData = ref([])
 const nowVersionList = ref<Set<String>>()
-const drawer_direction = ref<DrawerProps['direction']>('rtl')
+const drawer_direction = ref<DrawerProps['direction']>('ltr')
 const createPipeline = ref(false)
 const show_task_vue = ref(false)
 const pipeline_id = ref(0)
@@ -194,11 +194,11 @@ const update_processor = (proc_info) => {
     }
 
     if (proc_info.proc_detail.processor.type == 5) {
-        procType.value = 'shell'
+        procType.value = ''
     } else if (proc_info.proc_detail.processor.type == 6) {
         procType.value = 'docker'
     } else if (proc_info.proc_detail.processor.type == 7) {
-        procType.value = 'ClickhouseSQL'
+        procType.value = 'Clickhouse'
     }
 
     console.log("version list processor info coming: ", proc_info)

@@ -1,6 +1,6 @@
 <template>
-    <el-form ref="ruleFormRef" style="max-width: 600px" :model="ruleForm" :rules="rules" label-width="auto"
-        label-position="left">
+    <el-form ref="ruleFormRef" style="max-width: 600px;width: 800px; margin: 0 auto;" :model="ruleForm" :rules="rules" label-width="auto"
+        label-position="center">
         <el-form-item prop="project" required>
             <el-col :span="24">
                 <el-form-item prop="project" label="选择项目" required>
@@ -10,7 +10,7 @@
             </el-col>
         </el-form-item>
 
-        <el-form-item label="监控策略名称" prop="pipeline_name">
+        <el-form-item label="监控模型名称" prop="pipeline_name">
             <el-input v-model="ruleForm.pipeline_name" />
         </el-form-item>
 
@@ -102,7 +102,7 @@
         </el-form-item>
 
         <el-form-item label="描述" prop="desc" required>
-            <el-input v-model="ruleForm.desc" type="textarea" placeholder="请输入策略流描述信息" />
+            <el-input v-model="ruleForm.desc" type="textarea" placeholder="请输入模型流描述信息" />
         </el-form-item>
 
         <el-divider border-style="dashed" />
@@ -168,10 +168,10 @@ const ruleForm = reactive<RuleForm>({
 
 const rules = reactive<FormRules<RuleForm>>({
     project: [
-        { required: true, message: '请选择监控策略所在项目', trigger: 'blur' },
+        { required: true, message: '请选择监控模型所在项目', trigger: 'blur' },
     ],
     pipeline_name: [
-        { required: true, message: '请输入监控策略名称', trigger: 'blur' },
+        { required: true, message: '请输入监控模型名称', trigger: 'blur' },
         { min: 1, max: 64, message: '长度不超过64个字符。', trigger: 'blur' },
     ],
     ct_time: [
@@ -198,7 +198,7 @@ const rules = reactive<FormRules<RuleForm>>({
     timeout: [
         {
             required: true,
-            message: '请设置监控策略删除超时时间',
+            message: '请设置监控模型删除超时时间',
             trigger: 'change',
         },
     ],
@@ -212,7 +212,7 @@ const rules = reactive<FormRules<RuleForm>>({
     desc: [
         {
             required: true,
-            message: '请输入监控策略描述',
+            message: '请输入监控模型描述',
             trigger: 'change',
         },
     ],
@@ -268,25 +268,25 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                     .post('/pipeline/update/' + ruleForm.pipeline_id + "/", qs.stringify(params))
                     .then(response => {
                         if (response.data.status != 0) {
-                            ElMessage.warning("修改监控策略失败: " + response.data.msg)
+                            ElMessage.warning("修改监控模型失败: " + response.data.msg)
                         } else {
                             var project_id = ruleForm.project
-                            ElMessage.success("修改监控策略成功！")
+                            ElMessage.success("修改监控模型成功！")
                             emitter.emit("success_update_pipeline", '')
                         }
                     })
                     .catch(error => {
-                        ElMessage.error("修改监控策略失败: " + error)
+                        ElMessage.error("修改监控模型失败: " + error)
                     })
             } else {
                 axios
                     .post('/pipeline/create/', qs.stringify(params))
                     .then(response => {
                         if (response.data.status != 0) {
-                            ElMessage.error("创建监控策略失败: " + response.data.msg)
+                            ElMessage.error("创建监控模型失败: " + response.data.msg)
                         } else {
                             var project_id = ruleForm.project
-                            ElMessage.success("创建监控策略成功！")
+                            ElMessage.success("创建监控模型成功！")
                             params["pid"] = project_id
                             params["text"] = ruleForm.pipeline_name
                             params["is_project"] = false
@@ -296,7 +296,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                         }
                     })
                     .catch(error => {
-                        ElMessage.error("创建监控策略失败: " + error)
+                        ElMessage.error("创建监控模型失败: " + error)
                     })
             }
         } else {
@@ -334,7 +334,7 @@ const getProjectTree = async () => {
             treeData.value = response.data
         })
         .catch(error => {
-            ElMessage.error("创建监控策略失败: " + error)
+            ElMessage.error("创建监控模型失败: " + error)
         })
 }
 

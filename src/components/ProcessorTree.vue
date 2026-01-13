@@ -1,5 +1,5 @@
 <template>
-    <el-input class="esponsive-input" v-model="query" placeholder="Please enter keyword" @input="onQueryChanged"
+    <el-input class="esponsive-input" v-model="query" placeholder="输入搜索词" @input="onQueryChanged"
         :prefix-icon="Search" />
 
     <div :class="{ appContainerDark: isDark, appContainerLight: !isDark }" :style="`min-height: ${dynamicTreeHeight}px;`">
@@ -22,7 +22,7 @@
                         </div>
                         <div v-else style="margin-top: 0px;">
                             <el-icon :size="16" style="padding:4px" color="var(--el-color-primary)">
-                                <SqlIcon v-if="node.data.type == 5" src="/images/shell.png" />
+                                <SqlIcon v-if="node.data.type == 5" src="/images/.png" />
                                 <SqlIcon v-else-if="node.data.type == 6" src="/images/docker.png" />
                                 <SqlIcon v-else-if="node.data.type == 7" src="/images/ck.png" />
                                 <SqlIcon v-else src="/images/python.png" />
@@ -36,16 +36,16 @@
                                         <el-button type="info" size="small" :icon="Folder"
                                             @click="callCreateProject(node)" />
                                     </el-tooltip>
-                                    <el-tooltip class="box-item" effect="dark" content="点击新建模板策略！">
+                                    <el-tooltip class="box-item" effect="dark" content="点击新建模板指令！">
                                         <el-button type="success" size="small" :icon="Plus"
                                             @click="updateProcessorClicked(node)" />
                                     </el-tooltip>
-                                    <el-tooltip v-if="node.label != '华康电能'" class="box-item" effect="dark"
+                                    <el-tooltip v-if="node.label != '华康电量'" class="box-item" effect="dark"
                                         content="编辑分类">
                                         <el-button type="primary" size="small" :icon="Edit"
                                             @click="callUpdateProject(node)" />
                                     </el-tooltip>
-                                    <el-tooltip v-if="node.label != '华康电能'" class="box-item" effect="dark"
+                                    <el-tooltip v-if="node.label != '华康电量'" class="box-item" effect="dark"
                                         content="删除分类">
                                         <el-button type="warning" size="small" :icon="Delete"
                                             @click="deleteProject(node)" />
@@ -56,11 +56,11 @@
                         <div v-else>
                             <span class="node-buttons">
                                 <el-button-group class="ml-4">
-                                    <el-tooltip class="box-item" effect="dark" content="点击编辑模板策略信息！">
+                                    <el-tooltip class="box-item" effect="dark" content="点击编辑模板指令信息！">
                                         <el-button type="primary" @click="updateProcessorClicked(node)" size="small"
                                             :icon="Edit" />
                                     </el-tooltip>
-                                    <el-tooltip class="box-item" effect="dark" content="点击删除模板策略！">
+                                    <el-tooltip class="box-item" effect="dark" content="点击删除模板指令！">
                                         <el-button type="warning" size="small" :icon="Delete"
                                             @click="clickDeleteProcessor(node)" />
                                     </el-tooltip>
@@ -73,7 +73,7 @@
         </div>
     </div>
 
-    <el-drawer v-model="createProcessor" :direction="drawer_direction" size="55%" :destroy-on-close="true">
+    <el-drawer v-model="createProcessor" :direction="drawer_direction" size="100%" :destroy-on-close="true">
         <template #header>
             <h4>{{ openProcessorModelTitle }}</h4>
         </template>
@@ -82,7 +82,7 @@
         </template>
     </el-drawer>
 
-    <el-drawer v-model="createProject" :direction="drawer_direction" size="50%" :destroy-on-close="true">
+    <el-drawer v-model="createProject" :direction="drawer_direction" size="100%" :destroy-on-close="true">
         <template #header>
             <h4>创建项目文件夹</h4>
         </template>
@@ -91,7 +91,7 @@
         </template>
     </el-drawer>
 
-    <el-drawer v-model="updateProject" :direction="drawer_direction" size="50%" :destroy-on-close="true">
+    <el-drawer v-model="updateProject" :direction="drawer_direction" size="100%" :destroy-on-close="true">
         <template #header>
             <h4>修改项目文件夹</h4>
         </template>
@@ -120,15 +120,15 @@ import SqlIcon from './sqlIcon.vue';
 import { useEventListener } from '@vueuse/core'
 
 const createProcessor = ref(false)
-const drawer_direction = ref<DrawerProps['direction']>('rtl')
+const drawer_direction = ref<DrawerProps['direction']>('ltr')
 const treeContainerRef = ref(null);
 const treeHeight = ref(0);
 let resizeObserver = null;
 const query = ref('')
 const treeRef = ref()
-const project_path = ref('华康电能')
+const project_path = ref('华康电量')
 const project_id = ref('1')
-const openProcessorModelTitle = ref("创建监控策略")
+const openProcessorModelTitle = ref("创建监控指令")
 const pipeline_detail = ref({})
 const dynamicTreeHeight = ref(10000)
 const selectedProcessorValue = {
@@ -274,7 +274,7 @@ const emitterOn = () => {
     });
 
     emitter.on('click_show_pipeline', (key) => {
-        openProcessorModelTitle.value = "修改监控策略"
+        openProcessorModelTitle.value = "修改监控指令"
         axios
             .post('/pipeline/get_pipeline_detail/', qs.stringify({
                 'pipe_id': key.split("_")[1],
@@ -521,7 +521,7 @@ const handleNodeExpand = async (nodeData, nodeInstance) => {
 }
 
 const updateProcessorClicked = (nodeData) => {
-    openProcessorModelTitle.value = "创建模板策略"
+    openProcessorModelTitle.value = "创建模板指令"
     selectedProcessor.value = structuredClone(selectedProcessorValue);
     console.log("ttttt:", nodeData.key)
     var str_key = "" + nodeData.key
@@ -541,7 +541,7 @@ const updateProcessorClicked = (nodeData) => {
         return;
     }
 
-    openProcessorModelTitle.value = "修改模板策略"
+    openProcessorModelTitle.value = "修改模板指令"
     axios
         .post('/processor/get_processor/', qs.stringify({
             'id': nodeData.key.split("_")[1],
@@ -600,9 +600,9 @@ const handleDelete = (node) => {
 
 const clickDeleteProcessor = (nodeData) => {
     ElMessageBox({
-        title: '删除模板策略',
+        title: '删除模板指令',
         message: h('p', null, [
-            h('span', null, '确定要删除模板策略吗? 模板策略名： '),
+            h('span', null, '确定要删除模板指令吗? 模板指令名： '),
             h('i', { style: 'color: blue' }, nodeData.label),
         ]),
         showCancelButton: true,
@@ -627,7 +627,7 @@ const clickDeleteProcessor = (nodeData) => {
                         done()
                         ElMessage({
                             type: 'danger',
-                            message: "模板策略删除失败：" + error,
+                            message: "模板指令删除失败：" + error,
                         })
                     })
             } else {
@@ -637,7 +637,7 @@ const clickDeleteProcessor = (nodeData) => {
     }).then((action) => {
         ElMessage({
             type: 'success',
-            message: "模板策略删除成功！",
+            message: "模板指令删除成功！",
         })
     })
 }
@@ -674,7 +674,7 @@ const handleNodeClick = (nodeData, nodeInstance) => {
             if (response.data.status != 0) {
                 ElMessage({
                     type: 'danger',
-                    message: "获取模板策略详情失败：" + response.data.msg,
+                    message: "获取模板指令详情失败：" + response.data.msg,
                 })
                 return;
             }
@@ -689,7 +689,7 @@ const handleNodeClick = (nodeData, nodeInstance) => {
         .catch(error => {
             ElMessage({
                 type: 'danger',
-                message: "获取模板策略详情失败：" + error,
+                message: "获取模板指令详情失败：" + error,
             })
         })
 }
@@ -794,6 +794,10 @@ const appendNode = (parentId, item) => {
     }
 
     var label = item.text
+    if (label == "我创建的") {
+        label = "华康电量"
+    }
+    
     if (label == "标准库") {
         label = "公共监控模板"
         return;

@@ -41,16 +41,16 @@
             <el-table-column align="center" label="操作">
                 <template #default="scope">
                     <el-button-group class="ml-4">
-                        <el-tooltip class="box-item" effect="dark" content="点击查看模板策略详情！">
+                        <el-tooltip class="box-item" effect="dark" content="点击查看模板模型详情！">
                             <el-button v-if="scope.row.type == 'zip'" plain type="primary" size="small"
                                 @click="detail(scope.row)" :icon="InfoFilled">
                             </el-button>
                         </el-tooltip>
-                        <el-tooltip class="box-item" effect="dark" content="点击重新上传模板策略版本！">
+                        <el-tooltip class="box-item" effect="dark" content="点击重新上传模板模型版本！">
                             <el-button plain type="primary" size="small" @click="handleEdit(scope.row)" :icon="Edit">
                             </el-button>
                         </el-tooltip>
-                        <el-tooltip class="box-item" effect="dark" content="点击删除模板策略！">
+                        <el-tooltip class="box-item" effect="dark" content="点击删除模板模型！">
                             <el-button plain size="small" type="danger" @click="handleDelete(scope.row)" :icon="Delete">
                             </el-button>
                         </el-tooltip>
@@ -64,7 +64,7 @@
             </template>
         </el-table>
     </el-scrollbar>
-    <el-drawer v-model="show_upload_info" direction="rtl" size="60%" :destroy-on-close="true">
+    <el-drawer v-model="show_upload_info" direction="ltr" size="100%" :destroy-on-close="true">
         <template #header>
             <h4>上传命令
             </h4>
@@ -73,7 +73,7 @@
             <UploadInfo :proc_name="procName" />
         </template>
     </el-drawer>
-    <el-drawer v-model="show_upload_file" direction="rtl" size="50%" :destroy-on-close="true">
+    <el-drawer v-model="show_upload_file" direction="ltr" size="100%" :destroy-on-close="true">
         <template #header>
             <h4>上传ZIP文件夹
             </h4>
@@ -83,7 +83,7 @@
                 :proc_verion="procVersion" />
         </template>
     </el-drawer>
-    <el-drawer v-model="show_upload_git" direction="rtl" size="50%" :destroy-on-close="true">
+    <el-drawer v-model="show_upload_git" direction="ltr" size="100%" :destroy-on-close="true">
         <template #header>
             <h5>使用github地址库
             </h5>
@@ -94,7 +94,7 @@
         </template>
     </el-drawer>
 
-    <el-drawer v-model="show_detail" :direction="drawer_direction" size="80%" :destroy-on-close="true"
+    <el-drawer v-model="show_detail" :direction="drawer_direction" size="100%" :destroy-on-close="true"
         :append-to-body="true">
         <template #header>
             <h4 style="width: 100px"></h4>
@@ -138,7 +138,7 @@ const show_upload_git = ref(false)
 const show_detail = ref(false)
 var tableData = ref([])
 const nowVersionList = ref<Set<String>>()
-const drawer_direction = ref<DrawerProps['direction']>('rtl')
+const drawer_direction = ref<DrawerProps['direction']>('ltr')
 
 const emitterOn = () => {
     emitter.on('success_upload_processor', (data) => {
@@ -185,7 +185,7 @@ const handleDelete = (row) => {
     ElMessageBox({
         title: '删除版本',
         message: h('p', null, [
-            h('span', null, '确定要删除模板策略版本吗? '),
+            h('span', null, '确定要删除模板模型版本吗? '),
         ]),
         showCancelButton: true,
         confirmButtonText: '确认',
@@ -204,7 +204,7 @@ const handleDelete = (row) => {
                         if (response.data.status != 0) {
                             ElMessage({
                                 type: 'danger',
-                                message: "删除模板策略版本失败：" + response.data.msg,
+                                message: "删除模板模型版本失败：" + response.data.msg,
                             })
 
                             done()
@@ -214,7 +214,7 @@ const handleDelete = (row) => {
                         loadAllData()
                         ElMessage({
                             type: 'success',
-                            message: "删除模板策略版本成功！",
+                            message: "删除模板模型版本成功！",
                         })
                         done()
                         instance.confirmButtonLoading = false
@@ -223,7 +223,7 @@ const handleDelete = (row) => {
                         done()
                         ElMessage({
                             type: 'danger',
-                            message: "删除模板策略版本失败：" + error,
+                            message: "删除模板模型版本失败：" + error,
                         })
                     })
             } else {
@@ -286,11 +286,11 @@ const update_processor = (proc_info) => {
     }
 
     if (proc_info.proc_detail.processor.type == 5) {
-        procType.value = 'shell'
+        procType.value = ''
     } else if (proc_info.proc_detail.processor.type == 6) {
         procType.value = 'docker'
     } else if (proc_info.proc_detail.processor.type == 7) {
-        procType.value = 'ClickhouseSQL'
+        procType.value = 'Clickhouse'
     }
 
     console.log("version list processor info coming: ", proc_info)

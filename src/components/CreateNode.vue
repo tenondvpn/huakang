@@ -1,9 +1,9 @@
 <template>
-    <el-form ref="ruleFormRef" style="max-width: 600px" :model="ruleForm" :rules="rules" label-width="auto"
-        label-position="left">
+    <el-form ref="ruleFormRef" style="max-width: 600px;width: 800px; margin: 0 auto;" :model="ruleForm" :rules="rules" label-width="auto"
+        label-position="center">
         <el-form-item v-if="taskType == 1" prop="processor" required>
             <el-col :span="11">
-                <el-form-item prop="processor" label="选择模板策略" required>
+                <el-form-item prop="processor" label="选择模板模型" required>
                     <el-tree-select v-model="ruleForm.processor" lazy :load="load" :props="processor_props" placeholder=""
                         @change="handleSelectionChange" style="width: 240px" :disabled="update_task" />
                 </el-form-item>
@@ -21,17 +21,17 @@
                 </el-form-item>
             </el-col>
             <el-col :span="2">
-                        <el-tooltip class="box-item" effect="dark" content="点击查看模板策略文件列表！">
+                        <el-tooltip class="box-item" effect="dark" content="点击查看模板模型文件列表！">
             <el-button  type="primary" @click="show_detail = true" style="margin-top:-3px;margin-left: 3px;" :icon="Files" plain></el-button>
         </el-tooltip>    
         </el-col>
         </el-form-item>
 
-        <el-form-item label="策略名称" prop="task_name">
+        <el-form-item label="模型名称" prop="task_name">
             <el-input v-model="ruleForm.task_name" />
         </el-form-item>
 
-        <el-form-item label="失败重复次数:" prop="retry_times" style="margin-top: 17px">
+        <!-- <el-form-item label="失败重复次数:" prop="retry_times" style="margin-top: 17px">
             <div style="margin-top: -10px">
                 <el-radio-group v-model="retry_times_radio">
                     <el-radio-button label="&nbsp;&nbsp;&nbsp;&nbsp;不重试&nbsp;&nbsp;&nbsp;" value="1" />
@@ -66,32 +66,31 @@
                 style="width: 223px;margin-right:6px;">
                 <el-option v-for="item in power_options" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
-            <!-- <ChoosePowerNodes ref="choose_power_nodes" /> -->
+        </el-form-item> -->
+        <el-form-item label="模型描述" prop="desc" required>
+            <el-input v-model="ruleForm.desc" type="textarea" placeholder="请输入模型描述信息，DAG图中用于显示！" />
         </el-form-item>
-        <el-form-item label="策略描述" prop="desc" required>
-            <el-input v-model="ruleForm.desc" type="textarea" placeholder="请输入策略描述信息，DAG图中用于显示！" />
-        </el-form-item>
-        <el-form-item v-if="taskType === TaskTypes.TYPE_SHELL" label="shell命令"
-            prop="shell" required>
-            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入shell命令，可以多行！" />
-        </el-form-item>
-
-        <el-form-item v-if="taskType === TaskTypes.TYPE_CLICKHOUSE" label="ck-sql命令"
-            prop="shell" required>
-            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入clickhouse的SQL命令，可以多行！" />
+        <el-form-item v-if="taskType === TaskTypes.TYPE_SHELL" label=""
+            prop="" required>
+            <el-input v-model="ruleForm." type="textarea" :rows="6" placeholder="输入shell命令，可以多行！" />
         </el-form-item>
 
-        <el-form-item v-if="taskType === TaskTypes.TYPE_ODPS" label="odps-sql命令"
-            prop="shell" required>
-            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入odps的SQL命令，可以多行！" />
+        <el-form-item v-if="taskType === TaskTypes.TYPE_CLICKHOUSE" label=""
+            prop="" required>
+            <el-input v-model="ruleForm." type="textarea" :rows="6" placeholder="输入clickhouse的命令，可以多行！" />
+        </el-form-item>
+
+        <el-form-item v-if="taskType === TaskTypes.TYPE_ODPS" label=""
+            prop="" required>
+            <el-input v-model="ruleForm." type="textarea" :rows="6" placeholder="输入odps的命令，可以多行！" />
         </el-form-item>
         <el-divider border-style="dashed" />
 
-        <el-form-item label="策略参数" prop="configs">
+        <el-form-item label="模型参数" prop="configs">
             <CreateNodeConfig ref="config_vue" :show_description="false" />
         </el-form-item>
         <el-divider border-style="dashed" />
-        <el-form-item label="依赖策略" prop="prev_task">
+        <el-form-item label="依赖模型" prop="prev_task" v-show="false" >
             <CreateNodePrevTasks ref="prev_tasks_vue" />
         </el-form-item>
 
@@ -104,7 +103,7 @@
                 创建
             </el-button>
             <el-popconfirm confirm-button-text="确定" cancel-button-text="取消" :icon="InfoFilled" icon-color="#626AEF"
-                title="确定删除策略吗?" @confirm="DeleteTask" @cancel="cancelEvent">
+                title="确定删除模型吗?" @confirm="DeleteTask" @cancel="cancelEvent">
                 <template #reference>
                     <el-button v-if="update_task" style="margin-left: 10px;" type="warning"
                         :icon="Delete">删除</el-button>
@@ -114,7 +113,7 @@
             <el-button @click="resetForm(ruleFormRef)" :icon="RefreshLeft">重置</el-button>
         </el-form-item>
     </el-form>
-        <el-drawer v-model="show_detail" :direction="drawer_direction" size="80%" :destroy-on-close="true"
+        <el-drawer v-model="show_detail" :direction="drawer_direction" size="100%" :destroy-on-close="true"
         :append-to-body="true">
         <template #header>
             <h4 style="width: 100px"></h4>
@@ -157,7 +156,7 @@ import qs from 'qs';
 import { defineProps } from 'vue';
 
 
-const drawer_direction = ref<DrawerProps['direction']>('rtl')
+const drawer_direction = ref<DrawerProps['direction']>('ltr')
 const show_detail = ref(false)
 const procId = ref()
 const power_options = ref([])
@@ -221,7 +220,7 @@ interface RuleForm {
     prev_task: string
     power_tag: string
     desc: string
-    shell: string
+    : string
 }
 
 const ruleFormRef = ref<FormInstance>()
@@ -236,18 +235,18 @@ const ruleForm = reactive<RuleForm>({
     prev_task: "",
     power_tag: "ALL",
     desc: "",
-    shell: "",
+    : "",
 })
 
 const rules = reactive<FormRules<RuleForm>>({
     processor: [
-        { required: true, message: '请选择模板策略', trigger: 'blur' },
+        { required: true, message: '请选择模板模型', trigger: 'blur' },
     ],
     processor_version: [
         { required: true, message: '请选择版本', trigger: 'blur' },
     ],
     task_name: [
-        { required: true, message: '请输入策略名称', trigger: 'blur' },
+        { required: true, message: '请输入模型名称', trigger: 'blur' },
         { min: 1, max: 30, message: '长度不超过30个字符。', trigger: 'blur' },
     ],
     configs: [
@@ -274,7 +273,7 @@ const rules = reactive<FormRules<RuleForm>>({
     timeout: [
         {
             required: true,
-            message: '请设置执行策略超时时间',
+            message: '请设置执行模型超时时间',
             trigger: 'change',
         },
     ],
@@ -295,11 +294,11 @@ const rules = reactive<FormRules<RuleForm>>({
     desc: [
         {
             required: true,
-            message: '请输入策略描述',
+            message: '请输入模型描述',
             trigger: 'change',
         },
     ],
-    shell: [
+    : [
         {
             required: true,
             message: '请输入shell命令',
@@ -322,7 +321,7 @@ onMounted(() => {
     } else if (taskType.value == TaskTypes.TYPE_ODPS) {
         ChangcePowerNodes("odps")
     } else if (taskType.value == TaskTypes.TYPE_SHELL) {
-        ChangcePowerNodes("shell")
+        ChangcePowerNodes("")
     } else if (taskType.value == TaskTypes.TYPE_DOCKER) {
         ChangcePowerNodes("docker")
     } else if (taskType.value == TaskTypes.TYPE_CLICKHOUSE) {
@@ -380,7 +379,7 @@ onMounted(() => {
 
         prev_tasks_vue.value.AddPrevTasks(props.task_info.rely_tasks)
         console.log(ruleForm)
-        ruleForm.shell = props.task_info.processor.template
+        ruleForm. = props.task_info.processor.template
     }
 
     update_task.value = props.update_task
@@ -421,7 +420,7 @@ const changeTaskInfo = () => {
     }
 
     console.log(ruleForm)
-    ruleForm.shell = history.template
+    ruleForm. = history.template
 }
 const handleSelectionChange = (value) => {
     // `value` 参数就是新选中的节点的 value 值
@@ -462,15 +461,15 @@ const DeleteTask = () => {
         .post('/pipeline/delete_task/' + props.pipeline_id + '/', qs.stringify(params))
         .then(response => {
             if (response.status != 200 || response.data.status != 0) {
-                ElMessage.warning("删除策略失败：" + response.data.info)
+                ElMessage.warning("删除模型失败：" + response.data.info)
             } else {
                 console.log(response.data)
                 emitter.emit("delete_task_success", props.task_info.task.id)
-                ElMessage.success("删除策略成功！")
+                ElMessage.success("删除模型成功！")
             }
         })
         .catch(error => {
-            ElMessage.error("创建策略失败：" + error)
+            ElMessage.error("创建模型失败：" + error)
             console.log(error)
         })
 }
@@ -507,7 +506,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     var params = {
         "name": ruleForm.task_name,
         "config": config_str,
-        "template": ruleForm.shell,
+        "template": ruleForm.,
         "retry_count": ruleForm.retry_times,
         "priority": ruleForm.priority,
         "over_time": ruleForm.timeout,
@@ -529,15 +528,15 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                     .post('/pipeline/update_task/' + props.task_info.task.id + '/', qs.stringify(params))
                     .then(response => {
                         if (response.status != 200 || response.data.status != 0) {
-                            ElMessage.warning("修改策略失败：" + response.data.msg)
+                            ElMessage.warning("修改模型失败：" + response.data.msg)
                         } else {
                             console.log(response.data)
                             emitter.emit("update_task_success", response.data.task)
-                            ElMessage.success("修改策略成功！")
+                            ElMessage.success("修改模型成功！")
                         }
                     })
                     .catch(error => {
-                        ElMessage.error("修改策略失败：" + error)
+                        ElMessage.error("修改模型失败：" + error)
                         console.log(error)
                     })
             } else {
@@ -545,15 +544,15 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                     .post('/pipeline/create_task/' + props.pipeline_id + '/', qs.stringify(params))
                     .then(response => {
                         if (response.status != 200 || response.data.status != 0) {
-                            ElMessage.warning("创建策略失败：" + response.data.msg)
+                            ElMessage.warning("创建模型失败：" + response.data.msg)
                         } else {
                             console.log(response.data)
                             emitter.emit("success_create_task", response.data.task)
-                            ElMessage.success("创建策略成功！")
+                            ElMessage.success("创建模型成功！")
                         }
                     })
                     .catch(error => {
-                        ElMessage.error("创建策略失败：" + error)
+                        ElMessage.error("创建模型失败：" + error)
                         console.log(error)
                     })
             }

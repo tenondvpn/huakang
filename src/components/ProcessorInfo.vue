@@ -1,12 +1,12 @@
 <template>
     <el-scrollbar style="height: 90vh">
-        <el-badge class="item" style="float: left;" :value="procType" type="primary">
+        <el-badge class="item" style="float: left;" value="" type="primary">
             <el-text style="font-size: 24px;">{{ procName }}</el-text>
 
         </el-badge>
         <el-button-group class="ml-4" style="float: right;margin-top: 0px;margin-top: 10px;">
-            <el-button plain type="primary" @click="clickDeleteProcessor" :icon="Delete">删除模板策略</el-button>
-            <el-button plain type="primary" @click="clickUpdateProcessor" :icon="Edit">修改模板策略</el-button>
+            <el-button plain type="primary" @click="clickDeleteProcessor" :icon="Delete">删除模板模型</el-button>
+            <el-button plain type="primary" @click="clickUpdateProcessor" :icon="Edit">修改模板模型</el-button>
         </el-button-group>
         <el-divider style="float: right;" />
 
@@ -14,7 +14,7 @@
             <template #extra>
 
             </template>
-            <el-descriptions-item>
+            <!-- <el-descriptions-item>
                 <template #label>
                     <div class="cell-item">
                         <el-icon :style="iconStyle">
@@ -51,17 +51,17 @@
                     </div>
                 </template>
                 <div v-if="isPrivate == 1"><el-tag type="warning" style="margin-left: 3px;">私有</el-tag>
-                    <el-tooltip class="box-item" effect="dark" content="点击开放共享模板策略，所有人可见可用！">
+                    <el-tooltip class="box-item" effect="dark" content="点击开放共享模板模型，所有人可见可用！">
                         <el-button size="small" :icon="Share" circle style="border: 0px;" @click="shareProcessor" />
                     </el-tooltip>
                 </div>
                 <div v-else><el-tag type="warning" style="margin-left: 3px;">已开放</el-tag>
-                    <el-tooltip class="box-item" effect="dark" content="点击回收共享模板策略，其他人不可用！">
+                    <el-tooltip class="box-item" effect="dark" content="点击回收共享模板模型，其他人不可用！">
                         <el-button size="small" :icon="SwitchButton" circle style="border: 0px;"
                             @click="shareProcessor" />
                     </el-tooltip>
                 </div>
-            </el-descriptions-item>
+            </el-descriptions-item> -->
             <el-descriptions-item>
                 <template #label>
                     <div class="cell-item">
@@ -73,7 +73,7 @@
                 </template>
                 <el-text size="">{{ updateTime }}</el-text>
             </el-descriptions-item>
-            <el-descriptions-item>
+            <!-- <el-descriptions-item>
                 <template #label>
                     <div class="cell-item">
                         <el-icon :style="iconStyle">
@@ -83,7 +83,7 @@
                     </div>
                 </template>
                 <el-tag v-for="user in userList" size="" type="success" style="margin-left: 3px;">{{ user }}</el-tag>
-            </el-descriptions-item>
+            </el-descriptions-item> -->
             <el-descriptions-item>
                 <template #label>
                     <div class="cell-item">
@@ -118,9 +118,9 @@
             </template>
         </el-table>
     </el-scrollbar>
-    <el-drawer v-model="share_processor" :direction="drawer_direction" size="50%" :destroy-on-close="true">
+    <el-drawer v-model="share_processor" :direction="drawer_direction" size="100%" :destroy-on-close="true">
         <template #header>
-            <h4 v-if="isPrivate == 1">发布模板策略</h4>
+            <h4 v-if="isPrivate == 1">发布模板模型</h4>
             <h4 v-else>取消共享</h4>
         </template>
         <template #default>
@@ -219,7 +219,7 @@ const toPrivate = () => {
     ElMessageBox({
         title: '取消共享',
         message: h('p', null, [
-            h('span', null, '确定要取消模板策略共享吗?  '),
+            h('span', null, '确定要取消模板模型共享吗?  '),
         ]),
         showCancelButton: true,
         confirmButtonText: '确认',
@@ -235,16 +235,16 @@ const toPrivate = () => {
                     }))
                     .then(response => {
                         if (response.status != 200 || response.data.status != 0) {
-                            ElMessage.warning("取消共享模板策略失败：" + response.data.msg)
+                            ElMessage.warning("取消共享模板模型失败：" + response.data.msg)
                         } else {
                             done()
                             console.log(response.data)
                             isPrivate.value = 1
-                            ElMessage.success("取消共享模板策略成功！")
+                            ElMessage.success("取消共享模板模型成功！")
                         }
                     })
                     .catch(error => {
-                        ElMessage.error("取消共享模板策略失败：" + error)
+                        ElMessage.error("取消共享模板模型失败：" + error)
                         console.log(error)
                     })
             } else {
@@ -285,11 +285,11 @@ const update_processor = (proc_info) => {
     description.value = proc_info.proc_detail.processor.description
     procTypeId.value = proc_info.proc_detail.processor.type
     if (proc_info.proc_detail.processor.type == 5) {
-        procType.value = 'shell'
+        procType.value = ''
     } else if (proc_info.proc_detail.processor.type == 6) {
         procType.value = 'docker'
     } else if (proc_info.proc_detail.processor.type == 7) {
-        procType.value = 'ClickhouseSQL'
+        procType.value = 'Clickhouse'
     }
 
     tableData.value = []
