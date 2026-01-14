@@ -62,7 +62,7 @@
             <!-- <ChoosePowerNodes ref="choose_power_nodes" /> -->
         </el-form-item>
         <el-form-item label="模型描述" prop="desc" required>
-            <el-input v-model="ruleForm.desc" type="textarea" placeholder="请输入模型描述信息，DAG图中用于显示！" />
+            <el-input v-model="ruleForm.desc" type="textarea" placeholder="请输入模型描述信息！" />
         </el-form-item>
         <el-divider border-style="dashed" />
 

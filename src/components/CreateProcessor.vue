@@ -22,18 +22,18 @@
         <el-form-item label="模板指令描述" prop="desc" required>
             <el-input v-model="ruleForm.desc" type="textarea" placeholder="请输入模板指令描述信息！" />
         </el-form-item>
-        <el-form-item v-if="processorType === TaskTypes.TYPE_SHELL" label="shell命令" prop="shell" required>
-            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入shell命令，可以多行！" />
+        <el-form-item v-if="processorType === TaskTypes.TYPE_SHELL" label="命令" prop="shell" required>
+            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入命令，可以多行！" />
         </el-form-item>
 
-        <el-form-item v-if="processorType === TaskTypes.TYPE_CLICKHOUSE" label="ck-sql命令" prop="shell" required>
-            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入clickhouse的SQL命令，可以多行！" />
+        <el-form-item v-if="processorType === TaskTypes.TYPE_CLICKHOUSE" label="命令" prop="shell" required>
+            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入命令，可以多行！" />
         </el-form-item>
 
-        <el-form-item v-if="processorType === TaskTypes.TYPE_ODPS" label="odps-sql命令" prop="shell" required>
-            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入odps的SQL命令，可以多行！" />
+        <el-form-item v-if="processorType === TaskTypes.TYPE_ODPS" label="命令" prop="shell" required>
+            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入命令，可以多行！" />
         </el-form-item>
-        <el-form-item label="模板指令标签" prop="tags" required>
+        <!-- <el-form-item label="模板指令标签" prop="tags" required>
             <el-input-tag v-model="ruleForm.tags" tag-type="primary" :max="3" placeholder="最多设置三个标签">
                 <template #tag="{ value }">
                     <div class="flex items-center">
@@ -44,7 +44,7 @@
                     </div>
                 </template>
             </el-input-tag>
-        </el-form-item>
+        </el-form-item> -->
         <el-divider border-style="dashed" />
 
         <el-form-item label="模板指令参数" prop="configs">
@@ -321,7 +321,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         'principal': selectedUsers.value.toString(),
         'input_config': '',
         'output_config': '',
-        'tag': ruleForm.tags.toString(),
+        'tag': 'huakang',
     }
 
     console.log(params)

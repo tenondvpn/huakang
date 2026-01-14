@@ -104,7 +104,9 @@
         <el-form-item label="描述" prop="desc" required>
             <el-input v-model="ruleForm.desc" type="textarea" placeholder="请输入模型流描述信息" />
         </el-form-item>
-
+        <el-form-item label="是否上线">
+            <el-switch v-model="ruleForm.online" />
+        </el-form-item>
         <el-divider border-style="dashed" />
         <el-form-item>
             <el-button v-if="updatePipeline" type="primary" @click="submitForm(ruleFormRef)">
@@ -151,6 +153,7 @@ interface RuleForm {
     timeout: String
     tags: String
     desc: String
+    online: Boolean
 }
 
 const ruleFormRef = ref<FormInstance>()
@@ -164,6 +167,7 @@ const ruleForm = reactive<RuleForm>({
     timeout: '',
     tags: "",
     desc: "",
+    online: false,
 })
 
 const rules = reactive<FormRules<RuleForm>>({
@@ -216,6 +220,13 @@ const rules = reactive<FormRules<RuleForm>>({
             trigger: 'change',
         },
     ],
+    online: [
+        {
+            required: false,
+            message: '',
+            trigger: 'change',
+        },
+    ],
 })
 
 const submitForm = async (formEl: FormInstance | undefined) => {
@@ -258,6 +269,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         "project_id": project_id,
         "tags": ruleForm.tags.toString(),
         "type": 2,
+        "enable": ruleForm.online,
     }
     console.log(params)
     if (!formEl) return
@@ -378,6 +390,10 @@ onMounted(() => {
         }
         selectedUsers.value = id_list
         ruleForm.users = props.pipeline_info.principal_id_list!
+        ruleForm.online = false;
+        if (props.pipeline_info.enable == 1) {
+            ruleForm.online = true;
+        }
         console.log("init update pipeline:", id_list, ruleForm.users, userOptions.value)
     }
 });

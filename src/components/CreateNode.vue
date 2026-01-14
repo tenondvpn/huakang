@@ -68,21 +68,21 @@
             </el-select>
         </el-form-item> -->
         <el-form-item label="模型描述" prop="desc" required>
-            <el-input v-model="ruleForm.desc" type="textarea" placeholder="请输入模型描述信息，DAG图中用于显示！" />
+            <el-input v-model="ruleForm.desc" type="textarea" placeholder="请输入模型描述信息！" />
         </el-form-item>
         <el-form-item v-if="taskType === TaskTypes.TYPE_SHELL" label=""
             prop="shell" required>
-            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入shell命令，可以多行！" />
+            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入、、命令，可以多行！" />
         </el-form-item>
 
         <el-form-item v-if="taskType === TaskTypes.TYPE_CLICKHOUSE" label=""
             prop="shell" required>
-            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入clickhouse的SQL命令，可以多行！" />
+            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入命令，可以多行！" />
         </el-form-item>
 
         <el-form-item v-if="taskType === TaskTypes.TYPE_ODPS" label=""
             prop="shell" required>
-            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入odps的SQL命令，可以多行！" />
+            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入命令，可以多行！" />
         </el-form-item>
         <el-divider border-style="dashed" />
 
@@ -593,6 +593,7 @@ const load = (node, resolve) => {
     if (node_id == undefined) {
         params = {
             type: 99,
+            id: -1,
         }
     } else {
         params = {

@@ -5,7 +5,7 @@
     <div :class="{ appContainerDark: isDark, appContainerLight: !isDark }" :style="`min-height: ${dynamicTreeHeight}px;`">
         <div class="tree-container" ref="treeContainerRef">
             <el-tree-v2 ref="treeRef" :data="data" :props="props" :height="treeHeight" :filter-method="filterMethod"
-                :expand-on-click-node="false" @node-expand="handleNodeExpand" @node-click="handleNodeClick"
+                :expand-on-click-node="true" @node-expand="handleNodeExpand" @node-click="handleNodeClick"
                 :highlight-current="true" node-key="id">
 
                 <template #default="{ node }">

@@ -53,6 +53,7 @@ type EventTypes = {
   'theme_changed': {},
   'change_search_status': {},
   'change_search_owner': {},
+  'search_with_new_query': {},
 };
 
 const emitter = mitt<EventTypes>();

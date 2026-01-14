@@ -1,5 +1,5 @@
 <template>
-    <el-scrollbar style="height: 90vh">
+    <el-scrollbar style="height: 90vh; margin-top: -30px;margin-left: -10px;">
         <el-badge class="item" style="float: left;" value="" type="primary">
             <el-text style="font-size: 24px;">{{ procName }}</el-text>
 
@@ -8,7 +8,6 @@
             <el-button plain type="primary" @click="clickDeleteProcessor" :icon="Delete">删除模板模型</el-button>
             <el-button plain type="primary" @click="clickUpdateProcessor" :icon="Edit">修改模板模型</el-button>
         </el-button-group>
-        <el-divider style="float: right;" />
 
         <el-descriptions label-width=150 class="margin-top" :column="2" size="large" border>
             <template #extra>
@@ -103,10 +102,6 @@
                 
             </el-descriptions-item>
         </el-descriptions>
-
-        <el-divider />
-
-
         <el-table border :data="tableData" min-height="200" height="100%" style="width: 100%">
             <el-table-column prop="name" label="参数名" width="280" header-align="center" align="left" />
             <el-table-column prop="default" label="参数默认值" width="280" header-align="center" align="left" />
@@ -340,7 +335,7 @@ const iconStyle = computed(() => {
 }
 
 .el-descriptions {
-    margin-top: 20px;
+    margin-top: 0px;
 }
 
 .cell-item {

@@ -585,6 +585,7 @@ const table_margin_top = ref(0);
 const search_owner_type = ref(0);
 const is_graph_task_list_ref = ref(false);
 const user_msg_info = ref("正在获取监控数据....");
+const search_query = ref("");
 
 watch(status_value, (val) => {
   if (val.length === 0) {
@@ -1065,6 +1066,12 @@ onUnmounted(() => {
 });
 
 const emitterOn = () => {
+  emitter.on("search_with_new_query", (query) => {
+    pl_name_search.value = query.pl_name
+    task_name_search.value = query.task_name
+    load_data((curPage.value - 1) * curPageSize.value);
+  });
+
   emitter.on("reload_task_table_data_with_page", (page) => {
     curPage.value = page;
     load_data((curPage.value - 1) * curPageSize.value);
@@ -1174,6 +1181,7 @@ const emitterOn = () => {
 };
 
 const emitterOff = () => {
+  emitter.off("search_with_new_query", null);
   emitter.off("reload_task_table_data_with_page", null);
   emitter.off("reload_task_table_data_with_page_size", null);
   emitter.off("auto_refresh_task_table_data", null);

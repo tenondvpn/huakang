@@ -51,8 +51,20 @@
                     </el-button-group>
 
                 </el-col> -->
-
-                <el-col :span="18">
+                <el-col :span="8" style="float: left;">
+                <el-form :inline="true" :model="formInline" class="demo-form-inline">
+                  <el-form-item label="模型组">
+                    <el-input v-model="formInline.pl_name"  placeholder="请输入需要查询的模型组" clearable />
+                  </el-form-item>
+                  <el-form-item label="模型名">
+                    <el-input v-model="formInline.task_name"  placeholder="请输入需要查询的模型名" clearable />
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="primary" @click="onSubmit" :icon="Search">查询</el-button>
+                  </el-form-item>
+                </el-form>
+                </el-col>
+                <el-col :span="16">
                     <el-pagination style="margin-left: 196px;float:right" v-model:current-page="currentPage2"
                         v-model:page-size="pageSize2" :page-sizes="[5, 50, 100, 200]" background
                         layout="sizes, prev, pager, next" :total="currentTotalSize" />
@@ -94,10 +106,12 @@ import emitter from './EventBus';
 import type { DrawerProps } from 'element-plus'
 import { Refresh } from '@element-plus/icons-vue'
 
-import { User, ShoppingCart, Files,Crop,VideoPlay,Wallet,WarnTriangleFilled, Promotion, TrendCharts,SuccessFilled } from '@element-plus/icons-vue'
+import { User, Search, Files,Crop,VideoPlay,Wallet,WarnTriangleFilled, Promotion, TrendCharts,SuccessFilled } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { reactive } from 'vue'
+
 const auto_refresh_task = ref(false)
 
 const drawer_direction = ref<DrawerProps['direction']>('ltr')
@@ -219,6 +233,15 @@ const getStatistics = () => {
 
 const handleClick = (card) => {
   card.onClick?.()
+}
+
+const formInline = reactive({
+  pl_name: '',
+  task_name: '',
+})
+
+const onSubmit = () => {
+  emitter.emit('search_with_new_query', {"pl_name": formInline.pl_name, "task_name": formInline.task_name})
 }
 
 const handleDocumentClick = (e) => {
