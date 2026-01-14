@@ -5,12 +5,12 @@
                 @click="show_task_vue = true; update_task = false; clicked_task_info = {}; taskType = 1;" size=""
                 style="margin-top: 4px; margin-left: 4px; z-index:1051;position: fixed;" :icon="Plus" />
         </el-tooltip>
-        <el-tooltip class="box-item" effect="dark" content="创建shell模型！">
+        <el-tooltip class="box-item" effect="dark" content="创建模型！">
             <el-button class="!ml-0" plain
                 @click="show_task_vue = true; update_task = false; clicked_task_info = {}; taskType = 5;" size=""
                 style="margin-top: 4px; margin-left: 54px; z-index:1051;position: fixed;" :icon="DArrowRight" />
         </el-tooltip>
-        <el-tooltip class="box-item" effect="dark" content="创建确权溯源数据库-模型！">
+        <el-tooltip class="box-item" effect="dark" content="创建确权溯源数据库模型！">
             <el-button class="!ml-0" plain
                 @click="show_task_vue = true; update_task = false; clicked_task_info = {}; taskType = 7;"
                 style="width: 46px;margin-top: 4px; margin-left: 104px; z-index:1051;position: fixed;">
@@ -113,7 +113,7 @@
         :destroy-on-close="true">
         <template #header>
             <h4 style="width: 60px;">执行状态</h4>
-            <el-tooltip class="box-item" effect="dark" content="手动刷新数据列表！" style="text-align: left;"
+            <!-- <el-tooltip class="box-item" effect="dark" content="手动刷新数据列表！" style="text-align: left;"
                 placement="top-start">
                 <el-button @click="userRefreshData" style="margin-right: 20px;" type="default" size="default"
                     :icon="Refresh" circle />
@@ -127,7 +127,7 @@
             <el-button-group style="margin-right:20px;">
                 <el-button type="primary" :disabled="!choosed_task" @click="batchRun">批量重跑</el-button>
                 <el-button type="primary" :disabled="!choosed_task" @click="batchStop">批量停止</el-button>
-            </el-button-group>
+            </el-button-group> -->
             <el-pagination v-model:current-page="currentPage2" v-model:page-size="pageSize2"
                 :page-sizes="[10, 50, 100, 200]" background layout="sizes, prev, pager, next"
                 :total="currentTotalSize" />
@@ -527,7 +527,7 @@ const AiAddNode = (index) => {
     for (let i = 0; i < ai_nodes.value.length; i++) {
         var image_path = '/images/python.png'
         if (ai_nodes.value[i]["proc_type"] == 5) {
-            image_path = '/images/.png'
+            image_path = '/images/shell.png'
         }
 
         if (ai_nodes.value[i]["proc_type"] == 7) {
@@ -1322,7 +1322,7 @@ const update_graph = (data) => {
 
             var image_path = '/images/python.png'
             if (data["task_list"][i]["proc_type"] == 5) {
-                image_path = '/images/.png'
+                image_path = '/images/shell.png'
             }
 
             if (data["task_list"][i]["proc_type"] == 7) {
@@ -1517,7 +1517,7 @@ function add_new_task(task_info) {
     console.log("add new task: ", task_info)
     var image_path = '/images/python.png'
     if (task_info["proc_type"] == 5) {
-        image_path = '/images/.png'
+        image_path = '/images/shell.png'
     }
 
     if (task_info["proc_type"] == 6) {
@@ -1905,7 +1905,7 @@ const handleCurrentChange = (val: number) => {
 }
 
 ::v-deep .my-icon-kucun {
-    background: '/images/.png';
+    background: '/images/shell.png';
     font-size: 12px;
     background-size: cover;
 }

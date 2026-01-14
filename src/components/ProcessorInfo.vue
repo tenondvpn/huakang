@@ -285,11 +285,11 @@ const update_processor = (proc_info) => {
     description.value = proc_info.proc_detail.processor.description
     procTypeId.value = proc_info.proc_detail.processor.type
     if (proc_info.proc_detail.processor.type == 5) {
-        procType.value = ''
+        procType.value = 'shell'
     } else if (proc_info.proc_detail.processor.type == 6) {
         procType.value = 'docker'
     } else if (proc_info.proc_detail.processor.type == 7) {
-        procType.value = 'Clickhouse'
+        procType.value = 'ClickhouseSQL'
     }
 
     tableData.value = []

@@ -22,7 +22,7 @@
                         </div>
                         <div v-else style="margin-top: 0px;">
                             <el-icon :size="16" style="padding:4px" color="var(--el-color-primary)">
-                                <SqlIcon v-if="node.data.type == 5" src="/images/.png" />
+                                <SqlIcon v-if="node.data.type == 5" src="/images/shell.png" />
                                 <SqlIcon v-else-if="node.data.type == 6" src="/images/docker.png" />
                                 <SqlIcon v-else-if="node.data.type == 7" src="/images/ck.png" />
                                 <SqlIcon v-else src="/images/python.png" />

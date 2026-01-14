@@ -71,18 +71,18 @@
             <el-input v-model="ruleForm.desc" type="textarea" placeholder="请输入模型描述信息，DAG图中用于显示！" />
         </el-form-item>
         <el-form-item v-if="taskType === TaskTypes.TYPE_SHELL" label=""
-            prop="" required>
-            <el-input v-model="ruleForm." type="textarea" :rows="6" placeholder="输入shell命令，可以多行！" />
+            prop="shell" required>
+            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入shell命令，可以多行！" />
         </el-form-item>
 
         <el-form-item v-if="taskType === TaskTypes.TYPE_CLICKHOUSE" label=""
-            prop="" required>
-            <el-input v-model="ruleForm." type="textarea" :rows="6" placeholder="输入clickhouse的命令，可以多行！" />
+            prop="shell" required>
+            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入clickhouse的SQL命令，可以多行！" />
         </el-form-item>
 
         <el-form-item v-if="taskType === TaskTypes.TYPE_ODPS" label=""
-            prop="" required>
-            <el-input v-model="ruleForm." type="textarea" :rows="6" placeholder="输入odps的命令，可以多行！" />
+            prop="shell" required>
+            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入odps的SQL命令，可以多行！" />
         </el-form-item>
         <el-divider border-style="dashed" />
 
@@ -220,7 +220,7 @@ interface RuleForm {
     prev_task: string
     power_tag: string
     desc: string
-    : string
+    shell: string
 }
 
 const ruleFormRef = ref<FormInstance>()
@@ -235,7 +235,7 @@ const ruleForm = reactive<RuleForm>({
     prev_task: "",
     power_tag: "ALL",
     desc: "",
-    : "",
+    shell: "",
 })
 
 const rules = reactive<FormRules<RuleForm>>({
@@ -298,7 +298,7 @@ const rules = reactive<FormRules<RuleForm>>({
             trigger: 'change',
         },
     ],
-    : [
+    shell: [
         {
             required: true,
             message: '请输入shell命令',
@@ -321,7 +321,7 @@ onMounted(() => {
     } else if (taskType.value == TaskTypes.TYPE_ODPS) {
         ChangcePowerNodes("odps")
     } else if (taskType.value == TaskTypes.TYPE_SHELL) {
-        ChangcePowerNodes("")
+        ChangcePowerNodes("shell")
     } else if (taskType.value == TaskTypes.TYPE_DOCKER) {
         ChangcePowerNodes("docker")
     } else if (taskType.value == TaskTypes.TYPE_CLICKHOUSE) {
@@ -379,7 +379,7 @@ onMounted(() => {
 
         prev_tasks_vue.value.AddPrevTasks(props.task_info.rely_tasks)
         console.log(ruleForm)
-        ruleForm. = props.task_info.processor.template
+        ruleForm.shell = props.task_info.processor.template
     }
 
     update_task.value = props.update_task
@@ -420,7 +420,7 @@ const changeTaskInfo = () => {
     }
 
     console.log(ruleForm)
-    ruleForm. = history.template
+    ruleForm.shell = history.template
 }
 const handleSelectionChange = (value) => {
     // `value` 参数就是新选中的节点的 value 值
@@ -506,7 +506,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     var params = {
         "name": ruleForm.task_name,
         "config": config_str,
-        "template": ruleForm.,
+        "template": ruleForm.shell,
         "retry_count": ruleForm.retry_times,
         "priority": ruleForm.priority,
         "over_time": ruleForm.timeout,

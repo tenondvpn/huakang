@@ -22,16 +22,16 @@
         <el-form-item label="模板指令描述" prop="desc" required>
             <el-input v-model="ruleForm.desc" type="textarea" placeholder="请输入模板指令描述信息！" />
         </el-form-item>
-        <el-form-item v-if="processorType === TaskTypes.TYPE_SHELL" label="shell命令" prop="" required>
-            <el-input v-model="ruleForm." type="textarea" :rows="6" placeholder="输入shell命令，可以多行！" />
+        <el-form-item v-if="processorType === TaskTypes.TYPE_SHELL" label="shell命令" prop="shell" required>
+            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入shell命令，可以多行！" />
         </el-form-item>
 
-        <el-form-item v-if="processorType === TaskTypes.TYPE_CLICKHOUSE" label="ck-sql命令" prop="" required>
-            <el-input v-model="ruleForm." type="textarea" :rows="6" placeholder="输入clickhouse的命令，可以多行！" />
+        <el-form-item v-if="processorType === TaskTypes.TYPE_CLICKHOUSE" label="ck-sql命令" prop="shell" required>
+            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入clickhouse的SQL命令，可以多行！" />
         </el-form-item>
 
-        <el-form-item v-if="processorType === TaskTypes.TYPE_ODPS" label="odps-sql命令" prop="" required>
-            <el-input v-model="ruleForm." type="textarea" :rows="6" placeholder="输入odps的命令，可以多行！" />
+        <el-form-item v-if="processorType === TaskTypes.TYPE_ODPS" label="odps-sql命令" prop="shell" required>
+            <el-input v-model="ruleForm.shell" type="textarea" :rows="6" placeholder="输入odps的SQL命令，可以多行！" />
         </el-form-item>
         <el-form-item label="模板指令标签" prop="tags" required>
             <el-input-tag v-model="ruleForm.tags" tag-type="primary" :max="3" placeholder="最多设置三个标签">
@@ -131,7 +131,7 @@ interface RuleForm {
     desc: string
     tags: Array<String>
     users: string
-    : string
+    shell: string
 }
 
 const rules = reactive<FormRules<RuleForm>>({
@@ -173,7 +173,7 @@ const rules = reactive<FormRules<RuleForm>>({
             trigger: 'change',
         },
     ],
-    : [
+    shell: [
         {
             required: true,
             message: '请输入命令！',
@@ -251,7 +251,7 @@ onMounted(() => {
 
         console.log(ruleForm)
         update_processor.value = true
-        ruleForm. = processor.template
+        ruleForm.shell = processor.template
     }
 });
 
@@ -314,7 +314,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     var params = {
         "name": ruleForm.name,
         "config": config_str,
-        'template': ruleForm.,
+        'template': ruleForm.shell,
         "description": ruleForm.desc,
         "type": processorType.value,
         "project_id": tmp_project_id,
@@ -485,7 +485,7 @@ const type_options = ref([
 
     {
         "id": TaskTypes.TYPE_SHELL,
-        "label": "",
+        "label": "shell",
     },
 
     {

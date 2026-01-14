@@ -34,7 +34,7 @@
     <el-card v-model="show_task_status" :direction="drawer_direction" size="100%" :destroy-on-close="true" body-class="my-card-body" >
         <template #header >
             <el-row justify="end" style="height:20px;margin-top: -10px;">
-                <el-col :span="6" style="float: left;">
+                <!-- <el-col :span="6" style="float: left;">
                     <el-tooltip class="box-item" effect="dark" content="手动刷新数据列表！" style="text-align: left;"
                         placement="top-start">
                         <el-button @click="userRefreshData" style="margin-left: 20px;" type="default" size="default"
@@ -50,11 +50,11 @@
                     <el-button type="primary" :disabled="!choosed_task" @click="batchStop">批量停止</el-button>
                     </el-button-group>
 
-                </el-col>
+                </el-col> -->
 
                 <el-col :span="18">
                     <el-pagination style="margin-left: 196px;float:right" v-model:current-page="currentPage2"
-                        v-model:page-size="pageSize2" :page-sizes="[10, 50, 100, 200]" background
+                        v-model:page-size="pageSize2" :page-sizes="[5, 50, 100, 200]" background
                         layout="sizes, prev, pager, next" :total="currentTotalSize" />
                 </el-col>
             </el-row>
@@ -106,7 +106,7 @@ const pipeline_name = ref('');
 const task_name = ref('');
 const show_task_status = ref(false)
 const choosed_task = ref(false)
-const pageSize2 = ref(50)
+const pageSize2 = ref(5)
 const currentPage2 = ref(1)
 const currentTotalSize = ref(0)
 const intervalId = ref(null)
@@ -381,7 +381,7 @@ onUnmounted(() => {
 }
 
 ::v-deep .my-icon-kucun {
-    background: '/images/.png';
+    background: '/images/shell.png';
     font-size: 12px;
     background-size: cover;
 }

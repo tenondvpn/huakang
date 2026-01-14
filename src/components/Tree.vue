@@ -793,12 +793,21 @@ onBeforeUnmount(() => {
 
 
 const onQueryChanged = (query: string) => {
-    if (query == "") {
-        GetProjectsAndPipelines();
-        return;
-    }
+    // if (query == "") {
+    //     for (var i in treeRef.value.store.nodesMap) {
+    //         treeRef.value.store.nodesMap[i].expanded = false;
+    //     }
+    //     return;
+    // }
 
     treeRef.value!.filter(query)
+    if (query == "") {
+        // 遍历内部 store 的 nodesMap 将 expanded 设置为 false
+        treeRef.value?.setExpandedKeys([]); 
+            treeRef.value.expandNode(treeRef.value.getNode(46))
+        
+        // GetProjectsAndPipelines();
+    }
 }
 const filterMethod = (query: string, node: TreeNodeData) =>
     node.label!.includes(query)
