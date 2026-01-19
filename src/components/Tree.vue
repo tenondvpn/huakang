@@ -62,7 +62,7 @@
                                         <el-button plain type="warning" size="small" :icon="Delete"
                                             @click="clickDeletePipeline(node)" />
                                     </el-tooltip>
-                                    <el-tooltip class="box-item" effect="dark" content="点击拷贝流程">
+                                    <el-tooltip class="box-item" effect="dark" content="点击拷贝模型">
                                         <el-button plain type="primary" @click="copyPipelineClicked(node)" size="small"
                                             :icon="CopyDocument" />
                                     </el-tooltip>
@@ -104,7 +104,7 @@
 
     <el-dialog
         v-model="centerDialogVisible"
-        title="拷贝流程"
+        title="拷贝模型"
         width="500"
         destroy-on-close
         center>
@@ -114,7 +114,7 @@
                     <el-tree-select v-model="projectToCopy" :data="treeData"  check-strictly
                                 node-key="id" />
                 </el-form-item>
-                <el-form-item label="新流程名">
+                <el-form-item label="新模型名">
                     <el-input v-model="pipelineNameToCopy" />
                 </el-form-item>
             </el-form>
@@ -385,7 +385,7 @@ const callCopyPipeline = () => {
     if (pipelineNameToCopy.value.trim() == "") {
         ElMessage({
             type: 'warning',
-            message: "请输入新的流程名",
+            message: "请输入新的模型名",
         })
         return;
     }
@@ -402,7 +402,7 @@ const callCopyPipeline = () => {
             if (response.data.status != 0) {
                 ElMessage({
                     type: 'danger',
-                    message: "拷贝流程失败：" + response.data.msg,
+                    message: "拷贝模型失败：" + response.data.msg,
                 })
             } else {
                 centerDialogVisible.value = false
@@ -416,14 +416,14 @@ const callCopyPipeline = () => {
                 appendNode(projectToCopy.value, params)
                 ElMessage({
                     type: 'success',
-                    message: "拷贝流程成功！",
+                    message: "拷贝模型成功！",
                 })
             }
         })
         .catch(error => {
             ElMessage({
                 type: 'danger',
-                message: "拷贝流程失败：" + error,
+                message: "拷贝模型失败：" + error,
             })
         })
 }

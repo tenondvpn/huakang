@@ -331,10 +331,6 @@
               <el-dropdown-item @click.native="runAll(scope.$index, scope.row)"
                 >完全重跑</el-dropdown-item
               >
-              <el-dropdown-item
-                @click.native="runAllNext(scope.$index, scope.row)"
-                >重跑当前及后续</el-dropdown-item
-              >
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -353,10 +349,6 @@
             <el-dropdown-menu>
               <el-dropdown-item @click.native="runAll(scope.$index, scope.row)"
                 >完全重跑</el-dropdown-item
-              >
-              <el-dropdown-item
-                @click.native="runAllNext(scope.$index, scope.row)"
-                >重跑当前及后续</el-dropdown-item
               >
               <el-dropdown-item
                 @click.native="runSingleTask(scope.$index, scope.row)"
@@ -560,6 +552,7 @@ const status_value = ref<CheckboxValueType[]>([
   "3",
 ]);
 const start_time_begin = ref("");
+const start_time_end = ref("");
 const start_time_select = ref(">=");
 const use_time_select = ref(">");
 const use_time_seconds = ref(0);
@@ -980,7 +973,8 @@ const load_data = async (start) => {
         search_pl_name: pl_name_search.value,
         search_task_name: task_name_search.value,
         search_status: status_str,
-        search_start_time: start_time,
+        search_start_time: ">=" + start_time_begin.value,
+        search_end_time: "<=" + start_time_end.value,
         search_use_time: use_time,
         order_name: order_name.value,
         order_type: order_type.value,
@@ -1069,6 +1063,9 @@ const emitterOn = () => {
   emitter.on("search_with_new_query", (query) => {
     pl_name_search.value = query.pl_name
     task_name_search.value = query.task_name
+    status_value.value = query.status
+    start_time_begin.value = query.start_time
+    start_time_end.value = query.end_time
     load_data((curPage.value - 1) * curPageSize.value);
   });
 

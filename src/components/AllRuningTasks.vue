@@ -51,20 +51,71 @@
                     </el-button-group>
 
                 </el-col> -->
-                <el-col :span="8" style="float: left;">
-                <el-form :inline="true" :model="formInline" class="demo-form-inline">
-                  <el-form-item label="模型组">
-                    <el-input v-model="formInline.pl_name"  placeholder="请输入需要查询的模型组" clearable />
-                  </el-form-item>
-                  <el-form-item label="模型名">
-                    <el-input v-model="formInline.task_name"  placeholder="请输入需要查询的模型名" clearable />
-                  </el-form-item>
-                  <el-form-item>
-                    <el-button type="primary" @click="onSubmit" :icon="Search">查询</el-button>
-                  </el-form-item>
-                </el-form>
+                <el-col :span="16" style="float: left;">
+                  <el-form :inline="true" :model="formInline" class="demo-form-inline">
+                    <el-form-item label="">
+                      <el-input v-model="formInline.pl_name" style="width: 150px;"  placeholder="请输入模型组" clearable />
+                    </el-form-item>
+                    <el-form-item label="">
+                      <el-input v-model="formInline.task_name" style="width: 150px;"   placeholder="请输入模型名" clearable />
+                    </el-form-item>
+                    <el-form-item label="">
+                      <el-date-picker
+                        size="small"
+                        style="width: 100px;height: 30px;"
+                        v-model="start_time_begin"
+                        type="datetime"
+                        placeholder="开始时间"
+                        format="YYYY-MM-DD hh:mm"
+                        value-format="YYYY-MM-DD hh:mm:ss"
+                      />
+                    </el-form-item>
+                    <el-form-item label="">
+                      <el-date-picker
+                        size="small"
+                        style="width: 100px;height: 30px;margin-left: -20px;"
+                        v-model="start_time_end"
+                        type="datetime"
+                        placeholder="结束时间"
+                        format="YYYY-MM-DD hh:mm"
+                        value-format="YYYY-MM-DD hh:mm:ss"
+                      />
+                    </el-form-item>
+                    <el-form-item>
+                      <el-select
+                        size="small"
+                        v-model="status_value"
+                        clearable
+                        multiple
+                        collapse-tags
+                        collapse-tags-tooltip
+                        :max-collapse-tags="1"
+                        placeholder="选择状态"
+                        style="width: 100px; float: right; margin-top: 0px;"
+                      >
+                        <template #header>
+                          <el-checkbox
+                            v-model="checkAll"
+                            :indeterminate="indeterminate"
+                          >
+                            所有状态
+                          </el-checkbox>
+                        </template>
+                        <el-option
+                          v-for="item in status_options"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                        />
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item>
+                      <el-button type="primary" @click="onSubmit" :icon="Search">查询</el-button>
+                    </el-form-item>
+                  </el-form>
                 </el-col>
-                <el-col :span="16">
+
+                <el-col :span="8">
                     <el-pagination style="margin-left: 196px;float:right" v-model:current-page="currentPage2"
                         v-model:page-size="pageSize2" :page-sizes="[5, 50, 100, 200]" background
                         layout="sizes, prev, pager, next" :total="currentTotalSize" />
@@ -103,7 +154,7 @@ import {
     CloseBold,
 } from '@element-plus/icons-vue'
 import emitter from './EventBus';
-import type { DrawerProps } from 'element-plus'
+import type { DrawerProps , CheckboxValueType } from 'element-plus'
 import { Refresh } from '@element-plus/icons-vue'
 
 import { User, Search, Files,Crop,VideoPlay,Wallet,WarnTriangleFilled, Promotion, TrendCharts,SuccessFilled } from '@element-plus/icons-vue'
@@ -133,6 +184,56 @@ const st_all_my_count = ref(0)
 const st_runing_count = ref(0)
 const st_handled_count = ref(0)
 const refreshSt = ref(0)
+const start_time_begin = ref("");
+const start_time_end = ref("");
+
+
+const status_options = ref([
+  {
+    value: "0",
+    label: "等待中",
+  },
+  {
+    value: "1",
+    label: "正在执行",
+  },
+  {
+    value: "2",
+    label: "执行通过",
+  },
+  {
+    value: "3",
+    label: "执行失败",
+  },
+  {
+    value: "4",
+    label: "执行超时",
+  },
+  {
+    value: "5",
+    label: "等待调度",
+  },
+  {
+    value: "6",
+    label: "用户终止执行",
+  },
+  {
+    value: "7",
+    label: "上游失败",
+  },
+]);
+const checkAll = ref(true);
+const indeterminate = ref(false);
+const status_value = ref<CheckboxValueType[]>([
+  "0",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+]);
 
 import { ArrowUp, ArrowDown } from '@element-plus/icons-vue'
 
@@ -241,7 +342,13 @@ const formInline = reactive({
 })
 
 const onSubmit = () => {
-  emitter.emit('search_with_new_query', {"pl_name": formInline.pl_name, "task_name": formInline.task_name})
+    emitter.emit('search_with_new_query', {
+      "pl_name": formInline.pl_name, 
+      "task_name": formInline.task_name, 
+      'status':status_value.value, 
+      "start_time": start_time_begin.value,
+      "end_time": start_time_end.value
+   })
 }
 
 const handleDocumentClick = (e) => {
