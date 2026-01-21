@@ -33,18 +33,18 @@
             <el-button class="!ml-0" plain @click="show_task_status = true" size=""
                 style="margin-top: 4px; margin-left: 254px; z-index:1051;position: fixed;" :icon="DataAnalysis" />
         </el-tooltip>
-        <el-tooltip class="box-item" effect="dark" content="重新自动布局,生成新的监控模型图！">
+        <!-- <el-tooltip class="box-item" effect="dark" content="重新自动布局,生成新的监控模型图！">
             <el-button class="!ml-0" plain @click="relayout" size=""
                 style="margin-top: 4px; margin-left: 304px; z-index:1051;position: fixed;" :icon="PictureFilled" />
-        </el-tooltip>
-        <el-tooltip class="box-item" effect="dark" content="导出图片！">
+        </el-tooltip> -->
+        <!-- <el-tooltip class="box-item" effect="dark" content="导出图片！">
             <el-button class="!ml-0" plain @click="export_graph = true" size=""
                 style="margin-top: 4px; margin-left: 354px; z-index:1051;position: fixed;" :icon="Download" />
         </el-tooltip>
         <el-tooltip v-if="!isOnline" class="box-item" effect="dark" content="上线监控模型，按照执行周期自动执行！">
             <el-button class="!ml-0" plain @click="callOnline" size=""
                 style="margin-top: 4px; margin-left: 404px; z-index:1051;position: fixed;" :icon="VideoPause" />
-        </el-tooltip>
+        </el-tooltip> -->
         <!-- <el-tooltip v-else class="box-item" effect="dark" content="监控模型当前已上线，点击下线监控模型，停止自动执行！">
             <el-button type="success" class="!ml-0" plain @click="callOffline" size=""
                 style="margin-top: 4px; margin-left: 454px; z-index:1051;position: fixed;" :icon="VideoPlay" />

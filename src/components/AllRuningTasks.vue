@@ -190,49 +190,19 @@ const start_time_end = ref("");
 
 const status_options = ref([
   {
-    value: "0",
-    label: "等待中",
-  },
-  {
-    value: "1",
-    label: "正在执行",
-  },
-  {
     value: "2",
     label: "执行通过",
   },
   {
     value: "3",
     label: "执行失败",
-  },
-  {
-    value: "4",
-    label: "执行超时",
-  },
-  {
-    value: "5",
-    label: "等待调度",
-  },
-  {
-    value: "6",
-    label: "用户终止执行",
-  },
-  {
-    value: "7",
-    label: "上游失败",
-  },
+  }
 ]);
 const checkAll = ref(true);
 const indeterminate = ref(false);
 const status_value = ref<CheckboxValueType[]>([
-  "0",
-  "1",
   "2",
   "3",
-  "4",
-  "5",
-  "6",
-  "7",
 ]);
 
 import { ArrowUp, ArrowDown } from '@element-plus/icons-vue'

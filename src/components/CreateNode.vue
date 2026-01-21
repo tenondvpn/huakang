@@ -2,13 +2,11 @@
     <el-form ref="ruleFormRef" style="max-width: 600px;width: 800px; margin: 0 auto;" :model="ruleForm" :rules="rules" label-width="auto"
         label-position="center">
         <el-form-item v-if="taskType == 1" prop="processor" required>
-            <el-col :span="11">
                 <el-form-item prop="processor" label="选择模板模型" required>
                     <el-tree-select v-model="ruleForm.processor" lazy :load="load" :props="processor_props" placeholder=""
                         @change="handleSelectionChange" style="width: 240px" :disabled="update_task" />
                 </el-form-item>
-            </el-col>
-            <el-col :span="1">
+            <!-- <el-col :span="1">
             </el-col>
             <el-col :span="10">
                 <el-form-item prop="processor_version" label="选择版本" required>
@@ -24,7 +22,7 @@
                         <el-tooltip class="box-item" effect="dark" content="点击查看模板模型文件列表！">
             <el-button  type="primary" @click="show_detail = true" style="margin-top:-3px;margin-left: 3px;" :icon="Files" plain></el-button>
         </el-tooltip>    
-        </el-col>
+        </el-col> -->
         </el-form-item>
 
         <el-form-item label="模型名称" prop="task_name">
@@ -226,7 +224,7 @@ interface RuleForm {
 const ruleFormRef = ref<FormInstance>()
 const ruleForm = reactive<RuleForm>({
     processor: "",
-    processor_version: '',
+    processor_version: 'VER.0.0.0',
     task_name: '',
     configs: '',
     retry_times: 1,
@@ -445,6 +443,8 @@ const handleSelectionChange = (value) => {
             console.log(get_processor_data)
             ChangcePowerNodes("script")
             procId.value = proc_id
+            ruleForm.processor_version = get_processor_data[0].id
+            changeTaskInfo()
         })
         .catch(error => console.log(error))
 };
