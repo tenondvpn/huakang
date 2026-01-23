@@ -54,15 +54,32 @@
                 <el-col :span="16" style="float: left;">
                   <el-form :inline="true" :model="formInline" class="demo-form-inline">
                     <el-form-item label="">
-                      <el-input v-model="formInline.pl_name" style="width: 150px;"  placeholder="请输入模型组" clearable />
+                      <el-autocomplete
+                        v-model="formInline.pl_name"
+                        style="width: 120px;"
+                        placeholder="请输入模型组"
+                        clearable
+                        :fetch-suggestions="querySearchGroup"
+                        popper-class="search-dropdown-limit" 
+                        @select="handleSelect"
+                      />
                     </el-form-item>
+
                     <el-form-item label="">
-                      <el-input v-model="formInline.task_name" style="width: 150px;"   placeholder="请输入模型名" clearable />
+                      <el-autocomplete
+                        v-model="formInline.task_name"
+                        style="width: 120px; margin-left: -5px;"
+                        placeholder="请输入模型名"
+                        clearable
+                        :fetch-suggestions="querySearchTask"
+                        popper-class="search-dropdown-limit"
+                        @select="handleSelect"
+                      />
                     </el-form-item>
                     <el-form-item label="">
                       <el-date-picker
                         size="small"
-                        style="width: 100px;height: 30px;"
+                        style="width: 90px;height: 30px;margin-left: -5px;"
                         v-model="start_time_begin"
                         type="datetime"
                         placeholder="开始时间"
@@ -73,7 +90,7 @@
                     <el-form-item label="">
                       <el-date-picker
                         size="small"
-                        style="width: 100px;height: 30px;margin-left: -20px;"
+                        style="width: 90px;height: 30px;margin-left: -20px;"
                         v-model="start_time_end"
                         type="datetime"
                         placeholder="结束时间"
@@ -91,7 +108,7 @@
                         collapse-tags-tooltip
                         :max-collapse-tags="1"
                         placeholder="选择状态"
-                        style="width: 100px; float: right; margin-top: 0px;"
+                        style="width: 90px; float: right; margin-top: 0px;margin-left: -5px;"
                       >
                         <template #header>
                           <el-checkbox
@@ -117,7 +134,7 @@
 
                 <el-col :span="8">
                     <el-pagination style="margin-left: 196px;float:right" v-model:current-page="currentPage2"
-                        v-model:page-size="pageSize2" :page-sizes="[5, 50, 100, 200]" background
+                        v-model:page-size="pageSize2" :page-sizes="[14, 50, 100, 200]" background
                         layout="sizes, prev, pager, next" :total="currentTotalSize" />
                 </el-col>
             </el-row>
@@ -138,6 +155,7 @@ import TaskStatusList from './TaskStatusList.vue';
 import ExportGraph from './ExportGraph.vue'
 import { ElMessageBox } from 'element-plus';
 import { ElMessage } from 'element-plus';
+import qs from 'qs';
 
 export default {
     name: 'App',
@@ -163,7 +181,7 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { reactive } from 'vue'
 
-const auto_refresh_task = ref(false)
+const auto_refresh_task = ref(true)
 
 const drawer_direction = ref<DrawerProps['direction']>('ltr')
 const popoverVisible = ref(false);
@@ -171,7 +189,7 @@ const pipeline_name = ref('');
 const task_name = ref('');
 const show_task_status = ref(false)
 const choosed_task = ref(false)
-const pageSize2 = ref(5)
+const pageSize2 = ref(14)
 const currentPage2 = ref(1)
 const currentTotalSize = ref(0)
 const intervalId = ref(null)
@@ -187,6 +205,10 @@ const refreshSt = ref(0)
 const start_time_begin = ref("");
 const start_time_end = ref("");
 
+const formInline = reactive({
+  pl_name: '',
+  task_name: ''
+})
 
 const status_options = ref([
   {
@@ -205,82 +227,75 @@ const status_value = ref<CheckboxValueType[]>([
   "3",
 ]);
 
-import { ArrowUp, ArrowDown } from '@element-plus/icons-vue'
+const mockBackendApi = (queryString, type) => {
 
-const cards = ref([
-{
-    title: '监测异常',
-    value: st_all_failes_count,
-    unit: '个',
-    trend: 18.9,
-    icon: WarnTriangleFilled,
-    iconBg: 'rgba(249, 0, 0, 0.15)',
-    glowColor: 'rgba(252, 0, 0, 0.25)',
-    onClick: () =>  {
-        emitter.emit('change_search_status', [3])
+  
+  return new Promise((resolve) => {
+    if (queryString == "") {
+      resolve([])
+      return;
     }
-  },
-  {
-    title: '总计运行',
-    value: st_all_count,
-    unit: '个',
-    trend: 18.9,
-    icon: Files,
-    iconBg: 'rgba(102, 126, 234, 0.15)',
-    glowColor: 'rgba(102, 126, 234, 0.25)',
-    onClick: () => {
-        emitter.emit('change_search_status', [0, 1, 2, 3, 4, 5, 6, 7])
+
+    if (type == '模型组') {
+      axios
+          .post('/pipeline/search_all_pipeline/', qs.stringify({
+              'word': queryString
+          }))
+          .then(response => {
+              const list = []
+              for (let i = 0; i < response.data.data_list.length; i++) {
+                list.push({ 
+                  // el-autocomplete 默认识别 'value' 字段作为显示内容
+                  value: response.data.data_list[i], 
+                  id: i 
+                })
+              }
+              resolve(list)
+            })
+          .catch(error => {
+          })
+    } else {
+      axios
+          .post('/pipeline/search_task/', qs.stringify({
+              'word': queryString
+          }))
+          .then(response => {
+              const list = []
+              for (let i = 0; i < response.data.data_list.length; i++) {
+                list.push({ 
+                  // el-autocomplete 默认识别 'value' 字段作为显示内容
+                  value: response.data.data_list[i], 
+                  id: i 
+                })
+              }
+              resolve(list)
+          })
+          .catch(error => {
+          })
     }
-  },
-  {
-    title: '我负责的',
-    value: st_all_my_count,
-    unit: '个',
-    trend: 12.5,
-    icon: User,
-    iconBg: 'rgba(56, 217, 169, 0.15)',
-    glowColor: 'rgba(56, 217, 169, 0.25)',
-    onClick: () => {
-        emitter.emit('change_search_owner', 1)
-    }
-  },
-  {
-    title: '华康电量',
-    unit: '个',
-    value: st_my_create_count,
-    trend: -2.3,
-    icon: Crop,
-    iconBg: 'rgba(250, 173, 20, 0.15)',
-    glowColor: 'rgba(250, 173, 20, 0.25)',
-    onClick: () => {
-        emitter.emit('change_search_owner', 2)
-    }
-  },
-  {
-    title: '运行中的',
-    value: st_runing_count,
-    unit: '个',
-    trend: 8.1,
-    icon: VideoPlay,
-    iconBg: 'rgba(152, 253, 134, 0.25)',
-    glowColor: 'rgba(152, 253, 134, 0.25)',
-    onClick: () => {
-        emitter.emit('change_search_status', [0, 1, 5])
-    }
-  },
-  {
-    title: '已处理告警',
-    value: st_handled_count,
-    unit: '个',
-    trend: 12.5,
-    icon: SuccessFilled,
-    iconBg: 'rgba(56, 217, 169, 0.15)',
-    glowColor: 'rgba(210, 222, 219, 0.25)',
-    onClick: () => {
-        emitter.emit('change_search_status', [2])
-    }
-  }
-])
+  })
+}
+
+// 1. 模型组 - 搜索逻辑
+const querySearchGroup = (queryString, cb) => {
+  // 调用后台接口
+  mockBackendApi(queryString, '模型组').then((res) => {
+    // cb 是回调函数，将数据渲染到下拉列表
+    cb(res)
+  })
+}
+
+// 2. 模型名 - 搜索逻辑
+const querySearchTask = (queryString, cb) => {
+  mockBackendApi(queryString, '模型名').then((res) => {
+    cb(res)
+  })
+}
+
+// 选中下拉项触发
+const handleSelect = (item) => {
+  console.log('用户选中了:', item)
+}
 
 const getStatistics = () => {
     axios
@@ -305,11 +320,6 @@ const getStatistics = () => {
 const handleClick = (card) => {
   card.onClick?.()
 }
-
-const formInline = reactive({
-  pl_name: '',
-  task_name: '',
-})
 
 const onSubmit = () => {
     emitter.emit('search_with_new_query', {
@@ -508,6 +518,17 @@ onUnmounted(() => {
 </style>
 
 <style>
+/* 自定义下拉框样式 
+  注意：el-autocomplete 的下拉框是插入到 body 的，
+  所以如果 style 有 scoped，需要用 :deep 或者放在全局样式中。
+  这里为了演示方便，建议放在全局 CSS 或不带 scoped 的 style 标签中。
+*/
+.search-dropdown-limit .el-autocomplete-suggestion__wrap {
+  /* Element Plus 默认单行高度约 34px-40px，5行大约 170px-200px */
+  max-height: 180px !important; 
+  /* 超出部分显示滚动条 */
+  overflow-y: auto;
+}
 
 .my-card-body {
   padding: 0px!important;

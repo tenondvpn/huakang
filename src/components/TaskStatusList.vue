@@ -4,7 +4,6 @@
   
   <div style="flex: 1; overflow: hidden;">
   <el-table
-    v-loading="isLoading"
     ref="multipleTableRef"
     border
     :data="tableData"
